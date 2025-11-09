@@ -1,0 +1,4 @@
+mock_plate:
+    resource: ../../src/External/MockApiPlate/Controller/
+    type: attribute
+    prefix: /
