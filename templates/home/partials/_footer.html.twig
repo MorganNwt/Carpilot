@@ -1,47 +1,43 @@
 <div class="h-1 bg-orange-500 w-full my-4"></div>
-<div class="flex justify-center items-center py-4">
-    <!-- Espace vide à gauche -->
-    <div class="w-1/3"></div>
 
-    <!-- Logo CarPilot centré -->
-    <div class="w-1/3 flex justify-center">
-        <a href="{{ path('app_home') }}">
-            <img src="/images/logo.png" alt="CarPilot" class="h-12">
-        </a>
-    </div>
+<div class="flex justify-center items-center space-x-6 py-4">
+    <!-- Logo CarPilot -->
+    <a href="{{ path('app_home') }}">
+        <img src="/images/logo.png" alt="CarPilot" class="h-12">
+    </a>
 
-    <!-- Réseaux sociaux à droite -->
-    <div class="w-1/3 flex justify-end space-x-4">
-        <a href="{{ path('app_home') }}">
-            <img src="/images/Instagram.png" alt="logo-Instagram" class="h-8">
-        </a>
-        <a href="{{ path('app_home') }}">
-            <img src="/images/Facebook.png" alt="logo-Facebook" class="h-8">
-        </a>
-    </div>
+    <!-- Logo Instagram -->
+    <a href="{{ path('app_home') }}">
+        <img src="/images/Instagram.png" alt="logo-Instagram" class="h-8">
+    </a>
+
+    <!-- Logo Facebook -->
+    <a href="{{ path('app_home') }}">
+        <img src="/images/Facebook.png" alt="logo-Facebook" class="h-8">
+    </a>
 </div>
  
 <!-- Formulaire de contact -->
-<div class="max-w-4xl mx-auto bg-orange-500 text-white p-6 rounded shadow-md mb-10 mt-10">
+<div class="max-w-4xl mx-auto bg-orange-500 text-white p-6 rounded shadow-md mb-10 mt-15 mb-20">
     <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-            <label for="prenom" class="block text-sm font-medium mb-1">Prénom</label>
+            <label for="prenom" class="block text-sm font-medium mb-1 text-black">Prénom</label>
             <input type="text" id="prenom" name="prenom" placeholder="Votre prénom"
-                    class="w-full p-2 rounded text-black">
+                    class="w-full p-2 rounded text-black bg-white">
         </div>
         <div>
-            <label for="email" class="block text-sm font-medium mb-1">Email</label>
+            <label for="email" class="block text-sm font-medium mb-1 text-black">Email</label>
             <input type="email" id="email" name="email" placeholder="Votre Email"
-                    class="w-full p-2 rounded text-black">
+                    class="w-full p-2 rounded text-black bg-white">
         </div>
         <div class="md:col-span-2">
-            <label for="message" class="block text-sm font-medium mb-1">Question</label>
+            <label for="message" class="block text-sm font-medium mb-1 text-black">Question</label>
             <textarea id="message" name="message" placeholder="Votre message"
-                        class="w-full p-2 h-28 rounded text-black"></textarea>
+                        class="w-full p-2 h-28 rounded text-black bg-white"></textarea>
         </div>
         <div class="md:col-span-2">
             <button type="submit"
-                    class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded">
+                    class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-sm">
                 Envoyez !
             </button>
         </div>
@@ -49,9 +45,9 @@
 </div>
 
 <!-- Liens du footer -->
-<div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-black pb-10">
+<div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-black pb-10 mb-15">
     <div>
-        <h4 class="font-semibold mb-2">Pages</h4>
+        <h4 class="font-bold mb-2">Pages</h4>
         <ul class="space-y-1">
             <li><a href="#">Accueil</a></li>
             <li><a href="#">Vendre ma voiture</a></li>
@@ -62,7 +58,7 @@
     </div>
 
     <div class="border-l border-orange-500 pl-4">
-        <h4 class="font-semibold mb-2">Retrouvez-nous près de chez vous !</h4>
+        <h4 class="font-bold mb-2">Retrouvez-nous près de chez vous !</h4>
         <ul class="space-y-1">
             <li><a href="#">Agence d’Eprogny</a></li>
             <li><a href="#">Agence d’Annecy</a></li>
@@ -71,7 +67,7 @@
     </div>
 
     <div class="border-l border-orange-500 pl-4">
-        <h4 class="font-semibold mb-2">Nos dernières astuces</h4>
+        <h4 class="font-bold mb-2">Nos dernières astuces</h4>
         <ul class="space-y-1">
             <li><a href="#">Comment la couleur de votre voiture impacte sur le prix de revente ?</a></li>
             <li><a href="#">Dois-je effectuer les réparations avant de vendre mon véhicule ?</a></li>
@@ -89,5 +85,5 @@
 
 <!-- Footer bas -->
 <div class="bg-orange-500 text-center text-white py-3 text-sm">
-    © 2023 - 2025 Carpilot Tous droits réservés
+    ©Copyright  Carpilot Tous droits réservés
 </div>
