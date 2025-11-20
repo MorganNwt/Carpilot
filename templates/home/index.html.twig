@@ -60,7 +60,7 @@
 
         <!-- Avis client 1 -->
        <div class="flex flex-wrap gap-6 justify-center">
-            <div class="relative bg-white text-gray-800 rounded-lg p-6 pt-14 pb-12 w-140 shadow-md mr-4">
+            <div class="relative bg-white text-gray-800 rounded-lg p-6 pt-14 pb-12 sm:w-80 lg:w-100 shadow-md mr-4">
 
                 <!-- Photo dépassante à gauche -->
                 <div class="absolute -top-10 left-4">
@@ -87,7 +87,7 @@
             </div>
 
             <!-- Avis client 2 -->
-            <div class="relative bg-white text-gray-800 rounded-lg p-6 pt-14 pb-12 w-140 shadow-md ml-4">
+            <div class="relative bg-white text-gray-800 rounded-lg p-6 pt-14 pb-12 sm:w-80 lg:w-100 shadow-md ml-4">
 
                 <!-- Photo dépassante à gauche -->
                 <div class="absolute -top-10 left-4">
@@ -127,81 +127,114 @@
     <h2 class="text-center text-2xl mt-8 md:text-3xl font-bold mb-10 text-gray-800">Vendez votre véhicule facilement et rapidement !</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-50">
-        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-150 h-35 ">
+        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-80 h-35 lg:w-120 lg:h-50 ">
             <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-mouse-pointer"></i></div>
             <div>
                 <h3 class="font-semibold text-lg mb-1 text-center">En quelques clics</h3>
-                <p class="opacity-50">Choisir CarPilot, c’est dire adieu aux tracas de la revente d’occasion !</p>
+                <p class="text-center opacity-50">Choisir CarPilot, c’est dire adieu aux tracas de la revente d’occasion !</p>
             </div>
         </div>
 
-        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-150 h-35">
+        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-80 h-35 lg:w-120 lg:h-50">
             <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-university"></i></div>
             <div>
                 <h3 class="font-semibold text-lg mb-1  text-center">Virement instantané sur votre compte</h3>
-                <p class="opacity-50">Une fois le véhicule déposé, vous recevez votre argent instantanément sur votre compte.</p>
+                <p class="text-center opacity-50">Une fois le véhicule déposé, vous recevez votre argent instantanément sur votre compte.</p>
             </div>
         </div>
 
-        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-150 h-35">
+        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-80 h-35 lg:w-120 lg:h-50">
             <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-users"></i></div>
             <div>
                 <h3 class="font-semibold text-lg mb-1  text-center">Pour particuliers et professionnels</h3>
-                <p class="opacity-50">Nous rachetons immédiatement votre véhicule, que vous soyez particulier ou professionnel.</p>
+                <p class="text-center opacity-50">Nous rachetons immédiatement votre véhicule, que vous soyez particulier ou professionnel.</p>
             </div>
         </div>
 
-        <div class="relative bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-150 h-35">
+        <div class="relative bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-80 h-35 lg:w-120 lg:h-50">
             <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-car"></i></div>
             <div>
-                <h3 class="font-semibold text-lg mb-1  text-center">Tous types de véhicules</h3>
-                <p class="opacity-50">Que vous ayez une citadine, un break ou un SUV, nous avons une offre pour vous !</p>
+                <h3 class="font-semibold text-lg mb-1 text-center">Tous types de véhicules</h3>
+                <p class="text-center opacity-50">Que vous ayez une citadine, un break ou un SUV, nous avons une offre pour vous !</p>
             </div>
-            <img src="{{ asset('images/renault_20clioeditiononehb5b_angularfront 1.png') }}" alt="voiture"  class="absolute top-1/2 right-[-50px] transform -translate-y-1/2 w-32 md:w-50 lg:w-80 top-45">
+
+            <!-- Clio rouge à droite -->
+            <img src="{{ asset('images/renault_20clioeditiononehb5b_angularfront 1.png') }}" alt="voiture"  class="absolute top-1/2 right-[-50px] transform -translate-y-1/2 w-80 top-65 sm:left-35 lg:left-85">
         </div>
     </div>
 </section>
 
 <section class="bg-[#0b2c4c] text-white py-10">
     <div class="container mx-auto px-4">
-        <h3 class="text-xl md:text-2xl font-semibold mb-8">Comment faire ?</h3>
-        <div class="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-                <div class="flex items-start mb-6">
-                    <div class="w-8 h-8 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold mr-4">1</div>
+       
+        <div class="grid lg:grid-cols-2 gap-8 items-center justify-items-center">
+
+            
+            <!-- COLONNE GAUCHE -->
+            <div class="relative">
+                 <h3 class="text-xl md:text-4xl font-semibold mb-8 ">Comment faire ?</h3>
+
+                <!-- ÉTAPE 1 -->
+                <div class="flex items-start mb-10 relative">
+                    <!-- BARRE VERTICALE -->
+                    <span class="absolute left-6 top-12 h-17 w-[4px] bg-white"></span>
+
+                    <!-- ROND -->
+                    <div class="w-12 h-12 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold text-xl mr-4 shrink-0">
+                        1
+                    </div>
+
                     <div>
                         <h4 class="font-bold text-lg">Estimation en ligne</h4>
-                        <p class="text-sm mt-1">Renseignez votre véhicule à partir de sa plaque d’immatriculation, précisez son état, ajoutez quelques photos et le tour est joué !</p>
+                        <p class="text-sm opacity-50 mt-1">Renseignez votre véhicule à partir de sa plaque d’immatriculation, précisez son état, ajoutez quelques photos et le tour est joué !</p>
                     </div>
                 </div>
 
-                <div class="flex items-start mb-6">
-                    <div class="w-8 h-8 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold mr-4">2</div>
+                <!-- ÉTAPE 2 -->
+                <div class="flex items-start mb-10 relative">
+                    <!-- BARRE VERTICALE -->
+                    <span class="absolute left-6 top-12 h-15 w-[4px] bg-white"></span>
+
+                    <!-- ROND -->
+                    <div class="w-12 h-12 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold text-xl mr-4 shrink-0">
+                        2
+                    </div>
+
                     <div>
                         <h4 class="font-bold text-lg">Recevez votre prix de vente</h4>
-                        <p class="text-sm mt-1"><strong>En moins de 48 minutes !</strong> Nous traitons votre demande pour vous proposer la meilleure offre de rachat.</p>
+                        <p class="text-sm opacity-50 mt-1"><strong>En moins de 48 minutes !</strong> Nous traitons votre demande pour vous proposer la meilleure offre de rachat.</p>
                     </div>
                 </div>
 
-                <div class="flex items-start">
-                    <div class="w-8 h-8 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold mr-4">3</div>
+                <!-- ÉTAPE 3 (pas de barre) -->
+                <div class="flex items-start relative">
+                    <!-- ROND -->
+                    <div class="w-12 h-12 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold text-xl mr-4 shrink-0">
+                        3
+                    </div>
+
                     <div>
                         <h4 class="font-bold text-lg">Prenez rendez-vous</h4>
-                        <p class="text-sm mt-1">Dans une de nos agences CarPilot pour contrôler l’état de votre véhicule et valider ensemble l’offre !</p>
+                        <p class="text-sm opacity-50 mt-1">Dans une de nos agences CarPilot pour contrôler l’état de votre véhicule et valider ensemble l’offre !</p>
                     </div>
                 </div>
+
             </div>
 
-            <div class="text-center">
-                <img src="{{ asset('images/Comment faire.png') }}" alt="client carpilot" class="mx-auto rounded-lg shadow-lg">
-                <a href="#" class="inline-block mt-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded">Estimez maintenant !</a>
+            <!-- Image à droite -->
+            <div class="text-center hidden lg:block">
+                <img src="{{ asset('images/Comment faire.png') }}" alt="client carpilot" class="mx-auto rounded-lg shadow-lg l-120 h-120">
+                <a href="#" class="inline-block w-120 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded">
+                    Estimez maintenant !
+                </a>
             </div>
+
         </div>
     </div>
 </section>
 
 <section class="text-center py-6 bg-white">
-    <h4 class="text-xl font-bold text-[#0b2c4c]">Retrouvez nous en agence !</h4>
+    <h3 class="text-3xl mt-5 font-bold text-[#0b2c4c]">Retrouvez nous en agence !</h3>
 </section>
 
 {% endblock %}
