@@ -45,8 +45,8 @@
     </a>
 
     <nav class="ml-auto hidden md:flex items-center space-x-6">
-        <a href="#" class="text-sm font-semibold hover:text-orange-500">Vendre ma voiture</a>
-        <a href="#" class="text-sm font-semibold hover:text-orange-500">Estimer ma voiture</a>
+        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500">Vendre ma voiture</a>
+        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500">Estimer ma voiture</a>
         <a href="#contact" onclick="smoothScroll(event, '#contact')" class="text-sm font-semibold hover:text-orange-500">Nous contacter</a>
         <a href="#" class="text-sm font-semibold hover:text-orange-500">Nos articles</a>
         <a href="{{ path('app_register') }}" class="text-sm font-semibold hover:text-orange-500">Mon compte</a>
@@ -65,10 +65,10 @@
             <!-- Dropdown -->
             <div id="agencesMenu" class="hidden origin-top-right absolute right-0 mt-1 w-34 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                 <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="agencesButton">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Valence</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Strasbourg</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Paris</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Annecy</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Eprogny</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Annecy</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Unieux</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Valence</a>
                 </div>
             </div>
         </div>

@@ -1,5 +1,67 @@
+{% block stylesheets %}
+
+<style>
+    .back-to-top {
+        position: fixed;
+        bottom: 5em; /* plus haut que le bas de page */
+        right: 2em;
+        width: 2.5em;
+        height: 2.5em;
+        background-color: #ff8c00; /* orange */
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 24px;
+        text-decoration: none;
+        box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 1000;
+    }
+
+    /* opacité 50% quand visible */
+    .back-to-top.show {
+        opacity: 0.5;
+        pointer-events: auto;
+    }
+
+    /* hover : devient 100% opaque */
+    .back-to-top:hover {
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    document.addEventListener("scroll", () => {
+    const button = document.getElementById("backToTop");
+
+    // hauteur totale du document
+    const docHeight = document.documentElement.scrollHeight;
+    
+    // hauteur visible
+    const winHeight = window.innerHeight;
+    
+    // scroll actuel (distance parcourue)
+    const scrollTop = window.scrollY;
+
+    // si l'utilisateur est en bas de page
+    if (scrollTop + winHeight >= docHeight - 100) {
+        button.classList.add("show");
+    } else {
+        button.classList.remove("show");
+    }
+});
+</script>
+{% endblock %}
+
 {% block body %}
-<div class="h-1 bg-orange-500 w-full my-4"></div>
+<div class="h-1 bg-orange-500 w-full my-4 mt-30"></div>
 
 <div class="flex justify-center items-center space-x-6 py-4">
     <!-- Logo CarPilot -->
@@ -38,7 +100,7 @@
         </div>
         <div class="md:col-span-2">
             <button type="submit"
-                    class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-sm">
+                    class="bg-blue-900 hover:bg-[#0b2c4c] text-white px-4 py-2 rounded-sm cursor-pointer">
                 Envoyez !
             </button>
         </div>
@@ -64,6 +126,7 @@
             <li><a href="#">Agence d’Eprogny</a></li>
             <li><a href="#">Agence d’Annecy</a></li>
             <li><a href="#">Agence d’Unieux</a></li>
+             <li><a href="#">Agence de Valence</a></li>
         </ul>
     </div>
 
@@ -83,6 +146,11 @@
         </ul>
     </div>
 </div>
+
+<!-- Bouton : remonter en haut de page -->
+<a href="#" id="backToTop" class="back-to-top">
+    ▲
+</a>
 
 <!-- Footer bas -->
 <div class="bg-orange-500 text-center text-white py-3 text-sm">
