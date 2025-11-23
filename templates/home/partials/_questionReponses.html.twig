@@ -1,0 +1,52 @@
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-8">Questions fréquentes</h2>
+
+    <div class="divide-y divide-gray-200">
+
+        {% for faq in faqs %}
+        <div class="py-6">
+            <button 
+                class="w-full flex justify-between items-center text-left faq-toggle cursor-pointer"
+            >
+                <span class="font-semibold text-lg text-[#0b2c4c]">
+                    {{ faq.question }}
+                </span>
+
+                <!-- Icône chevron -->
+                <svg class="w-5 h-5 text-[#0b2c4c] transform transition-transform duration-300" 
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5 15l7-7 7 7"/>
+                </svg>
+            </button>
+
+            <div class="faq-content hidden mt-4 text-gray-700 leading-relaxed">
+                {{ faq.answer|raw }}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <script>
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const content = btn.nextElementSibling;
+            const svg = btn.querySelector('svg');
+
+            // Si déjà ouvert → referme
+            if (!content.classList.contains('hidden')) {
+                content.classList.add('hidden');
+                svg.classList.remove('rotate-180');
+                return;
+            }
+
+            // Fermer toutes les autres
+            document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.faq-toggle svg').forEach(icon => icon.classList.remove('rotate-180'));
+
+            // Ouvrir celui cliqué
+            content.classList.remove('hidden');
+            svg.classList.add('rotate-180');
+        });
+    });
+</script>

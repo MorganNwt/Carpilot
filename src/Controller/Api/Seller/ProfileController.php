@@ -28,8 +28,7 @@ final class ProfileController extends AbstractController
 {
     public function __construct(
         private readonly ProfileService $profileService
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'get', methods: ['GET'])]
     /*
@@ -43,12 +42,13 @@ final class ProfileController extends AbstractController
         content: new Model(type: SellerResponseDto::class)
     )]
     #[OA\Response(response: 403, description: "Access Denied.")]
+    */
     public function getProfile(#[CurrentUser] Seller $seller): JsonResponse
     {
         $responseDto = $this->profileService->getSeller($seller);
         return new JsonResponse($responseDto);
     }
-*/
+
     #[Route('', name: 'update', methods: ['PUT'])]
     /*
     #[OA\Put(
@@ -134,5 +134,4 @@ final class ProfileController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 }

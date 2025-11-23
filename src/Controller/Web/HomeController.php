@@ -11,6 +11,70 @@ class HomeController extends AbstractController
     #[Route('/home', name: 'app_home')]
     public function index()
     {
-        return $this->render('home/index.html.twig');
+        $faqs = [
+            [
+                'question' => "Comment fonctionne le processus de rachat de véhicules sur votre site ?",
+                'answer' => "
+                    Commencez par réaliser une estimation en ligne de votre véhicule. 
+                    En quelques minutes, vous pourrez renseigner toutes les informations de votre voiture et de son état. 
+                    Vous recevrez alors une proposition de rachat sous 45 minutes. 
+                    Prenez ensuite rendez-vous en agence pour faire contrôler l'état de votre véhicule avec un expert CarPilot. 
+                    Vous obtiendrez l'offre définitive dès la fin de l'expertise. 
+                    Si celle-ci vous convient, nous fixons ensemble un rendez-vous afin de finaliser la transaction. 
+                    Nous nous occupons des démarches administratives et ainsi, dès le dépôt de votre véhicule, vous repartez avec votre règlement.
+                "
+            ],
+            [
+                'question' => "Quels types de véhicules acceptez-vous pour le rachat ?",
+                'answer' => "
+                    Nous acceptons toutes les voitures, peu importe leur marque. Votre véhicule doit néanmoins respecter les conditions suivantes :<br><br>
+                    • Année de mise en circulation à partir de 2010<br>
+                    • Moins de 150 000 km<br>
+                    • Suivi mécanique à minima partiel<br>
+                    • Non accidenté et roulant<br>
+                    • Le vendeur doit être le propriétaire (carte grise obligatoire)<br><br>
+                    Pour les véhicules hors de ces conditions, merci de prendre rendez-vous pour que nous puissions trouver la meilleure solution de vente.
+                "
+            ],
+            [
+                'question' => "Mon véhicule a-t-il besoin d'être en parfait état pour être éligible au rachat ?",
+                'answer' => "
+                    Non, nous acceptons également les véhicules endommagés. 
+                    Cependant, l'état de votre véhicule peut influencer l'offre que nous pouvons vous faire.
+                "
+            ],
+            [
+                'question' => "Dois-je effectuer des réparations avant de vendre mon véhicule ?",
+                'answer' => "
+                    Non, vous n'avez pas besoin de faire de réparations. 
+                    Nous considérons l'état actuel de votre véhicule lors de l'évaluation.
+                "
+            ],
+            [
+                'question' => "Comment se déroule le paiement une fois que j'ai accepté l'offre ?",
+                'answer' => "
+                    Le paiement s'effectue selon votre préférence : 
+                    par virement bancaire instantané ou par chèque, au moment de la transaction.
+                "
+            ],
+            [
+                'question' => "Combien de temps faut-il pour finaliser le processus de rachat ?",
+                'answer' => "
+                    En général, le processus peut être finalisé en quelques jours seulement 
+                    après l'acceptation de notre offre.
+                "
+            ],
+            [
+                'question' => "Y a-t-il des frais cachés ou des coûts supplémentaires associés au processus de rachat ?",
+                'answer' => "
+                    Non, notre offre est totalement transparente, 
+                    et il n'y a aucun frais caché. Nous couvrons tous les coûts liés à la transaction.
+                "
+            ],
+        ];
+
+        return $this->render('home/index.html.twig', [
+            'faqs' => $faqs,
+        ]);
     }
 }
