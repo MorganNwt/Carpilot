@@ -3,21 +3,7 @@
 {% block title %}Accueil - CarPilot{% endblock %}
 
 {% block javascript %}
-<script>
-    let index = 0;
-    const carousel = document.getElementById("carousel-inner");
-    const totalSlides = carousel.children.length;
 
-    document.getElementById("next").addEventListener("click", () => {
-        index = (index + 1) % totalSlides;
-        carousel.style.transform = `translateX(-${index * 100}%)`;
-    });
-
-    document.getElementById("prev").addEventListener("click", () => {
-        index = (index - 1 + totalSlides) % totalSlides;
-        carousel.style.transform = `translateX(-${index * 100}%)`;
-    });
-</script>
 {% endblock %}
 
 {% block body %}

@@ -11,6 +11,37 @@ class HomeController extends AbstractController
     #[Route('/home', name: 'app_home')]
     public function index()
     {
+        $steps = [
+            [
+                'icon' => 'fas fa-mouse-pointer',
+                'image' => 'clics.png',
+                'title' => 'En quelques clics',
+                'text' => "Choisir CarPilot, c’est dire adieu aux tracas de la revente d’occasion !",
+                'car_image' => null
+            ],
+            [
+                'icon' => 'fas fa-university',
+                'image' => 'Virement.png',
+                'title' => 'Virement instantané sur votre compte',
+                'text' => "Une fois le véhicule déposé, vous recevez votre argent instantanément sur votre compte.",
+                'car_image' => null
+            ],
+            [
+                'icon' => 'fas fa-users',
+                'image' => 'Particulier et pro.png',
+                'title' => 'Pour particuliers et professionnels',
+                'text' => "Nous rachetons immédiatement votre véhicule, que vous soyez particulier ou professionnel.",
+                'car_image' => null
+            ],
+            [
+                'icon' => 'fas fa-car',
+                'image' => 'Véhicule.png',
+                'title' => 'Tous types de véhicules',
+                'text' => "Que vous ayez une citadine, un break ou un SUV, nous avons une offre pour vous !",
+                'car_image' => 'renault_20clioeditiononehb5b_angularfront 1.png'
+            ],
+        ];
+
         $faqs = [
             [
                 'question' => "Comment fonctionne le processus de rachat de véhicules sur votre site ?",
@@ -75,6 +106,7 @@ class HomeController extends AbstractController
 
         return $this->render('home/index.html.twig', [
             'faqs' => $faqs,
+            'steps' => $steps
         ]);
     }
 }

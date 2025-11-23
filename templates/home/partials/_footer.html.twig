@@ -1,7 +1,7 @@
 <style>
     .back-to-top {
         position: fixed;
-        bottom: 5em; /* plus haut que le bas de page */
+        bottom: 5em;
         right: 2em;
         width: 2.5em;
         height: 2.5em;
@@ -20,19 +20,18 @@
         z-index: 1000;
     }
 
-    /* opacité 50% quand visible */
     .back-to-top.show {
         opacity: 0.5;
         pointer-events: auto;
     }
 
-    /* hover : devient 100% opaque */
     .back-to-top:hover {
         opacity: 1;
     }
 </style>
 
 <script>
+
     document.addEventListener("scroll", () => {
         const button = document.getElementById("backToTop");
 
