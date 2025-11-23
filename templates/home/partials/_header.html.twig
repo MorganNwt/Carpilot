@@ -1,4 +1,3 @@
-{% block javascripts %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         // ----- Smooth scroll pour les ancres -----
@@ -35,9 +34,7 @@
         }
     });
 </script>
-{% endblock %}
 
-{% block body %}
 <div class="w-full px-4 py-4 mt-6 flex items-center">
     <!-- Logo à gauche -->
     <a href="{{ path('app_home') }}" class="text-2xl font-bold text-orange-600">
@@ -76,4 +73,4 @@
 </div>
 
 <div class="h-1 bg-orange-500 w-full my-4"></div>
-{% endblock %}
+
