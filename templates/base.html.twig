@@ -1,40 +1,46 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
-        {% block navbar %}
-            <header class="bg-white shadow">
-                {% include 'home/partials/_header.html.twig' %}
-            </header>
-        {% endblock %}
+<html lang="fr-FR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <title>{% block title %}Carpilot - Vendre sa voiture facilement{% endblock %}</title>
 
-        {% block vnavbar %}
-            {# Optionnel : barre de navigation verticale #}
-        {% endblock %}
+    <meta name="description" content="{% block meta_description %}Carpilot vous accompagne pour vendre votre voiture rapidement, au meilleur prix et en toute confiance.{% endblock %}">
+    <meta name="keywords" content="carpilot, vendre voiture, reprise auto, estimation véhicule, voiture occasion">
+    <meta http-equiv="Content-Language" content="fr">
 
-        <main>
-            {% block body %}
-             <body class="bg-white shadow">
-                {% include 'home/index.thml.twig' %}
-            </body>
-            {% endblock %}
-        </main>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        {% block footer %}
-            <footer class="bg-white pt-10">
-                {% include 'home/partials/_footer.html.twig' %}
-            </footer>
-        {% endblock %}
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+</head>
+<body>
+    {% block navbar %}
+        <header class="bg-white shadow">
+            {% include 'home/partials/_header.html.twig' %}
+        </header>
+    {% endblock %}
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </body>
+    {# Optionnel : barre de navigation verticale #}    
+    {% block vnavbar %} {% endblock %}
+        
+    <main>
+        {% block body %} {% endblock %}
+    </main>
+
+    {% block footer %}
+        <footer class="bg-white pt-10">
+            {% include 'home/partials/_footer.html.twig' %}
+        </footer>
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</body>
 </html>

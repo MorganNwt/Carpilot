@@ -10,6 +10,8 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
       colors: {
         carpilot: '#0b2c4c',
         accent: '#ff6600',

@@ -1,37 +1,4 @@
-<!-- JS CAROUSEL -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    const carousel = document.getElementById("carousel");
-    const cards = document.querySelectorAll(".review-card");
-
-    const next = document.getElementById("next");
-    const prev = document.getElementById("prev");
-
-    let index = 0;
-
-    function updateCarousel() {
-        const cardWidth = cards[0].offsetWidth + 24;
-        const visible = window.innerWidth >= 1024 ? 2 : 1;
-        carousel.style.transform = `translateX(-${index * cardWidth}px)`;
-    }
-
-    next.addEventListener("click", () => {
-        const visible = 2;
-        if (index < cards.length - visible) index++;
-        updateCarousel();
-    });
-
-    prev.addEventListener("click", () => {
-        if (index > 0) index--;
-        updateCarousel();
-    });
-
-    window.addEventListener("resize", updateCarousel);
-});
-</script>
-
- <!-- Flèche vers le bas -->
+<!-- Flèche vers le bas -->
 <div class="absolute -top-16 left-1/2 -translate-x-1/2">
     <div class="bg-orange-500 border-15 border-white rounded-full w-24 h-24 flex items-center justify-center shadow-lg">
         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="3"
@@ -44,28 +11,32 @@ document.addEventListener("DOMContentLoaded", () => {
 <h2 class="text-2xl font-bold mt-6 mb-12 text-center">Ils nous ont adorés !</h2>
 
 <!-- CONTAINER GLOBAL CENTRÉ -->
-<div class="w-full flex justify-center mt-10 px-4">
+<div data-controller="commentaire" class="w-full flex justify-center mt-10 px-4">
 
-    <!-- CONTENEUR EXTERNE (visible) -->
+    <!-- CONTENEUR EXTERNE -->
     <div class="relative w-full max-w-[1200px] px-16">
 
-        <!-- CONTENEUR QUI MASQUE LES CARDS -->
+        <!-- ZONE MASQUÉE DE défilement -->
         <div class="overflow-hidden">
 
             <!-- FLÈCHE GAUCHE -->
-            <button id="prev"
-                    class="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+            <button 
+                data-commentaire-target="prev"
+                data-action="click->commentaire#prevSlide"
+                class="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+            >
                 <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="4"
                      viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
             </button>
 
-            <!-- CAROUSEL -->
-            <div id="carousel"
-                 class="flex gap-10 transition-transform duration-500">
-
-                  {% set reviews = [
+            <!-- CAROUSEL (le conteneur qui glisse) -->
+            <div 
+                data-commentaire-target="carousel"
+                class="flex gap-10 transition-transform duration-500"
+            >
+                {% set reviews = [
                     {
                         img: '/images/photo-avis-1.png',
                         name: 'Charles HENRY',
@@ -87,11 +58,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         text: 'Rachat immédiat et prix au top ! Rien à dire.'
                     }
                 ] %}
-                
-                {% for r in reviews %}
-                    <div class="review-card relative bg-white text-gray-800 rounded-xl p-6 pt-24 pb-18
-                                w-[500px] flex-shrink-0 shadow-lg overflow-visible">
 
+                {% for r in reviews %}
+                    <div 
+                        data-commentaire-target="card"
+                        class="review-card relative bg-white text-gray-800 rounded-xl p-6 pt-24 pb-18
+                               w-[500px] flex-shrink-0 shadow-lg overflow-visible"
+                    >
                         <!-- PHOTO DÉBORDANTE -->
                         <div class="absolute -top-0 left-8 mt-2">
                             <img src="{{ r.img }}"
@@ -115,8 +88,11 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
 
         <!-- FLÈCHE DROITE -->
-        <button id="next"
-                class="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+        <button 
+            data-commentaire-target="next"
+            data-action="click->commentaire#nextSlide"
+            class="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+        >
             <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="4"
                  viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
@@ -125,7 +101,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
     </div>
 </div>
-
-
-
-
