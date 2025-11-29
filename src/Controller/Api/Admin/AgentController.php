@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api\Admin;
 
-use App\DTO\User\Admin\UserResponseDto;
+use App\DTO\Admin\UserResponseDto;
 use App\Service\Admin\AgentService;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -25,8 +25,7 @@ final class AgentController extends AbstractController
 
     public function __construct(
         private readonly AgentService $userService
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'list', methods: ['GET'])]
     #[OA\Get(
