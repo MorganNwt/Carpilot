@@ -1,56 +1,23 @@
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // ----- Smooth scroll pour les ancres -----
-        const scrollLinks = document.querySelectorAll('a[href^="#"]');
-        scrollLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                const target = link.getAttribute('href');
-                if (target.length > 1 && document.querySelector(target)) {
-                    e.preventDefault();
-                    document.querySelector(target).scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // ----- Menu déroulant "Nos agences" -----
-        const button = document.getElementById('agencesButton');
-        const menu = document.getElementById('agencesMenu');
-
-        if (button && menu) {
-            // Ouvrir / fermer menu au clic
-            button.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-            });
-
-            // Fermer le menu si clic en dehors
-            document.addEventListener('click', (event) => {
-                if (!button.contains(event.target) && !menu.contains(event.target)) {
-                    menu.classList.add('hidden');
-                }
-            });
-        }
-    });
-</script>
-
-<div class="w-full px-4 py-4 mt-6 flex items-center">
+<div data-controller="header" class="w-full px-4 py-4 mt-6 flex items-center">
     <!-- Logo à gauche -->
     <a href="{{ path('app_home') }}" class="text-2xl font-bold text-orange-600">
         <img src="/images/logo.png" alt="CarPilot" class="h-12">
     </a>
 
     <nav class="ml-auto hidden md:flex items-center space-x-6">
-        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500">Vendre ma voiture</a>
-        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500">Estimer ma voiture</a>
-        <a href="#contact" onclick="smoothScroll(event, '#contact')" class="text-sm font-semibold hover:text-orange-500">Nous contacter</a>
-        <a href="#astuces" class="text-sm font-semibold hover:text-orange-500">Nos articles</a>
-        <a href="{{ path('app_register') }}" class="text-sm font-semibold hover:text-orange-500">Mon compte</a>
-        
+        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500" data-header-target="scrollLink">Vendre ma voiture</a>
+        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500" data-header-target="scrollLink">Estimer ma voiture</a>
+        <a href="#contact" class="text-sm font-semibold hover:text-orange-500" data-header-target="scrollLink">Nous contacter</a>
+        <a href="#astuces" class="text-sm font-semibold hover:text-orange-500" data-header-target="scrollLink">Nos articles</a>
+        <a href="{{ path('app_register') }}" class="text-sm font-semibold hover:text-orange-500" data-header-target="scrollLink">Mon compte</a>
+
         <!-- Menu déroulant "Nos agences" -->
         <div class="relative inline-block text-left">
-            <button id="agencesButton" class="bg-orange-500 cursor-pointer hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm inline-flex items-center space-x-1 focus:outline-none">
+            <button 
+                id="agencesButton" 
+                data-header-target="button"
+                class="bg-orange-500 cursor-pointer hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm inline-flex items-center space-x-1 focus:outline-none">
+                
                 <span>Nos agences</span>
                 <!-- Icône flèche -->
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,12 +26,16 @@
             </button>
 
             <!-- Dropdown -->
-            <div id="agencesMenu" class="hidden origin-top-right absolute right-0 mt-1 w-34 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+            <div 
+                id="agencesMenu" 
+                data-header-target="menu"
+                class="hidden origin-top-right absolute right-0 mt-1 w-34 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                
                 <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="agencesButton">
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Eprogny</a>
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Annecy</a>
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Unieux</a>
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white" role="menuitem">Valence</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Eprogny</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Annecy</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Unieux</a>
+                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Valence</a>
                 </div>
             </div>
         </div>
@@ -72,4 +43,3 @@
 </div>
 
 <div class="h-1 bg-orange-500 w-full my-4"></div>
-

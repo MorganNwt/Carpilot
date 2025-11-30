@@ -449,6 +449,9 @@ php bin/console doctrine:database:create
 php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 
+** Controller stimulus pour la gestion des script JS **
+php bin/console make:stimulus-controller header
+
 --------------------------------------------------
 ** Fixtures sont des données de test ou d’exemple qu’on injecte dans la base de données. **
 ** Faker est une bibliothèque PHP qui génère de fausses données réalistes automatiquement. **

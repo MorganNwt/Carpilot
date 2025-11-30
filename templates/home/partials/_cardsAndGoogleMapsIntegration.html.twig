@@ -5,111 +5,46 @@
 <div class="flex flex-col-reverse lg:flex-row items-center lg:items-start justify-center gap-10 w-full mx-auto mt-5">
     <!-- COLONNE GAUCHE : CARDS SCROLLABLES -->
     <div class="relative w-[500px] h-[600px] overflow-y-scroll pr-6 custom-scroll">
+    
+        {% for agency in agencies %}
+            <div class="bg-white rounded-xl shadow-xl border p-10 mb-10">
+                <h3 class="text-2xl font-bold text-[#0b2c4c] mb-6">{{ agency.name }}</h3>
 
-        <!-- CARD 1 -->
-        <div class="bg-white rounded-xl shadow-xl border p-10 mb-10">
-            <h3 class="text-2xl font-bold text-[#0b2c4c] mb-6">CarPilot Epagny</h3>
+                <div class="space-y-5 text-gray-700">
+                    <p class="flex items-start">
+                        <i class="fas fa-map-marker-alt text-orange-400 text-xl mt-1 mr-3"></i>
+                        {{ agency.address }}
+                    </p>
 
-            <div class="space-y-5 text-gray-700">
-                <p class="flex items-start">
-                    <i class="fas fa-map-marker-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    719 Route de Bellegarde, 74330 Epagny Metz-Tessy
-                </p>
+                    <p class="flex items-start">
+                        <i class="fas fa-calendar-alt text-orange-400 text-xl mt-1 mr-3"></i>
+                        {{ agency.hours }}
+                    </p>
 
-                <p class="flex items-start">
-                    <i class="fas fa-calendar-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.
-                </p>
+                    <p class="flex items-start">
+                        <i class="fas fa-phone-alt text-orange-400 text-xl mt-1 mr-3"></i>
+                        {{ agency.phone }}
+                    </p>
 
-                <p class="flex items-start">
-                    <i class="fas fa-phone-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    04.50.23.12.85
-                </p>
+                    <p class="flex items-start">
+                        <i class="fas fa-envelope text-orange-400 text-xl mt-1 mr-3"></i>
+                        {{ agency.email }}
+                    </p>
+                </div>
 
-                <p class="flex items-start">
-                    <i class="fas fa-envelope text-orange-400 text-xl mt-1 mr-3"></i>
-                    annecy@carpilot-annecy.fr
-                </p>
+                <div class="mt-8 flex gap-4">
+                    <a href="#" class="px-6 py-3 border border-[#0b2c4c] text-[#0b2c4c] font-semibold rounded-lg hover:bg-[#0b2c4c] hover:text-white transition">
+                        Voir l'agence
+                    </a>
+
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ agency.map }}"
+                    class="px-6 py-3 bg-orange-400 text-white font-semibold rounded-lg hover:bg-orange-500 transition flex items-center gap-2">
+                        Se rendre à l'agence <i class="fas fa-location-arrow"></i>
+                    </a>
+                </div>
             </div>
+        {% endfor %}
 
-            <div class="mt-8 flex gap-4">
-                <a href="#" class="px-6 py-3 border border-[#0b2c4c] text-[#0b2c4c] font-semibold rounded-lg hover:bg-[#0b2c4c] hover:text-white transition">
-                    Voir l'agence
-                </a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=CarPilot+Epagny"
-                class="px-6 py-3 bg-orange-400 text-white font-semibold rounded-lg hover:bg-orange-500 transition flex items-center gap-2">
-                    Se rendre à l'agence <i class="fas fa-location-arrow"></i>
-                </a>
-            </div>
-        </div>
-
-        <!-- CARD 2 -->
-        <div class="bg-white rounded-xl shadow-xl border p-10 mb-10">
-            <h3 class="text-2xl font-bold text-[#0b2c4c] mb-6">CarPilot Annecy</h3>
-
-            <div class="space-y-5 text-gray-700">
-                <p class="flex items-start">
-                    <i class="fas fa-map-marker-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    1140 Avenue d'Aix les Bains, 74600 Annecy
-                </p>
-                <p class="flex items-start">
-                    <i class="fas fa-calendar-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.
-                </p>
-                <p class="flex items-start">
-                    <i class="fas fa-phone-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    04.50.46.77.94
-                </p>
-                <p class="flex items-start">
-                    <i class="fas fa-envelope text-orange-400 text-xl mt-1 mr-3"></i>
-                    annecy@carpilot.fr
-                </p>
-            </div>
-
-            <div class="mt-8 flex gap-4">
-                <a href="#" class="px-6 py-3 border border-[#0b2c4c] text-[#0b2c4c] font-semibold rounded-lg hover:bg-[#0b2c4c] hover:text-white transition">
-                    Voir l'agence
-                </a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=CarPilot+Annecy"
-                class="px-6 py-3 bg-orange-400 text-white font-semibold rounded-lg hover:bg-orange-500 transition flex items-center gap-2">
-                    Se rendre à l'agence <i class="fas fa-location-arrow"></i>
-                </a>
-            </div>
-        </div>
-
-        <!-- CARD 3 -->
-        <div class="bg-white rounded-xl shadow-xl border p-10 mb-10">
-            <h3 class="text-2xl font-bold text-[#0b2c4c] mb-6">CarPilot Valence</h3>
-
-            <div class="space-y-5 text-gray-700">
-                <p class="flex items-start">
-                    <i class="fas fa-map-marker-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    52-74 Rue Barthélemy de Laffemas, 26000 Valence
-                </p>
-                <p class="flex items-start">
-                    <i class="fas fa-calendar-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.
-                </p>
-                <p class="flex items-start">
-                    <i class="fas fa-phone-alt text-orange-400 text-xl mt-1 mr-3"></i>
-                    04.75.00.00.00
-                </p>
-                <p class="flex items-start">
-                    <i class="fas fa-envelope text-orange-400 text-xl mt-1 mr-3"></i>
-                    contact@carpilot-valence.fr
-                </p>
-            </div>
-
-            <div class="mt-8 flex gap-4">
-                <a href="#" class="px-6 py-3 border border-[#0b2c4c] text-[#0b2c4c] font-semibold rounded-lg hover:bg-[#0b2c4c] hover:text-white transition">
-                    Voir l'agence
-                </a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=CarPilot+Valence"
-                class="px-6 py-3 bg-orange-400 text-white font-semibold rounded-lg hover:bg-orange-500 transition flex items-center gap-2">
-                    Se rendre à l'agence <i class="fas fa-location-arrow"></i>
-                </a>
-            </div>
-        </div>
     </div>
 
     <!-- COLONNE DROITE : GOOGLE MAP -->

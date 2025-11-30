@@ -104,9 +104,38 @@ class HomeController extends AbstractController
             ],
         ];
 
+        $agencies = [
+            [
+                'name' => 'CarPilot Epagny',
+                'address' => '719 Route de Bellegarde, 74330 Epagny Metz-Tessy',
+                'hours' => 'Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.',
+                'phone' => '04.50.23.12.85',
+                'email' => 'annecy@carpilot-annecy.fr',
+                'map' => 'CarPilot+Epagny',
+            ],
+            [
+                'name' => 'CarPilot Annecy',
+                'address' => "1140 Avenue d'Aix les Bains, 74600 Annecy",
+                'hours' => 'Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.',
+                'phone' => '04.50.46.77.94',
+                'email' => 'annecy@carpilot.fr',
+                'map' => 'CarPilot+Annecy',
+            ],
+            [
+                'name' => 'CarPilot Valence',
+                'address' => '52-74 Rue Barthélemy de Laffemas, 26000 Valence',
+                'hours' => 'Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.',
+                'phone' => '04.75.00.00.00',
+                'email' => 'contact@carpilot-valence.fr',
+                'map' => 'CarPilot+Valence',
+            ],
+        ];
+
+
         return $this->render('home/index.html.twig', [
             'faqs' => $faqs,
-            'steps' => $steps
+            'steps' => $steps,
+            'agencies' => $agencies
         ]);
     }
 }
