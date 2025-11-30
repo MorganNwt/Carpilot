@@ -4,8 +4,8 @@
 
 <div class="flex flex-col-reverse lg:flex-row items-center lg:items-start justify-center gap-10 w-full mx-auto mt-5">
     <!-- COLONNE GAUCHE : CARDS SCROLLABLES -->
-    <div class="relative w-[500px] h-[600px] overflow-y-scroll pr-6 custom-scroll">
-    
+    <div class="relative w-[500px] h-[600px] overflow-y-scroll pr-6">
+
         {% for agency in agencies %}
             <div class="bg-white rounded-xl shadow-xl border p-10 mb-10">
                 <h3 class="text-2xl font-bold text-[#0b2c4c] mb-6">{{ agency.name }}</h3>
@@ -39,13 +39,13 @@
 
                     <a href="https://www.google.com/maps/dir/?api=1&destination={{ agency.map }}"
                     class="px-6 py-3 bg-orange-400 text-white font-semibold rounded-lg hover:bg-orange-500 transition flex items-center gap-2">
-                        Se rendre à l'agence <i class="fas fa-location-arrow"></i>
+                        Se rendre à l'agence 
                     </a>
                 </div>
             </div>
         {% endfor %}
-
     </div>
+
 
     <!-- COLONNE DROITE : GOOGLE MAP -->
     <div class="sm:mb-10">

@@ -127,10 +127,17 @@ class HomeController extends AbstractController
                 'hours' => 'Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.',
                 'phone' => '04.75.00.00.00',
                 'email' => 'contact@carpilot-valence.fr',
-                'map' => 'CarPilot+Valence',
+                'map' => 'CCI+Valence',
+            ],
+            [
+                'name' => 'CarPilot Unieux',
+                'address' => '8 Rue Charles de Gaulle, 42240 Unieux',
+                'hours' => 'Du lundi au vendredi – 9h-12h / 15h-19h. Samedi sur rendez-vous.',
+                'phone' => '04.77.61.21.40',
+                'email' => 'unieux@carpilot.fr',
+                'map' => 'CarPilot+Unieux',
             ],
         ];
-
 
         return $this->render('home/index.html.twig', [
             'faqs' => $faqs,

@@ -34,7 +34,7 @@ export default class extends Controller {
     updateCarousel() {
         if (this.cardTargets.length === 0) return;
 
-        const gap = 40; // à adapter si besoin
+        const gap = 40; 
         const cardWidth = this.cardTargets[0].offsetWidth + gap;
 
         console.log('updateCarousel → index =', this.index, 'cardWidth =', cardWidth);
