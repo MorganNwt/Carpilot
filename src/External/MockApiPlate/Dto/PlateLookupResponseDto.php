@@ -5,8 +5,9 @@ namespace App\External\MockApiPlate\Dto;
 use OpenApi\Attributes as OA;
 
 /**
- * Représente la réponse structurée retournée par la mock API d'immatriculation.
- *
+ * Structure de réponse renvoyée par la mock API d'immatriculation.
+ * Toutes les propriétés sauf "plate" sont optionnelles afin de permettre
+ * les retours de véhicules non trouvés.
  */
 #[OA\Schema(
     title: "PlateLookupResponseDto",
@@ -15,66 +16,87 @@ use OpenApi\Attributes as OA;
 class PlateLookupResponseDto
 {
     /**
-     * @param string|null $plate La plaque d'immatriculation.
-     * @param string|null $vin Le numéro d'identification du véhicule.
-     * @param string|null $brand La marque du véhicule.
-     * @param string|null $model Le modèle du véhicule.
-     * @param string|null $version La version spécifique du véhicule.
-     * @param string|null $energy Le type d'énergie.
-     * @param int|null $horsePower La puissance en chevaux.
-     * @param float|null $fiscalPower La puissance fiscale.
-     * @param string|null $gearBox Le type de boîte de vitesse.
-     * @param int|null $doors Le nombre de portes.
-     * @param int|null $seats Le nombre de sièges.
-     * @param string|null $bodyType Le type de carrosserie.
-     * @param int|null $weightKg Le poids en kilogrammes.
-     * @param string|null $color La couleur du véhicule.
-     * @param string|null $registrationDate La date de première immatriculation.
+     * La plaque d'immatriculation recherchée (toujours présente dans la réponse).
+     */
+    #[OA\Property(type: "string", example: "AA123BB")]
+    public string $plate;
+
+    #[OA\Property(type: "string", example: "VF15ABHG854895231", nullable: true)]
+    public ?string $vin;
+
+    #[OA\Property(type: "string", example: "Renault", nullable: true)]
+    public ?string $brand;
+
+    #[OA\Property(type: "string", example: "Clio", nullable: true)]
+    public ?string $model;
+
+    #[OA\Property(type: "string", example: "1.5 DCI", nullable: true)]
+    public ?string $version;
+
+    #[OA\Property(type: "string", example: "Diesel", nullable: true)]
+    public ?string $energy;
+
+    #[OA\Property(type: "integer", example: 85, nullable: true)]
+    public ?int $horsePower;
+
+    #[OA\Property(type: "number", format: "float", example: 4.0, nullable: true)]
+    public ?float $fiscalPower;
+
+    #[OA\Property(type: "string", example: "Manuelle", nullable: true)]
+    public ?string $gearBox;
+
+    #[OA\Property(type: "integer", example: 5, nullable: true)]
+    public ?int $doors;
+
+    #[OA\Property(type: "integer", example: 5, nullable: true)]
+    public ?int $seats;
+
+    #[OA\Property(type: "string", example: "Citadine", nullable: true)]
+    public ?string $bodyType;
+
+    #[OA\Property(type: "integer", example: 1050, nullable: true)]
+    public ?int $weightKg;
+
+    #[OA\Property(type: "string", example: "Rouge", nullable: true)]
+    public ?string $color;
+
+    #[OA\Property(type: "string", format: "date", example: "2016-05-12", nullable: true)]
+    public ?string $registrationDate;
+
+    /**
+     * DTO immuable : toutes les valeurs sont fournies au constructeur.
      */
     public function __construct(
-        #[OA\Property(type: "string", example: "AA123BB")]
-        public string $plate,
-
-        #[OA\Property(type: "string", example: "VF15ABHG854895231")]
-        public ?string $vin = null,
-
-        #[OA\Property(type: "string", example: "Renault")]
-        public ?string $brand = null,
-
-        #[OA\Property(type: "string", example: "Clio")]
-        public ?string $model = null,
-
-        #[OA\Property(type: "string", example: "1.5 DCI")]
-        public ?string $version = null,
-
-        #[OA\Property(type: "string", example: "Diesel")]
-        public ?string $energy = null,
-
-        #[OA\Property(type: "integer", example: 85)]
-        public ?int $horsePower = null,
-
-        #[OA\Property(type: "number", format: "float", example: 4.0)]
-        public ?float $fiscalPower = null,
-
-        #[OA\Property(type: "string", example: "Manuelle")]
-        public ?string $gearBox = null,
-        #[OA\Property(type: "integer", example: 5)]
-        public ?int $doors = null,
-
-        #[OA\Property(type: "integer", example: 5)]
-        public ?int $seats = null,
-
-        #[OA\Property(type: "string", example: "Citadine")]
-        public ?string $bodyType = null,
-
-        #[OA\Property(type: "integer", example: 1050)]
-        public ?int $weightKg = null,
-
-        #[OA\Property(type: "string", example: "Rouge")]
-        public ?string $color = null,
-
-        #[OA\Property(type: "string", format: "date", example: "2016-05-12")]
-        public ?string $registrationDate = null
+        string $plate,
+        ?string $vin = null,
+        ?string $brand = null,
+        ?string $model = null,
+        ?string $version = null,
+        ?string $energy = null,
+        ?int $horsePower = null,
+        ?float $fiscalPower = null,
+        ?string $gearBox = null,
+        ?int $doors = null,
+        ?int $seats = null,
+        ?string $bodyType = null,
+        ?int $weightKg = null,
+        ?string $color = null,
+        ?string $registrationDate = null
     ) {
+        $this->plate = strtoupper($plate);
+        $this->vin = $vin;
+        $this->brand = $brand;
+        $this->model = $model;
+        $this->version = $version;
+        $this->energy = $energy;
+        $this->horsePower = $horsePower;
+        $this->fiscalPower = $fiscalPower;
+        $this->gearBox = $gearBox;
+        $this->doors = $doors;
+        $this->seats = $seats;
+        $this->bodyType = $bodyType;
+        $this->weightKg = $weightKg;
+        $this->color = $color;
+        $this->registrationDate = $registrationDate;
     }
 }

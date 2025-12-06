@@ -35,8 +35,7 @@ final class VehicleController extends AbstractController
     public function __construct(
         private readonly VehicleService $vehicleService,
         private readonly VehicleMapper $vehicleMapper
-    ) {
-    }
+    ) {}
 
     /*
     #[Route('', name: 'create', methods: ['POST'])]
@@ -80,8 +79,7 @@ final class VehicleController extends AbstractController
     {
         $token = $request->toArray()['estimation_token'] ?? null;
 
-        if(!$token)
-        {
+        if (!$token) {
             return new JsonResponse('Missing token', RESPONSE::HTTP_BAD_REQUEST);
         }
 
@@ -137,7 +135,7 @@ final class VehicleController extends AbstractController
         return $this->json($vehicleDto);
     }
 
-    #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
     #[OA\Put(
         summary: "Update a vehicle",
         description: "Updates the details of a specific vehicle, if owned by the current seller."
