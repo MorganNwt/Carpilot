@@ -31,49 +31,25 @@
                 </svg>
             </button>
 
-            <!-- CAROUSEL (le conteneur qui glisse) -->
+            <!-- CAROUSEL -->
             <div 
                 data-commentaire-target="carousel"
                 class="flex gap-10 transition-transform duration-500"
             >
-                {% set reviews = [
-                    {
-                        img: '/images/photo-avis-1.png',
-                        name: 'Charles HENRY',
-                        text: 'Incroyable, ma voiture est estimée et vendue<br>en quelques clics seulement !'
-                    },
-                    {
-                        img: '/images/photo-avis-2.png',
-                        name: 'Iness DEKLAPE',
-                        text: 'Très satisfaite du service, rapidité et fiabilité<br>au rendez-vous. Je recommande !'
-                    },
-                    {
-                        img: '/images/photo-avis-1.png',
-                        name: 'Julien MARCHEL',
-                        text: 'Service nickel, estimation rapide et sérieuse, je recommande !'
-                    },
-                    {
-                        img: '/images/photo-avis-2.png',
-                        name: 'Sarah LEMOINE',
-                        text: 'Rachat immédiat et prix au top ! Rien à dire.'
-                    }
-                ] %}
-
-                {% for r in reviews %}
+                {% for review in reviews %}
                     <div 
                         data-commentaire-target="card"
                         class="review-card relative bg-white text-gray-800 rounded-xl p-6 pt-24 pb-18
                                w-[500px] flex-shrink-0 shadow-lg overflow-visible"
                     >
-                        <!-- PHOTO DÉBORDANTE -->
                         <div class="absolute -top-0 left-8 mt-2">
-                            <img src="{{ r.img }}"
+                            <img src="{{ review.img }}"
                                  class="w-20 h-20 rounded-full border-4 border-white shadow-xl">
                         </div>
 
                         <div class="text-center">
-                            <h3 class="font-bold text-lg">{{ r.name }}</h3>
-                            <p class="text-sm mb-5">{{ r.text|raw }}</p>
+                            <h3 class="font-bold text-lg">{{ review.name }}</h3>
+                            <p class="text-sm mb-5">{{ review.text|raw }}</p>
                         </div>
 
                         <div class="absolute left-6 bottom-4 flex items-center gap-2">

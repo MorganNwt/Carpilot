@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     #[Route('/home', name: 'app_home')]
-    public function index()
+    public function DataCollection()
     {
         $steps = [
             [
@@ -139,10 +139,34 @@ class HomeController extends AbstractController
             ],
         ];
 
+        $reviews = [
+            [
+                'img'  => '/images/photo-avis-1.png',
+                'name' => 'Charles HENRY',
+                'text' => 'Incroyable, ma voiture est estimée et vendue<br>en quelques clics seulement !',
+            ],
+            [
+                'img'  => '/images/photo-avis-2.png',
+                'name' => 'Iness DEKLAPE',
+                'text' => 'Très satisfaite du service, rapidité et fiabilité<br>au rendez-vous. Je recommande !',
+            ],
+            [
+                'img'  => '/images/photo-avis-1.png',
+                'name' => 'Julien MARCHEL',
+                'text' => 'Service nickel, estimation rapide et sérieuse, je recommande !',
+            ],
+            [
+                'img'  => '/images/photo-avis-2.png',
+                'name' => 'Sarah LEMOINE',
+                'text' => 'Rachat immédiat et prix au top ! Rien à dire.',
+            ],
+        ];
+
         return $this->render('home/index.html.twig', [
             'faqs' => $faqs,
             'steps' => $steps,
-            'agencies' => $agencies
+            'agencies' => $agencies,
+            'reviews' => $reviews
         ]);
     }
 }

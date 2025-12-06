@@ -2,19 +2,16 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
     static targets = ["carousel", "card", "next", "prev"];
-
-    index = 0;
+    
+    index = 1;
 
     connect() {
-        console.log('✅ carousel controller CONNECTED');
-        console.log('cards trouvées :', this.cardTargets.length);
-
         this.updateCarousel();
         window.addEventListener("resize", () => this.updateCarousel());
     }
 
     nextSlide() {
-        console.log('➡ nextSlide');
+        console.log('nextSlide');
         const visible = window.innerWidth >= 1024 ? 2 : 1;
 
         if (this.index < this.cardTargets.length - visible) {
@@ -24,7 +21,7 @@ export default class extends Controller {
     }
 
     prevSlide() {
-        console.log('⬅ prevSlide');
+        console.log('prevSlide');
         if (this.index > 0) {
             this.index--;
             this.updateCarousel();
