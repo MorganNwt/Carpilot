@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Controller\Api\Public;
 
 
+use Psr\Log\LoggerInterface;
 use OpenApi\Attributes as OA;
 use App\DTO\Public\EstimationRequestDto;
 use App\DTO\Public\PlateLookupRequestDto;
@@ -22,9 +24,9 @@ final class EstimationController extends AbstractController
 {
     public function __construct(
         private readonly VehicleLookupService $lookupService,
-        private readonly EstimationService $estimationService
-    ) {
-    }
+        private readonly EstimationService $estimationService,
+        private readonly LoggerInterface $logger
+    ) {}
 
 
     #[Route('/lookup-by-plate', 'plate_lookup', methods: ['POST'])]
@@ -54,14 +56,14 @@ final class EstimationController extends AbstractController
     {
         try {
             $vehicleData = $this->lookupService->lookupByPlate($dto->plate);
-
             return new JsonResponse($vehicleData);
         } catch (\Exception $e) {
-            return new JsonResponse(status: 503);
+
+            // ✅ Le logger fonctionne MAINTENANT
+            $this->logger->error("[LOOKUP ERROR] " . $e->getMessage());
+
+            return new JsonResponse(['error' => 'Lookup failed'], 503);
         }
-
-
-
     }
 
 
@@ -93,10 +95,5 @@ final class EstimationController extends AbstractController
         return new JsonResponse([
             'estimation_token' => $token
         ]);
-
     }
-
-
-
-
 }

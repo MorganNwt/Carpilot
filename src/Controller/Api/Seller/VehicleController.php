@@ -4,12 +4,13 @@ namespace App\Controller\Api\Seller;
 
 use App\Entity\Vehicle;
 use App\Entity\User\Seller;
+use App\Mapper\VehicleMapper;
+
 use OpenApi\Attributes as OA;
 use App\DTO\Vehicle\CreateVehicleDto;
 use App\DTO\Vehicle\UpdateVehicleDto;
 use App\Service\Seller\VehicleService;
 use App\DTO\Vehicle\VehicleResponseDto;
-use App\Mapper\VehicleMapper;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * Handles CRUD operations for the authenticated Seller's vehicles.
  */
-#[Route('/api/sellers/vehicles', name: 'api_vehicle_')]
+#[Route('/api/seller/vehicles', name: 'api_vehicle_')]
 #[OA\Tag(name: 'Vehicles')]
 #[Security(name: 'bearerAuth')]
 #[IsGranted('ROLE_SELLER')]

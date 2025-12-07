@@ -1,11 +1,5 @@
 <?php
 
-/**
- * ==========================================
- * ============= ENTITÉ VEHICLE ==============
- * ==========================================
- */
-
 namespace App\Entity;
 
 use App\Entity\User\Seller;
@@ -112,10 +106,6 @@ class Vehicle
      * ===== GETTERS ET SETTERS COMMUNS ========
      * ==========================================
      */
-
-
-
-
 
     public function getId(): ?int
     {

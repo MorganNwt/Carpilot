@@ -398,7 +398,7 @@ php bin/phpunit
 
 ```bash
 # Cloner le projet
-git clone https://github.com/jenam15/carpilot-api.git
+git clone https://github.com/.../carpilot-api.git
 cd carpilot-api
 
 # Installer les dépendances PHP
@@ -433,12 +433,11 @@ php bin/console --version
 php -v
 
 symfony server:start 
-yarn encore dev --watch   
-yarn watch   
-npm run watch
+yarn watch /  npm run watch
+symfony console messenger:consume async -vv
 
-git clone https://github.com/jenam15/carpilot-api.git
-git remote add origin https://github.com/MorganNwt/carpilot-api.git
+git clone https://github.com/.../carpilot-api.git
+git remote add origin https://github.com/.../carpilot-api.git
 
 php bin/console debug:router   
 php bin/console cache:clear
