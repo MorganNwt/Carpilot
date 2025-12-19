@@ -55,7 +55,6 @@ class PlateLookupController extends AbstractController
             ], 404);
         }
 
-        // ➜ véhicule trouvé
         return $this->json([
             'error' => false,
             'data' => $vehicle,

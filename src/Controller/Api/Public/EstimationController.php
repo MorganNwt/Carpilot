@@ -52,14 +52,15 @@ final class EstimationController extends AbstractController
         ]
     )]
         */
-    public function lookupByPlate(#[MapRequestPayload] PlateLookupRequestDto $dto)
+    public function lookupByPlate(
+        #[MapRequestPayload] PlateLookupRequestDto $dto
+    )
     {
         try {
             $vehicleData = $this->lookupService->lookupByPlate($dto->plate);
             return new JsonResponse($vehicleData);
         } catch (\Exception $e) {
 
-            // ✅ Le logger fonctionne MAINTENANT
             $this->logger->error("[LOOKUP ERROR] " . $e->getMessage());
 
             return new JsonResponse(['error' => 'Lookup failed'], 503);
@@ -87,7 +88,9 @@ final class EstimationController extends AbstractController
             )
         ]
     )]*/
-    public function calculate(#[MapRequestPayload] EstimationRequestDto $dto)
+    public function calculate(
+        #[MapRequestPayload] EstimationRequestDto $dto
+    )
     {
 
         $token = $this->estimationService->calculateAndCache($dto);

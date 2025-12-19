@@ -24,12 +24,12 @@ class EstimationResponseDto
         #[OA\Property(description: "The vehicle's estimated price")]
         public readonly float $estimated_price,
 
+        #[OA\Property(description: "The date and time the estimated")]
+        public readonly ?DateTimeImmutable $createdAt,
+
+        // Deprecated : Place optional parameter in last position
         #[OA\Property(description: "The vehicle's offered price")]
         public readonly ?float $offer_price = null,
 
-        #[OA\Property(description: "The date and time the estimated")]
-        public readonly ?DateTimeImmutable $createdAt
-        
-    ) {
-    }
+    ) {}
 }

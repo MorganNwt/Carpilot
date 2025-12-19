@@ -68,8 +68,9 @@ final class AgentController extends AbstractController
         )
     )]
     #[OA\Response(response: 403, description: "Forbidden. Access is denied.")]
-    public function index(Request $request): JsonResponse
-    {
+    public function index(
+        Request $request
+    ) {
         $page = max(1, $request->query->getInt('page', 1));
         $limit = min(100, $request->query->getInt('limit', 20));
 

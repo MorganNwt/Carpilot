@@ -35,14 +35,25 @@ Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre
 Suivez ces étapes pour configurer le projet en local.
 
 1.  **Clonez le dépôt Git**
-    ```bash
-    git clone git@github.com:MorganNwt/Carpilot.git
-    cd carpilot-api
-    ```
+   ```bash
+   git clone git@github.com:MorganNwt/Carpilot.git
+   cd Carpilot
+   ```
 2.  **Installez les dépendances PHP**
-    ```bash
+   ```bash
     composer install
-    ```
+   ```
+    
+2.1   **Installer les dépendances JavaScript**
+   ```bash
+    npm install
+   ```
+   
+2.2   **Compiler les assets**
+   ```bash
+    npm run watch
+   ```
+
 3.  **Configurez les variables d'environnement**
 
     -   Copiez le fichier `.env` en `.env.local`. Ce dernier ne sera pas suivi par Git et contiendra vos configurations personnelles.
@@ -387,45 +398,6 @@ Pour garantir le fonctionnement de l'API, vous pouvez lancer la suite de tests a
 php bin/phpunit
 ``` -->
 
-
--------------------------------------------------------------------------------------
-
-# Projet Symfony Carpilot
-
-## Installation
-
-### 1. Cloner et installer
-
-```bash
-# Cloner le projet
-git clone https://github.com/.../carpilot-api.git
-cd carpilot-api
-
-# Installer les dépendances PHP
-composer install
-
-# Installer les dépendances JavaScript
-npm install
-```
-
-### 2. Compiler les assets
-
-```bash
-# Compiler les assets
-npm run watch
-```
-
-### 3. Démarrer le serveur
-
-```bash
-# Démarrer le serveur de développement
-symfony server:start
-```
-
-### 4. Accéder au projet
-
-Ouvrir le navigateur sur : **http://localhost:8000**
-
 ----------------------------------------------------------
 CMD: utiles
 
@@ -474,10 +446,4 @@ Il permet de :
 composer require "lexik/jwt-authentication-bundle"
  php bin/console messenger:consume async // sert à lancer un "worker" Messenger dans Symfony pour traiter les messages asynchrones (en file d’attente), envoyés via le composant Messenger.
 
-
-#   c a r p i l o t 
- 
- #   c a r p i l o t 
- 
- # carpilot
 # carpilot

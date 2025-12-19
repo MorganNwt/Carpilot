@@ -25,8 +25,7 @@ final class SellerController extends AbstractController
 
     public function __construct(
         private readonly SellerService $userService
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'list', methods: ['GET'])]
     #[OA\Get(
@@ -69,8 +68,9 @@ final class SellerController extends AbstractController
         )
     )]
     #[OA\Response(response: 403, description: "Forbidden. Access is denied.")]
-    public function index(Request $request): JsonResponse
-    {
+    public function index(
+        Request $request
+    ) {
         $page = max(1, $request->query->getInt('page', 1));
         $limit = min(100, $request->query->getInt('limit', 20));
 

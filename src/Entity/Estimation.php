@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\EstimationStatus;
+use App\Enum\EstimationStatus;
 use App\Repository\EstimationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,7 +21,7 @@ class Estimation
     private ?Vehicle $vehicle = null;
 
     #[ORM\Column(enumType: EstimationStatus::class)]
-    private EstimationStatus $status = EstimationStatus::Estimated;
+    private EstimationStatus $status = EstimationStatus::ESTIMATED;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 0, nullable: true)]
     private ?string $estimatedPrice = null;

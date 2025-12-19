@@ -27,7 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * Handles CRUD operations for the authenticated Seller's vehicles.
  */
-#[Route('/api/seller/vehicles', name: 'api_vehicle_')]
+#[Route('/api/seller/vehicles/', name: 'api_vehicle_')]
 #[OA\Tag(name: 'Vehicles')]
 #[Security(name: 'bearerAuth')]
 #[IsGranted('ROLE_SELLER')]
@@ -75,9 +75,21 @@ final class VehicleController extends AbstractController
         }
     }
 */
+
+
     #[Route('create-from-estimation', name: 'create_from_estimation', methods: ['POST'])]
-    public function createFromEstimation(Request $request, Seller $seller)
+    public function createFromEstimation(
+        Request $request, 
+        #[CurrentUser] ?Seller $seller
+    )
     {
+        if (!$seller) {
+            return $this->json(
+                ['message' => 'Forbidden access. You must be logged in as a seller.'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
         $token = $request->toArray()['estimation_token'] ?? null;
 
         if (!$token) {
@@ -87,7 +99,7 @@ final class VehicleController extends AbstractController
         $vehicle = $this->vehicleService->createVehicleFromEstimation($token, $seller);
         $responseDto = $this->vehicleMapper->fromEntityToResponseDto($vehicle);
 
-        return new JsonResponse($responseDto, RESPONSE::HTTP_BAD_REQUEST);
+        return new JsonResponse($responseDto, RESPONSE::HTTP_CREATED);
     }
 
 
@@ -105,7 +117,9 @@ final class VehicleController extends AbstractController
         )
     )]
     #[OA\Response(response: 403, description: "Access Denied (not authenticated).")]
-    public function index(#[CurrentUser] ?Seller $seller): JsonResponse
+    public function index(
+        #[CurrentUser] ?Seller $seller
+    )
     {
         if (!$seller) {
             return $this->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
@@ -116,7 +130,7 @@ final class VehicleController extends AbstractController
         return $this->json($vehicleDtos);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
     #[OA\Get(
         summary: "Get a single vehicle's details",
         description: "Retrieves the details of a specific vehicle, if owned by the current seller."
@@ -125,7 +139,10 @@ final class VehicleController extends AbstractController
     #[OA\Response(response: 200, description: "Returns the vehicle details.", content: new Model(type: VehicleResponseDto::class))]
     #[OA\Response(response: 403, description: "Access Denied (not the owner).")]
     #[OA\Response(response: 404, description: "Vehicle not found.")]
-    public function show(Vehicle $vehicle, #[CurrentUser] ?Seller $seller): JsonResponse
+    public function show(
+        Vehicle $vehicle, 
+        #[CurrentUser] ?Seller $seller
+    )
     {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
@@ -136,7 +153,7 @@ final class VehicleController extends AbstractController
         return $this->json($vehicleDto);
     }
 
-    #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
+    #[Route('update/{id}', name: 'update', methods: ['PUT'])]
     #[OA\Put(
         summary: "Update a vehicle",
         description: "Updates the details of a specific vehicle, if owned by the current seller."
@@ -152,7 +169,8 @@ final class VehicleController extends AbstractController
         Vehicle $vehicle,
         #[MapRequestPayload] UpdateVehicleDto $dto,
         #[CurrentUser] ?Seller $seller
-    ): JsonResponse {
+    )
+    {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
         }
@@ -167,7 +185,7 @@ final class VehicleController extends AbstractController
         }
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[Route('{id}', name: 'delete', methods: ['DELETE'])]
     #[OA\Delete(
         summary: "Delete a vehicle",
         description: "Deletes a specific vehicle, if owned by the current seller."
@@ -176,7 +194,10 @@ final class VehicleController extends AbstractController
     #[OA\Response(response: 204, description: "Vehicle deleted successfully.")]
     #[OA\Response(response: 403, description: "Access Denied (not the owner).")]
     #[OA\Response(response: 404, description: "Vehicle not found.")]
-    public function delete(Vehicle $vehicle, #[CurrentUser] ?Seller $seller): JsonResponse
+    public function delete(
+        Vehicle $vehicle, 
+        #[CurrentUser] ?Seller $seller
+    )
     {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);

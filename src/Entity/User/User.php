@@ -49,17 +49,17 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Identité de l'utilisateur
      */
     #[ORM\Column(length: 255)]
-    protected ?string $firstName;
+    protected ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    protected ?string $lastName;
+    protected ?string $lastName = null;
 
     /**
      * Identifiant de connexion
      * Longueur 320 : standard RFC pour les emails
      */
     #[ORM\Column(length: 320, unique: true)]
-    protected ?string $email;
+    protected ?string $email = null;
 
     /**
      * Mot de passe hashé (jamais en clair)
@@ -69,7 +69,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column(length: 20)]
-    private ?string $phone;
+    private ?string $phone = null;
 
     /**
      * Rôles de sécurité Symfony (tableau JSON en base)
@@ -81,7 +81,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Tiemestamp de création et de dernière modification
      */
     #[ORM\Column]
-    protected ?\DateTimeImmutable $createdAt;
+    protected ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     protected ?\DateTimeImmutable $updatedAt = null;
@@ -246,7 +246,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullName(): string
     {
-        return trim($this->firstName . ' ' . $this->lastName);
+        return trim(($this->firstName ?? '') . ' ' . ($this->lastName ?? ''));
     }
 
     public function hasRole(string $role): bool
@@ -281,6 +281,4 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-
 }

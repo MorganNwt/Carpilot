@@ -19,8 +19,7 @@ final class RegistrationController extends AbstractController
 {
     public function __construct(
         private readonly RegistrationService $registrationService
-    ) {
-    }
+    ) {}
 
     #[Route('/api/sellers', name: 'api_sellers_create', methods: ['POST'])]
     #[OA\Post(
@@ -39,8 +38,9 @@ final class RegistrationController extends AbstractController
     )]
     #[OA\Response(response: 409, description: "Conflict. The email address is already in use.")]
     #[OA\Response(response: 422, description: "Validation Error.")]
-    public function create(#[MapRequestPayload] RegistrationDto $dto): JsonResponse
-    {
+    public function create(
+        #[MapRequestPayload] RegistrationDto $dto
+    ) {
         try {
             $responseDto = $this->registrationService->createSeller($dto);
             return new JsonResponse($responseDto, Response::HTTP_CREATED);
