@@ -2,9 +2,9 @@
 
 namespace App\Controller\Api\Public;
 
-
 use Psr\Log\LoggerInterface;
 use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use App\DTO\Public\EstimationRequestDto;
 use App\DTO\Public\PlateLookupRequestDto;
 use App\Service\Public\EstimationService;
@@ -15,11 +15,9 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * Controller responsible for handling estimation-related API requests.
- *
- * This class provides endpoints for public estimation operations.
+ * Controller responsible for handling public estimation-related API requests.
  */
-#[Route('/api/estimations', 'api_public_estimation_')]
+#[Route('/api/estimations', name: 'api_public_estimation_')]
 final class EstimationController extends AbstractController
 {
     public function __construct(
@@ -28,11 +26,9 @@ final class EstimationController extends AbstractController
         private readonly LoggerInterface $logger
     ) {}
 
-
-    #[Route('/lookup-by-plate', 'plate_lookup', methods: ['POST'])]
-    /*
+    #[Route('/lookup-by-plate', name: 'plate_lookup', methods: ['POST'])]
     #[OA\Post(
-        summary: "Lookup vehicle by license plate",
+        summary: "Lookup vehicle information by license plate",
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(ref: new Model(type: PlateLookupRequestDto::class))
@@ -40,38 +36,33 @@ final class EstimationController extends AbstractController
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Vehicle data found",
-                content: new OA\JsonContent(
-                    // ici tu peux détailler les propriétés
-                )
-            ),
-            new OA\Response(
-                response: 503,
-                description: "Service unavailable"
+                description: "Returns vehicle information if found"
             )
         ]
     )]
-        */
     public function lookupByPlate(
         #[MapRequestPayload] PlateLookupRequestDto $dto
-    )
-    {
-        try {
-            $vehicleData = $this->lookupService->lookupByPlate($dto->plate);
-            return new JsonResponse($vehicleData);
-        } catch (\Exception $e) {
+    ): JsonResponse {
+        $vehicleData = $this->lookupService->lookupByPlate($dto->plate);
 
-            $this->logger->error("[LOOKUP ERROR] " . $e->getMessage());
-
-            return new JsonResponse(['error' => 'Lookup failed'], 503);
+        // Cas : plaque inconnue ou données partielles
+        if ($vehicleData === null) {
+            return $this->json([
+                'plate' => $dto->plate,
+                'known_vehicle' => false
+            ]);
         }
+
+        // Cas : plaque connue
+        return $this->json([
+            'known_vehicle' => true,
+            'vehicle' => $vehicleData
+        ]);
     }
 
-
-    #[Route('/calculate', 'calculate', methods: ['POST'])]
-    /*
+    #[Route('/calculate', name: 'calculate', methods: ['POST'])]
     #[OA\Post(
-        summary: "Calculate estimation and get token.",
+        summary: "Calculate estimation and return a token",
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(ref: new Model(type: EstimationRequestDto::class))
@@ -79,23 +70,16 @@ final class EstimationController extends AbstractController
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Returns an estimation token",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "estimation_token", type: "string", example: "abc123"),
-                    ]
-                )
+                description: "Returns an estimation token"
             )
         ]
-    )]*/
+    )]
     public function calculate(
         #[MapRequestPayload] EstimationRequestDto $dto
-    )
-    {
-
+    ): JsonResponse {
         $token = $this->estimationService->calculateAndCache($dto);
 
-        return new JsonResponse([
+        return $this->json([
             'estimation_token' => $token
         ]);
     }

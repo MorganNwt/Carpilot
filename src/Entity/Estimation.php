@@ -23,7 +23,7 @@ class Estimation
     #[ORM\Column(enumType: EstimationStatus::class)]
     private EstimationStatus $status = EstimationStatus::ESTIMATED;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 0, nullable: true)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 0, nullable: true)]
     private ?string $estimatedPrice = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 0, nullable: true)]

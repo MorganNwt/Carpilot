@@ -7,7 +7,6 @@ use App\Entity\User\Seller;
 use App\Mapper\VehicleMapper;
 
 use OpenApi\Attributes as OA;
-use App\DTO\Vehicle\CreateVehicleDto;
 use App\DTO\Vehicle\UpdateVehicleDto;
 use App\Service\Seller\VehicleService;
 use App\DTO\Vehicle\VehicleResponseDto;
@@ -38,45 +37,7 @@ final class VehicleController extends AbstractController
         private readonly VehicleMapper $vehicleMapper
     ) {}
 
-    /*
-    #[Route('', name: 'create', methods: ['POST'])]
-    #[OA\Post(
-        summary: "Create a new vehicle",
-        description: "Allows an authenticated seller to create a new vehicle and link it to their account."
-    )]
-    #[OA\RequestBody(
-        description: "Data required to create a new vehicle",
-        required: true,
-        content: new Model(type: CreateVehicleDto::class)
-    )]
-    #[OA\Response(
-        response: 201,
-        description: "Vehicle created successfully",
-        content: new Model(type: VehicleResponseDto::class)
-    )]
-    #[OA\Response(response: 403, description: "Access Denied (not authenticated).")]
-    #[OA\Response(response: 409, description: "Conflict. A vehicle with the same plate or VIN already exists.")]
-    #[OA\Response(response: 422, description: "Validation error. The request body is invalid.")]
-    public function create(
-        #[MapRequestPayload] CreateVehicleDto $dto,
-        #[CurrentUser] ?Seller $seller
-    ): JsonResponse {
-        if (!$seller) {
-            return $this->json(['message' => 'Forbidden access. You must be logged in as a seller.'], Response::HTTP_FORBIDDEN);
-        }
-
-        try {
-            $responseDto = $this->vehicleService->createVehicle($dto, $seller);
-            return $this->json($responseDto, Response::HTTP_CREATED);
-        } catch (UniqueConstraintViolationException $e) {
-            return $this->json(['error' => 'Data conflict', 'message' => 'A vehicle with this license plate or VIN already exists.'], Response::HTTP_CONFLICT);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'An unexpected error occurred', 'message' => 'Could not create the vehicle.', 'debug' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-    }
-*/
-
-
+   
     #[Route('create-from-estimation', name: 'create_from_estimation', methods: ['POST'])]
     public function createFromEstimation(
         Request $request, 

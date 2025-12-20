@@ -30,8 +30,7 @@ class VehicleService
         private readonly EntityManagerInterface $em,
         private readonly VehicleRepository $repository,
         private readonly VehicleMapper $mapper
-    ) {
-    }
+    ) {}
 
 
     /**
@@ -78,7 +77,6 @@ class VehicleService
         $cache->deleteItem($token);
 
         return $vehicle;
-
     }
 
 
@@ -99,6 +97,16 @@ class VehicleService
         }
 
         return $responseDtos;
+    }
+
+    /**
+     * ADMIN – Retrieve all vehicles in the system.
+     *
+     * @return Vehicle[] List of all vehicles
+     */
+    public function findAllVehicles(): array
+    {
+        return $this->repository->findAll();
     }
 
     /**
