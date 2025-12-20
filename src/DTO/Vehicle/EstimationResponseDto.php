@@ -16,6 +16,7 @@ class EstimationResponseDto
 
     public function __construct(
 
+        #[OA\Property(example: 7)]
         public readonly int $id,
 
         #[OA\Property(description: "")]

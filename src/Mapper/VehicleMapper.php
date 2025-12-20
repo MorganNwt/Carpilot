@@ -115,7 +115,7 @@ class VehicleMapper
      * @param Vehicle $vehicle The entity coming from the database.
      * @return VehicleResponseDto The response DTO with safe and formatted data.
      */
-    public function fromEntityToResponseDto(Vehicle $vehicle): VehicleResponseDto
+    public function fromEntityToResponseDto(Vehicle $vehicle)
     {
         $EstimationDto = $this->estimationMapper->fromEntityToResponseDto($vehicle->getEstimation());
         

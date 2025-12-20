@@ -71,7 +71,11 @@ class VehicleResponseDto
         #[OA\Property(description: "The date and time the vehicle was last updated.", type: "string", format: "date-time")]
         public readonly ?DateTimeImmutable $updatedAt,
 
+        #[OA\Property(
+            description: "Related estimation if exists",
+            ref: new OA\Schema(ref: EstimationResponseDto::class),
+            nullable: true
+        )]
         public readonly ?EstimationResponseDto $estimation = null
-    ) {
-    }
+    ) {}
 }

@@ -100,16 +100,6 @@ class VehicleService
     }
 
     /**
-     * ADMIN – Retrieve all vehicles in the system.
-     *
-     * @return Vehicle[] List of all vehicles
-     */
-    public function findAllVehicles(): array
-    {
-        return $this->repository->findAll();
-    }
-
-    /**
      * Finds a single vehicle by its entity and returns its DTO representation.
      *
      * @param Vehicle $vehicle The vehicle entity.

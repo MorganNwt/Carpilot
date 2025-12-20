@@ -8,6 +8,7 @@ use App\Mapper\VehicleMapper;
 use OpenApi\Attributes as OA;
 use App\DTO\Vehicle\UpdateVehicleDto;
 use App\Service\Seller\VehicleService;
+use App\Service\Admin\AdminVehicleService;
 use App\DTO\Vehicle\VehicleResponseDto;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -30,7 +31,8 @@ final class VehicleController extends AbstractController
 {
     public function __construct(
         private readonly VehicleService $vehicleService,
-        private readonly VehicleMapper $vehicleMapper
+        private readonly VehicleMapper $vehicleMapper,
+        private readonly AdminVehicleService $adminVehicleService
     ) {}
 
     /**
@@ -49,16 +51,11 @@ final class VehicleController extends AbstractController
             items: new OA\Items(ref: new Model(type: VehicleResponseDto::class))
         )
     )]
-    public function listAll(): JsonResponse
+    public function listAll()
     {
-        $vehicles = $this->vehicleService->findAllVehicles();
-
-        $responseDtos = [];
-        foreach ($vehicles as $vehicle) {
-            $responseDtos[] = $this->vehicleMapper->fromEntityToResponseDto($vehicle);
-        }
-
-        return $this->json($responseDtos);
+        return $this->json(
+            $this->adminVehicleService->findAllVehicles()
+        );
     }
 
     /**
