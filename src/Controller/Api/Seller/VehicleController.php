@@ -37,13 +37,12 @@ final class VehicleController extends AbstractController
         private readonly VehicleMapper $vehicleMapper
     ) {}
 
-   
+
     #[Route('create-from-estimation', name: 'create_from_estimation', methods: ['POST'])]
     public function createFromEstimation(
-        Request $request, 
+        Request $request,
         #[CurrentUser] ?Seller $seller
-    )
-    {
+    ) {
         if (!$seller) {
             return $this->json(
                 ['message' => 'Forbidden access. You must be logged in as a seller.'],
@@ -80,8 +79,7 @@ final class VehicleController extends AbstractController
     #[OA\Response(response: 403, description: "Access Denied (not authenticated).")]
     public function index(
         #[CurrentUser] ?Seller $seller
-    )
-    {
+    ) {
         if (!$seller) {
             return $this->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
         }
@@ -101,10 +99,9 @@ final class VehicleController extends AbstractController
     #[OA\Response(response: 403, description: "Access Denied (not the owner).")]
     #[OA\Response(response: 404, description: "Vehicle not found.")]
     public function show(
-        Vehicle $vehicle, 
+        Vehicle $vehicle,
         #[CurrentUser] ?Seller $seller
-    )
-    {
+    ) {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
         }
@@ -130,8 +127,7 @@ final class VehicleController extends AbstractController
         Vehicle $vehicle,
         #[MapRequestPayload] UpdateVehicleDto $dto,
         #[CurrentUser] ?Seller $seller
-    )
-    {
+    ) {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
         }
@@ -156,10 +152,9 @@ final class VehicleController extends AbstractController
     #[OA\Response(response: 403, description: "Access Denied (not the owner).")]
     #[OA\Response(response: 404, description: "Vehicle not found.")]
     public function delete(
-        Vehicle $vehicle, 
+        Vehicle $vehicle,
         #[CurrentUser] ?Seller $seller
-    )
-    {
+    ) {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
         }

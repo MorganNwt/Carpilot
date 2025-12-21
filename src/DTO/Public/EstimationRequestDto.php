@@ -6,76 +6,76 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema(
-    title: "",
-    description: ""
+    title: "Estimation Request",
+    description: "Data required to calculate a vehicle estimation."
 )]
 class EstimationRequestDto
 {
-    #[OA\Property(description: "The vehicle's license plate.", example: "AA-123-BB")]
+    #[OA\Property(example: "AA-123-BB")]
     #[Assert\NotBlank(message: "The license plate cannot be blank.")]
-    public ?string $plate = null;
+    public string $plate;
 
-    #[OA\Property(description: "The unique 17-character Vehicle Identification Number.", example: "VF15ABHG854895231")]
+    #[OA\Property(example: "VF15ABHG854895231")]
     #[Assert\NotBlank(message: "The VIN cannot be blank.")]
-    #[Assert\Length(exactly: 17, exactMessage: "The VIN must be exactly {{ limit }} characters long.")]
-    public ?string $vin = null;
+    #[Assert\Length(
+        exactly: 17,
+        exactMessage: "The VIN must be exactly {{ limit }} characters long."
+    )]
+    public string $vin;
 
-    #[OA\Property(description: "Brand of the vehicle.", example: "Renault")]
+    #[OA\Property(example: "Renault")]
     #[Assert\NotBlank]
-    public ?string $brand = null;
+    public string $brand;
 
-    #[OA\Property(description: "Model of the vehicle.", example: "Clio")]
+    #[OA\Property(example: "Clio")]
     #[Assert\NotBlank]
-    public ?string $model = null;
+    public string $model;
 
-    #[OA\Property(description: "Specific version or trim of the model.", example: "1.5 DCI Intens")]
+    #[OA\Property(example: "1.5 DCI Intens", nullable: true)]
     public ?string $version = null;
 
-    #[OA\Property(description: "Type of energy used by the vehicle.", example: "Diesel")]
+    #[OA\Property(example: "Diesel")]
     #[Assert\NotBlank]
-    public ?string $energy = null;
+    public string $energy;
 
-    #[OA\Property(description: "Engine power in horsepower.", example: 90)]
-    #[Assert\NotBlank]
+    #[OA\Property(example: 90)]
     #[Assert\Positive(message: "Horsepower must be a positive number.")]
-    public ?int $horsePower = null;
+    public int $horsePower;
 
-    #[OA\Property(description: "Fiscal power of the vehicle.", example: 5.0)]
-    #[Assert\NotBlank]
+    #[OA\Property(example: 5)]
     #[Assert\Positive(message: "Fiscal power must be a positive number.")]
-    public ?float $fiscalPower = null;
+    public float $fiscalPower;
 
-    #[OA\Property(description: "Type of gearbox.", example: "Manuelle")]
+    #[OA\Property(example: "Manuelle")]
     #[Assert\NotBlank]
-    public ?string $gearBox = null;
+    public string $gearBox;
 
-    #[OA\Property(description: "Number of doors.", example: 5)]
-    #[Assert\NotBlank]
+    #[OA\Property(example: 5)]
     #[Assert\Positive]
-    public ?int $doors = null;
+    public int $doors;
 
-    #[OA\Property(description: "Number of seats.", example: 5)]
-    #[Assert\NotBlank]
+    #[OA\Property(example: 5)]
     #[Assert\Positive]
-    public ?int $seats = null;
+    public int $seats;
 
-    #[OA\Property(description: "The vehicle's body type (e.g., Berline, SUV).", example: "Berline")]
+    #[OA\Property(example: "Berline")]
     #[Assert\NotBlank]
-    public ?string $bodyType = null;
+    public string $bodyType;
 
-    #[OA\Property(description: "Weight of the vehicle in kilograms.", example: 1178)]
-    #[Assert\NotBlank]
+    #[OA\Property(example: 1178)]
     #[Assert\Positive]
-    public ?int $weightKg = null;
+    public int $weightKg;
 
-    #[OA\Property(description: "Color of the vehicle.", example: "Bleu Iron")]
+    #[OA\Property(example: "Bleu Iron")]
     #[Assert\NotBlank]
-    public ?string $color = null;
+    public string $color;
 
-    #[OA\Property(description: "The first registration date of the vehicle.", example: "2019-07-23")]
+    #[OA\Property(example: "2019-07-23")]
     #[Assert\NotBlank(message: "The registration date is required.")]
-    #[Assert\Date(message: "The registration date format is invalid. Please use YYYY-MM-DD.")]
-    public ?string $registrationDate = null;
+    #[Assert\Date(message: "The registration date format must be YYYY-MM-DD.")]
+    public string $registrationDate;
 
-    public ?int $mileage;
+    #[OA\Property(example: 85000, nullable: true)]
+    #[Assert\Positive]
+    public ?int $mileage = null;
 }

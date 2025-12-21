@@ -3,8 +3,6 @@
 namespace App\Controller\Api\Admin;
 
 use App\Entity\Vehicle;
-use App\Mapper\VehicleMapper;
-
 use OpenApi\Attributes as OA;
 use App\DTO\Vehicle\UpdateVehicleDto;
 use App\Service\Seller\VehicleService;
@@ -31,7 +29,6 @@ final class VehicleController extends AbstractController
 {
     public function __construct(
         private readonly VehicleService $vehicleService,
-        private readonly VehicleMapper $vehicleMapper,
         private readonly AdminVehicleService $adminVehicleService
     ) {}
 
