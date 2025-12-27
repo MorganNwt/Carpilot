@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard vendeur{% endblock %}
+
+{% block body %}
+<main
+    class="min-h-screen bg-gray-50 p-8"
+    data-controller="seller-dashboard"
+>
+    <h1 class="text-2xl font-bold mb-8">
+        Mon espace vendeur
+    </h1>
+
+    {# =====================
+       PROFIL
+       ===================== #}
+    <section class="bg-white p-6 rounded-xl shadow mb-10">
+        <h2 class="font-semibold text-lg mb-4">Mon profil</h2>
+
+        <!-- Rempli par Stimulus -->
+        <div data-seller-dashboard-target="profile">
+            <p class="text-gray-400">Chargement du profil…</p>
+        </div>
+    </section>
+
+    {# =====================
+       VÉHICULES
+       ===================== #}
+    <section class="bg-white p-6 rounded-xl shadow">
+        <h2 class="font-semibold text-lg mb-4">Mes véhicules</h2>
+
+        <!-- Rempli par Stimulus -->
+        <div data-seller-dashboard-target="vehicles">
+            <p class="text-gray-400">Chargement des véhicules…</p>
+        </div>
+    </section>
+</main>
+{% endblock %}

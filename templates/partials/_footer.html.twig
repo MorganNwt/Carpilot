@@ -1,0 +1,102 @@
+
+<div class="h-1 bg-orange-500 w-full my-4 mt-30"></div>
+
+<div class="flex justify-center items-center space-x-6 py-4">
+    <!-- Logo CarPilot -->
+    <a href="{{ path('app_home') }}">
+        <img src="/images/logo.png" alt="CarPilot" class="h-12">
+    </a>
+
+    <!-- Logo Instagram -->
+    <a href="https://www.instagram.com/carpilot_france/" target="_blank" rel="noopener">
+        <img src="/images/Instagram.png" alt="logo-Instagram" class="h-8">
+    </a>
+
+    <!-- Logo Facebook -->
+    <a href="https://www.facebook.com/people/Carpilot/61557523783260/" target="_blank" rel="noopener">
+        <img src="/images/Facebook.png" alt="logo-Facebook" class="h-8">
+    </a>
+</div>
+ 
+<!-- Formulaire de contact -->
+<div id="contact" class="max-w-4xl mx-auto bg-orange-500 text-white p-6 rounded shadow-md mb-10 mt-15 mb-20 w-170">
+    <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label for="prenom" class="block text-sm font-medium mb-1 text-black">Prénom</label>
+            <input type="text" id="prenom" name="prenom" placeholder="Votre prénom"
+                    class="w-full p-2 rounded text-black bg-white">
+        </div>
+        <div>
+            <label for="email" class="block text-sm font-medium mb-1 text-black">Email</label>
+            <input type="email" id="email" name="email" placeholder="Votre Email"
+                    class="w-full p-2 rounded text-black bg-white">
+        </div>
+        <div class="md:col-span-2">
+            <label for="message" class="block text-sm font-medium mb-1 text-black">Question</label>
+            <textarea id="message" name="message" placeholder="Votre message"
+                        class="w-full p-2 h-28 rounded text-black bg-white"></textarea>
+        </div>
+        <div class="md:col-span-2">
+            <button type="submit"
+                    class="bg-blue-900 hover:bg-[#0b2c4c] text-white px-4 py-2 rounded-sm cursor-pointer">
+                Envoyez !
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Liens du footer -->
+<div class="justify-center max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-black pb-10 mb-15 px-4">
+    <div>
+        <h3 class="font-bold mb-2">Pages</h3>
+        <ul class="space-y-1">
+            <li><a href="#">Accueil</a></li>
+            <li><a href="#">Vendre ma voiture</a></li>
+            <li><a href="#">Estimez ma voiture</a></li>
+            <li><a href="#">Nos agences</a></li>
+            <li><a href="#">Nous contacter</a></li>
+        </ul>
+    </div>
+
+    <div class="border-l border-orange-500 pl-4">
+        <h3 class="font-bold mb-2">Retrouvez-nous près de chez vous !</h3>
+        <ul class="space-y-1">
+            <li><a href="#">Agence d’Eprogny</a></li>
+            <li><a href="#">Agence d’Annecy</a></li>
+            <li><a href="#">Agence d’Unieux</a></li>
+             <li><a href="#">Agence de Valence</a></li>
+        </ul>
+    </div>
+
+    <div class="border-l border-orange-500 pl-4">
+        <h3 class="font-bold mb-2">Nos dernières astuces</h3>
+        <ul class="space-y-1">
+            <li><a href="#">Comment la couleur de votre voiture impacte sur le prix de revente ?</a></li>
+            <li><a href="#">Dois-je effectuer les réparations avant de vendre mon véhicule ?</a></li>
+            <li><a href="#">Voir tout les articles</a></li>
+        </ul>
+    </div>
+
+     <div class="border-l border-orange-500 pl-4">
+        <h3 class="font-semibold mb-2">Mentions légales</h3>
+        <ul class="space-y-1">
+            <li><a href="#">Mentions légales</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Bouton : remonter en haut de page -->
+<div data-controller="footer">
+    <a href="#" 
+       id="backToTop" 
+       class="back-to-top" 
+       data-footer-target="button">
+        ▲
+    </a>
+</div>
+
+
+<!-- Footer bas -->
+<div class="bg-orange-500 text-center text-white py-3 text-sm">
+    ©Copyright  Carpilot Tous droits réservés
+</div>

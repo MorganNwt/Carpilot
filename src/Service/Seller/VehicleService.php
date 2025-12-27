@@ -6,7 +6,6 @@ use App\Entity\Vehicle;
 use App\Entity\Estimation;
 use App\Entity\User\Seller;
 use App\Mapper\VehicleMapper;
-use App\DTO\Vehicle\CreateVehicleDto;
 use App\DTO\Vehicle\UpdateVehicleDto;
 use App\Repository\VehicleRepository;
 use App\DTO\Vehicle\VehicleResponseDto;
