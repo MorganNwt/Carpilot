@@ -11,9 +11,8 @@ final class DashboardController extends AbstractController
     #[Route('/seller/dashboard', name: 'seller_dashboard')]
     public function index(): Response
     {
-        // ✅ AUCUNE logique de sécurité ici
-        // 👉 le contrôle d’accès est fait en JS + API
-
+        // AUCUNE logique de sécurité ici
+        // le contrôle d’accès est fait en JS + API
         return $this->render('seller/dashboard.html.twig');
     }
 }
