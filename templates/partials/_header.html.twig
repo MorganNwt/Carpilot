@@ -1,15 +1,18 @@
+<!-- Récupération du nom de la route Symfony actuellement active-->
+{% set currentRoute = app.request.attributes.get('_route') %}
+
 <div data-controller="header" class="w-full px-4 py-4 mt-6 flex items-center">
-    <!-- Logo à gauche -->
+    <!-- Logo -->
     <a href="{{ path('app_home') }}" class="text-2xl font-bold text-orange-600">
         <img src="/images/logo.png" alt="CarPilot" class="h-12">
     </a>
 
     <nav class="ml-auto hidden md:flex items-center space-x-6">
-        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500">Vendre ma voiture</a>
-        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500">Estimer ma voiture</a>
-        <a href="#contact" class="text-sm font-semibold hover:text-orange-500" data-header-target="scrollLink">Nous contacter</a>
-        <a href="#astuces" class="text-sm font-semibold hover:text-orange-500" data-header-target="scrollLink">Nos articles</a>
-        <a href="{{ path('app_account') }}" class="text-sm font-semibold hover:text-orange-500">Mon compte</a>
+        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_home'? 'text-orange-600 ' : '' }}">Vendre ma voiture</a>
+        <a href="{{ path('app_estimez_maintenant') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_estimez_maintenant'? 'text-orange-600 ' : '' }}">Estimer ma voiture</a>
+        <a href="#contact" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == '#contact'? 'text-orange-600 ' : '' }}" data-header-target="scrollLink">Nous contacter</a>
+        <a href="{{ path('app_astuces') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_astuces'? 'text-orange-600 ' : '' }}" data-header-target="scrollLink">Nos articles</a>
+        <a href="{{ path('app_account') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_account'? 'text-orange-600 ' : '' }}">Mon compte</a>
 
         <!-- Menu déroulant "Nos agences" -->
         <div class="relative inline-block text-left">
