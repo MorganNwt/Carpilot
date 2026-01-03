@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dois-je réparer ma voiture ?{% endblock %}
+
+{% block body %}
+<section class="relative overflow-hidden bg-white" data-controller="hero-collapse">
+    <div class="relative w-full h-screen" data-hero-collapse-target="hero">
+
+        <div class="absolute inset-0 bg-cover bg-center"style="background-image: url('/images/mechanics.jpg')" data-hero-collapse-target="image"></div>
+        <div class="absolute inset-0 bg-black/30"></div>
+
+        <h1 class="absolute inset-0 flex items-center justify-center text-white text-5xl font-bold text-center"data-hero-collapse-target="title">
+            Dois-je effectuer les réparations avant de vendre mon véhicule ?
+        </h1>
+    </div>
+</section>
+
+<section class="max-w-4xl mx-auto px-6 py-16 text-gray-800 mt-15">
+
+    <!-- En bref -->
+    <div class="mb-12 rounded-xl border-l-4 border-orange-500 bg-orange-50 p-6">
+        <h2 class="text-xl font-bold text-orange-600 mb-3">
+            En bref
+        </h2>
+
+        <p class="mb-4">
+            Non, nous prenons en compte l'état général de votre véhicule.
+        </p>
+
+        <ul class="list-disc list-inside space-y-1 font-medium">
+            <li>Vendez dans l'état</li>
+            <li>Vendez sans tracas</li>
+            <li>Nous nous occupons de tout</li>
+        </ul>
+    </div>
+
+    <!-- Titre -->
+    <h2 class="text-3xl font-bold text-orange-600 mt-15 mb-6">
+        Ai-je besoin de réparer mon véhicule avant la vente ?
+    </h2>
+
+    <!-- Contenu -->
+    <div class="space-y-6 leading-relaxed text-base">
+
+        <p>
+            Non, vous n'avez pas besoin de faire des réparations avant de vendre votre véhicule.
+            Chez <strong>CARPILOT</strong>, nous évaluons votre voiture dans son état actuel,
+            sans vous imposer de travaux préalables.
+        </p>
+
+        <p>
+            Cela signifie que nous prenons en compte l'ensemble des éléments qui composent votre
+            véhicule, y compris son état général, son kilométrage, son historique et les éventuelles
+            réparations nécessaires.
+        </p>
+
+        <p>
+            Vous pouvez donc vendre votre véhicule <strong>en l'état</strong>, sans avancer de frais
+            ni perdre du temps à effectuer des réparations parfois coûteuses ou inutiles.
+        </p>
+
+        <p>
+            Notre objectif est de vous offrir une expérience de vente simple, rapide et sans stress.
+            Nous nous occupons de tout, de l’estimation jusqu’à la reprise de votre véhicule.
+        </p>
+
+    </div>
+
+</section>
+
+<section class="max-w-5xl mx-auto my-16 px-6">
+    <div class="bg-white rounded-2xl p-8 md:p-10 shadow-[0_-6px_20px_-10px_rgba(0,0,0,0.15),0_10px_25px_-5px_rgba(0,0,0,0.15)]">
+        <!-- Titre -->
+        <h3 class="text-2xl font-bold text-orange-600 mb-6">
+            L’Auteur
+        </h3>
+
+        <!-- Description -->
+        <p class="text-gray-800 leading-relaxed mb-8">
+            Aydin est un expert en matière de camping-car. Il connaît tout sur les différents
+            types de véhicules de loisirs, les accessoires et les équipements nécessaires pour
+            une expérience de camping réussie. Il est passionné par les voyages en camping-car
+            et aime partager ses connaissances et ses expériences avec les autres. Il est
+            également très compétent pour entretenir et réparer les camping-cars. Il est le
+            meilleur interlocuteur pour tous les besoins de camping-car.
+        </p>
+
+        <!-- Auteur -->
+        <div class="flex items-center gap-4">
+            <!-- Photo -->
+            <img
+                src="/images/photo-avis-1.png"
+                alt="Aydin"
+                class="w-14 h-14 rounded-full object-cover"
+            />
+
+            <!-- Infos -->
+            <div class="flex flex-col">
+                <span class="font-semibold text-gray-900">
+                    Aydin
+                </span>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-orange-600 text-sm font-medium">
+                        Commercial
+                    </span>
+
+                    <!-- LinkedIn -->
+                    <a
+                        href="https://www.linkedin.com/in/TON-LIEN"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-700 transition"
+                        aria-label="LinkedIn"
+                    >
+                        <!-- Icône LinkedIn -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-current"
+                             viewBox="0 0 24 24">
+                            <path d="M22.23 0H1.77C.79 0 0 .774 0 1.727v20.545C0 23.227.79 24 1.77 24h20.46c.98 0 1.77-.773 1.77-1.728V1.727C24 .774 23.21 0 22.23 0zM7.12 20.452H3.56V9h3.56v11.452zM5.34 7.433c-1.14 0-2.06-.926-2.06-2.065 0-1.14.92-2.065 2.06-2.065s2.06.925 2.06 2.065c0 1.139-.92 2.065-2.06 2.065zM20.45 20.452h-3.56v-5.569c0-1.328-.03-3.038-1.85-3.038-1.85 0-2.13 1.445-2.13 2.94v5.667h-3.56V9h3.42v1.561h.05c.48-.9 1.65-1.85 3.4-1.85 3.64 0 4.31 2.395 4.31 5.51v6.231z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+{% endblock %}
