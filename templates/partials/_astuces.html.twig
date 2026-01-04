@@ -1,28 +1,35 @@
 <div class="container mx-auto mb-30">
     <div class="flex flex-wrap justify-center gap-10 md:gap-12">
 
-        <!-- Card 1 -->
+       <!-- Card 1 -->
         <div class="w-full sm:w-[300px] text-center mr-10">
-            <img src="/images/photo article 1.png"
+            <a href="{{ path('app_couleur_voiture') }}" class="block">
+                <img src="/images/photo article 1.png"
                     class="w-full h-64 object-cover rounded-xl mb-4"
                     alt="Astuces voiture">
-            <h3 class="text-white font-semibold opacity-50  text-lg mb-4">
-                Comment la couleur de votre voiture impacte son prix de vente ?
-            </h3>
+
+                <h3 class="text-white font-semibold opacity-50 text-lg mb-4">
+                    Comment la couleur de votre voiture impacte son prix de vente ?
+                </h3>
+            </a>
+
             <a href="{{ path('app_couleur_voiture') }}"
-                class="inline-block bg-white text-[#002f5a] font-semibold rounded-md px-6 py-2">
+            class="inline-block bg-white text-[#002f5a] font-semibold rounded-md px-6 py-2">
                 Lire l’article
             </a>
         </div>
 
         <!-- Card 2 -->
         <div class="w-full sm:w-[300px] text-center">
-            <img src="/images/photo article 2.png"
-                    class="w-full h-64 object-cover rounded-xl mb-4"
-                    alt="Astuces voiture">
-            <h3 class="text-white font-semibold opacity-50 text-lg mb-4">
-                Dois-je faire réparer mon véhicule avant de le vendre ?
-            </h3>
+            <a href="{{ path('app_reparer_voiture') }}" class="block">
+                <img src="/images/photo article 2.png"
+                        class="w-full h-64 object-cover rounded-xl mb-4"
+                        alt="Astuces voiture">
+                <h3 class="text-white font-semibold opacity-50 text-lg mb-4">
+                    Dois-je faire réparer mon véhicule avant de le vendre ?
+                </h3>
+            </a>
+          
             <a href="{{ path('app_reparer_voiture') }}"
                 class="inline-block bg-white text-[#002f5a] font-semibold rounded-md px-6 py-2">
                 Lire l’article
@@ -31,12 +38,15 @@
 
         <!-- Card 3 -->
         <div class="w-full sm:w-[300px] text-center ml-10">
-            <img src="/images/photo article 3.png"
-                    class="w-full h-64 object-cover rounded-xl mb-4"
-                    alt="Astuces voiture">
-            <h3 class="text-white font-semibold opacity-50  text-lg mb-4">
-                Pourquoi vendre sa voiture à un concessionnaire automobile ?
-            </h3>
+             <a href="#" class="block">
+                <img src="/images/photo article 3.png"
+                        class="w-full h-64 object-cover rounded-xl mb-4"
+                        alt="Astuces voiture">
+                <h3 class="text-white font-semibold opacity-50  text-lg mb-4">
+                    Pourquoi vendre sa voiture à un concessionnaire automobile ?
+                </h3>
+            </a>
+
             <a href="#"
                 class="inline-block bg-white text-[#002f5a] font-semibold rounded-md px-6 py-2">
                 Lire l’article
