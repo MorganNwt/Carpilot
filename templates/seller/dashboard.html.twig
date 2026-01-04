@@ -2,11 +2,33 @@
 
 {% block title %}Dashboard vendeur{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('layouts/_dashboard.scss') }}">
+
+<style>
+
+.input {
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.badge {
+    background: #f3f4f6;
+    padding: 4px 10px;
+    border-radius: 9999px;
+}
+</style>
+
+{% endblock %}
+
 {% block body %}
-<main
-    class="min-h-screen bg-gray-50 p-8"
-    data-controller="seller-dashboard"
->
+
+
+<main class="min-h-screen bg-gray-50 p-8" data-controller="seller-profile seller-vehicle">
+
     <h1 class="text-2xl font-bold mb-8">
         Mon espace vendeur
     </h1>
@@ -17,7 +39,7 @@
     <section class="bg-white p-6 shadow-xl rounded-2xl mb-10 max-w-4xl mx-auto">
         <h2 class="text-orange-500 font-semibold text-lg mb-4">Mon profil</h2>
 
-        <div data-seller-dashboard-target="profile">
+        <div data-seller-profile-target="profile">
             <p class="text-gray-400">Chargement du profil…</p>
         </div>
     </section>
@@ -28,7 +50,7 @@
     <section class="mt-15 bg-white p-6 shadow-xl rounded-2xl max-w-6xl mx-auto">
         <h2 class="text-orange-500 font-semibold text-lg mb-4">Mes véhicules</h2>
 
-        <div data-seller-dashboard-target="vehicles">
+        <div data-seller-vehicle-target="vehicles">
             <p class="text-gray-400">Chargement des véhicules…</p>
         </div>
     </section>
