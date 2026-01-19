@@ -1,22 +1,26 @@
-     <div class="mx-auto md:w-1/2 lg:w-2/3 xl:w-1/2 max-w-md lg:max-w-2xl mt-15">
-        <div class="bg-orange-500 text-white py-4 px-8 rounded-t-lg font-semibold text-center">
-            Commencez la vente de votre véhicule ici !
-        </div>
+<div
+  class="mx-auto md:w-1/2 lg:w-2/3 xl:w-1/2 max-w-md lg:max-w-2xl mt-15"
+  data-controller="plate-prefill"
+  data-plate-prefill-endpoint-value="/mock/plate-lookup"
+  data-plate-prefill-redirect-value="{{ path('public_estimation_form') }}"
+>
+  <div class="bg-orange-500 text-white py-4 px-8 rounded-t-lg font-semibold text-center">
+    Commencez la vente de votre véhicule ici !
+  </div>
 
-        <div class="bg-gray-100 p-12 rounded-b-lg">
-            <label class="block font-semibold mb-6">Pour immatriculation</label>
-            <input type="text" placeholder="GW-713-AC" class="w-full px-4 py-2 mb-4 rounded border border-gray-300 text-center font-mono text-lg bg-white">
-            <p class="text-sm text-gray-500 mb-6 mt-2">Pour un pré-remplissage des informations rapide et fiable !</p>
-            <button class="text-white px-6 py-2 rounded font-semibold transition bg-[#123354] hover:bg-[#3a5a7d] cursor-pointer">
-                ESTIMEZ MAINTENANT
-            </button>
-        </div>
-    </div>
+  <form class="bg-gray-100 p-12 rounded-b-lg" data-action="submit->plate-prefill#submit">
+    <label class="block font-semibold mb-6">Pour immatriculation</label>
 
-    <section class="py-12">
-        <div class="flex justify-left">
-            <img src="/images/renault-clio 1.png" alt="Voiture Renault clio blanche" class="w-96 max-w-full">
-        </div>
-    </section>
+    <input type="text"placeholder="GW-713-AC"class="w-full px-4 py-2 mb-4 rounded border border-gray-300 text-center font-mono text-lg bg-white"data-plate-prefill-target="plate">
 
+    <p class="text-sm text-gray-500 mb-6 mt-2">
+      Pour un pré-remplissage des informations rapide et fiable !
+    </p>
 
+    <button type="submit" class="text-white px-6 py-2 rounded font-semibold transition bg-[#123354] hover:bg-[#3a5a7d] cursor-pointer"data-plate-prefill-target="btn">
+      ESTIMEZ MAINTENANT
+    </button>
+
+    <p class="text-sm mt-4 text-red-600 hidden" data-plate-prefill-target="error"></p>
+  </form>
+</div>

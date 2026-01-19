@@ -3,6 +3,7 @@
 {% block title %}Dashboard vendeur{% endblock %}
 
 {% block stylesheets %}
+    {# TODO : move to app.scss #}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('layouts/_dashboard.scss') }}">
 
@@ -18,7 +19,7 @@
 .badge {
     background: #f3f4f6;
     padding: 4px 10px;
-    border-radius: 9999px;
+    border-radius: 90px;
 }
 </style>
 
