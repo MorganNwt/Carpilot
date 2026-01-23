@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = ["plate", "btn", "error"];
   static values = {
     endpoint: String,  // "/mock/plate-lookup"
-    redirect: String,  // URL de la page infos véhicule
+    redirect: String,  // URL de la page infos véhicule (formulaire pré-rempli)
     login: String,     // "/account"
   };
 
@@ -17,11 +17,21 @@ export default class extends Controller {
       return;
     }
 
-    // 1) Vérifie connexion
+    // 1) Vérifie connexion (JWT)
     const jwt = localStorage.getItem("token");
 
-    //  Pas connecté : on stocke la plaque + la redirection, puis login
+    // Pas connecté : on stocke la plaque + info de retour, puis on va sur login
     if (!jwt) {
+      // plaque en attente (pour relancer le lookup après login)
+      sessionStorage.setItem("pending_plate", plate);
+
+      // info de retour après login (formulaire)
+      sessionStorage.setItem("after_login_redirect", this.redirectValue);
+
+      // flag pour savoir qu'on vient du flux plaque
+      sessionStorage.setItem("resume_plate_lookup", "1");
+
+      // pré-remplir minimalement pour éviter un écran vide
       sessionStorage.setItem(
         "plate_prefill",
         JSON.stringify({
@@ -32,14 +42,15 @@ export default class extends Controller {
         })
       );
 
-      // optionnel : permet de revenir exactement ici après login
-      sessionStorage.setItem("after_login_redirect", this.redirectValue);
-
       window.location.href = this.loginValue || "/account";
       return;
     }
 
-    // 2) Connecté : on fait le lookup comme avant
+    // 2) Connecté : lookup direct + stockage + redirection
+    await this.lookupAndRedirect(plate);
+  }
+
+  async lookupAndRedirect(plate) {
     this.setLoading(true);
     this.hideError();
 
@@ -52,8 +63,6 @@ export default class extends Controller {
       });
 
       const json = await res.json().catch(() => null);
-
-      // Format attendu: { error: false, data: {...} } ou { error: true, data: null }
       const found = !!json && json.error === false && !!json.data;
 
       sessionStorage.setItem(
@@ -67,7 +76,6 @@ export default class extends Controller {
 
       window.location.href = this.redirectValue;
     } catch (e) {
-      // Même si panne réseau → on redirige avec formulaire vide
       sessionStorage.setItem(
         "plate_prefill",
         JSON.stringify({

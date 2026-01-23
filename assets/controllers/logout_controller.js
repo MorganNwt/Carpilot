@@ -11,6 +11,6 @@ export default class extends Controller {
   logout() {
     localStorage.removeItem("token");
     sessionStorage.clear();
-    window.location.href = "/account";
+    window.location.href = "/home";
   }
 }

@@ -1,129 +1,146 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = [
-        'loginEmail',
-        'loginPassword',
-        'loginError',
-        'registerForm',
-        'registerError'
-    ];
+  static targets = [
+    'loginEmail',
+    'loginPassword',
+    'loginError',
+    'registerForm',
+    'registerError'
+  ];
 
     /* ======================
-     * CONNEXION
-     * ====================== */
-    async login(event) {
-        event.preventDefault();
-        this.loginErrorTarget.textContent = '';
+    * CONNEXION
+    * ====================== */
+  async login(event) {
+    event.preventDefault();
+    this.loginErrorTarget.textContent = '';
 
-        try {
-            const response = await fetch('/api/login_check', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: this.loginEmailTarget.value,
-                    password: this.loginPasswordTarget.value
-                })
-            });
+    try {
+      const response = await fetch('/api/login_check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: this.loginEmailTarget.value,
+          password: this.loginPasswordTarget.value
+        })
+      });
 
-            if (!response.ok) {
-                throw new Error('Identifiants incorrects');
-            }
+      if (!response.ok) {
+        throw new Error('Identifiants incorrects');
+      }
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (!data.token) {
-                throw new Error('Token manquant dans la réponse');
-            }
+      if (!data.token) {
+        throw new Error('Token manquant dans la réponse');
+      }
 
-            // ✅ Stockage du JWT
-            localStorage.setItem('token', data.token);
+      //  Stockage du JWT
+      localStorage.setItem('token', data.token);
 
-            // ✅ Décodage du token pour connaître le rôle
-            const decoded = this.decodeJwt(data.token);
-            const roles = decoded.roles ?? [];
+      //  PRIORITÉ : si on vient du flow "plaque" → retour vers le formulaire pré-rempli
+      const redirect = sessionStorage.getItem('after_login_redirect');
+      if (redirect) {
+        sessionStorage.removeItem('after_login_redirect');
+        window.location.href = redirect;
+        return;
+      }
 
-            // 🔀 Redirection par rôle
-            if (roles.includes('ROLE_ADMIN')) {
-                window.location.href = '/admin/dashboard';
-                return;
-            }
+      //  Décodage du token pour connaître le rôle
+      const decoded = this.decodeJwt(data.token);
+      const roles = decoded.roles ?? [];
 
-            if (roles.includes('ROLE_AGENT')) {
-                window.location.href = '/agent/dashboard';
-                return;
-            }
+      //  Redirection par rôle
+      if (roles.includes('ROLE_ADMIN')) {
+        window.location.href = '/admin/dashboard';
+        return;
+      }
 
-            if (roles.includes('ROLE_SELLER')) {
-                window.location.href = '/seller/dashboard';
-                return;
-            }
+      if (roles.includes('ROLE_AGENT')) {
+        window.location.href = '/agent/dashboard';
+        return;
+      }
 
-            // fallback sécurité
-            window.location.href = '/';
+      if (roles.includes('ROLE_SELLER')) {
+        window.location.href = '/seller/dashboard';
+        return;
+      }
 
-        } catch (error) {
-            console.error(error);
-            this.loginErrorTarget.textContent = error.message;
-        }
+      // fallback sécurité
+      window.location.href = '/';
+
+    } catch (error) {
+      console.error(error);
+      this.loginErrorTarget.textContent = error.message;
+    }
+  }
+
+  /* ======================
+   * INSCRIPTION
+   * ====================== */
+  async register(event) {
+    event.preventDefault();
+    this.registerErrorTarget.textContent = '';
+
+    const form = this.registerFormTarget;
+
+    const password = form.querySelector('[name="password"]').value;
+    const passwordConfirm = form.querySelector('[name="passwordConfirm"]').value;
+
+    if (password !== passwordConfirm) {
+      this.registerErrorTarget.textContent =
+        'Les mots de passe ne correspondent pas';
+      return;
     }
 
-    /* ======================
-     * INSCRIPTION
-     * ====================== */
-    async register(event) {
-        event.preventDefault();
-        this.registerErrorTarget.textContent = '';
+    try {
+      const response = await fetch('/api/sellers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lastName: form.lastName.value,
+          firstName: form.firstName.value,
+          email: form.email.value,
+          password: password,
+          phone: form.phone.value,
+          address: form.address.value,
+          city: form.city.value,
+          postalCode: form.postalCode.value,
+          country: 'France'
+        })
+      });
 
-        const form = this.registerFormTarget;
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création du compte');
+      }
 
-        const password = form.querySelector('[name="password"]').value;
-        const passwordConfirm = form.querySelector('[name="passwordConfirm"]').value;
+      alert('Compte créé avec succès. Vous pouvez vous connecter.');
+      form.reset();
 
-        if (password !== passwordConfirm) {
-            this.registerErrorTarget.textContent =
-                'Les mots de passe ne correspondent pas';
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/sellers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    lastName: form.lastName.value,
-                    firstName: form.firstName.value,
-                    email: form.email.value,
-                    password: password,
-                    phone: form.phone.value,
-                    address: form.address.value,
-                    city: form.city.value,
-                    postalCode: form.postalCode.value,
-                    country: 'France'
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Erreur lors de la création du compte');
-            }
-
-            alert('Compte créé avec succès. Vous pouvez vous connecter.');
-            form.reset();
-
-        } catch (error) {
-            this.registerErrorTarget.textContent = error.message;
-        }
+    } catch (error) {
+      this.registerErrorTarget.textContent = error.message;
     }
+  }
 
-    /* ======================
-     * UTILS
-     * ====================== */
-    decodeJwt(token) {
-        const payload = token.split('.')[1];
-        return JSON.parse(atob(payload));
+  /* ======================
+   * UTILS
+   * ====================== */
+  decodeJwt(token) {
+    try {
+      const payload = token.split('.')[1];
+
+      // Support Base64URL (JWT) -> Base64
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+
+      return JSON.parse(atob(padded));
+    } catch (e) {
+      return {};
     }
+  }
 }
