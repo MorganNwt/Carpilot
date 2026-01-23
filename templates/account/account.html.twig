@@ -3,86 +3,101 @@
 {% block title %}Mon compte{% endblock %}
 
 {% block body %}
-<main class="min-h-screen flex items-center justify-center bg-gray-50 px-4 ">
-    <section class="bg-white shadow-xl rounded-2xl w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 relative" data-controller="account">
-
-         <!-- Colonne de gauche-->
-        <div class="p-12 flex flex-col justify-between">
-        
-            <div class="space-y-6">
-                <h2 class="text-orange-500 font-semibold text-lg">
-                    Me connecter
-                </h2>
-
-                <form data-action="submit->account#login"class="mt-17 space-y-5">
-                    <input type="email" placeholder="Adresse mail" data-account-target="loginEmail" required class="input">
-                    <input type="password" placeholder="Mot de passe" data-account-target="loginPassword" required class="input">
-
-                    <label class="flex items-center gap-3 text-sm text-gray-600">
-                        <input type="checkbox" class="rounded">
-                        Restez connecté
-                    </label>
-
-                    <button type="submit"class="bg-blue-900 cursor-pointer text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition w-fit">
-                        Me connecter
-                    </button>
-                </form>
-
-                <p class="text-red-500 text-sm" data-account-target="loginError"></p>
-            </div>
-
-            <div class="mt-5 mb-15">
-                 <img src="/images/renault-clio 1.png" alt="Voiture Renault clio blanche" class="w-120 max-w-full">
-            </div>
-        </div>
-
-         <!-- Séparateur -->
-        <div class="hidden md:block absolute inset-y-12 left-1/2 w-px bg-gray-300"></div>
-
-        <!-- Colonne de droite -->
-        <div class="p-12 flex flex-col justify-start">
-
-            <div class="space-y-3 mb-8">
-                <h2 class="text-orange-500 font-semibold text-lg">
-                    Nouveau du site ?
-                </h2>
-                <p class="font-semibold text-gray-800">
-                    Tous les champs sont obligatoires
+    <main class="min-h-screen bg-gray-50 px-4 py-10">
+        <div data-controller="account-info" class="hidden max-w-xl mx-auto mb-8 rounded-xl bg-orange-500 px-6 py-6 text-white shadow-lg flex items-start gap-4">
+          <span class="text-2xl animate-spin">⚙️</span>
+            <div>
+                <p class="font-semibold leading-tight">
+                    Récupération de votre véhicule en cours...
+                </p>
+                <p class="text-sm text-white/80 mt-1">
+                    Connectez-vous ou créez un compte pour finaliser votre estimation.
                 </p>
             </div>
-
-            <form data-account-target="registerForm" data-action="submit->account#register" class="space-y-5 w-full">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <input type="text" name="lastName" placeholder="Nom" required class="input">
-                    <input type="text" name="firstName" placeholder="Prénom" required class="input">
-                </div>
-
-                <input type="email" name="email" placeholder="Adresse mail" required class="input">
-                <input type="password" name="password" placeholder="Mot de passe" required class="input">
-                <input type="password" name="passwordConfirm" placeholder="Confirmez le mot de passe" required class="input">
-                <input type="text" name="address" placeholder="Adresse" required class="input">
-                <input type="text" name="postalCode" placeholder="Code postal" required class="input">
-                <input type="text" name="city" placeholder="Choisissez votre ville" required class="input">
-                <input type="tel" name="phone" placeholder="Téléphone" required class="input">
-
-                <a href="{{ path('app_legal_rgpd') }}" target="_blank" class="text-blue-600 underline hover:text-blue-800">
-                        Lire la politique de confidentialité
-                    </a>
-
-                <label class="flex items-center gap-3 text-sm text-gray-700 mt-2">
-                    <input type="checkbox" required class="rounded">
-                    Accord RGPD
-                </label>
-
-                <button type="submit"class="bg-orange-500 cursor-pointer text-white px-10 py-4 rounded-xl font-semibold hover:bg-orange-600 transition w-fit mt-4">
-                    S’inscrire
-                </button>
-            </form>
-
-            <p class="text-red-500 text-sm mt-4" data-account-target="registerError"></p>
         </div>
 
-    </section>
-</main>
+        <section class="min-h-screen flex justify-center bg-gray-50 px-4 ">
+    
+            <section class="bg-white shadow-xl rounded-2xl w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 relative" data-controller="account">
+
+                <!-- Colonne de gauche-->
+                <div class="p-12 flex flex-col justify-between">
+                
+                    <div class="space-y-6">
+                        <h2 class="text-orange-500 font-semibold text-lg">
+                            Me connecter
+                        </h2>
+
+                        <form data-action="submit->account#login"class="mt-17 space-y-5">
+                            <input type="email" placeholder="Adresse mail" data-account-target="loginEmail" required class="input">
+                            <input type="password" placeholder="Mot de passe" data-account-target="loginPassword" required class="input">
+
+                            <label class="flex items-center gap-3 text-sm text-gray-600">
+                                <input type="checkbox" class="rounded">
+                                Restez connecté
+                            </label>
+
+                            <button type="submit"class="bg-blue-900 cursor-pointer text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition w-fit">
+                                Me connecter
+                            </button>
+                        </form>
+
+                        <p class="text-red-500 text-sm" data-account-target="loginError"></p>
+                    </div>
+
+                    <div class="mt-5 mb-15">
+                        <img src="/images/renault-clio 1.png" alt="Voiture Renault clio blanche" class="w-120 max-w-full">
+                    </div>
+                </div>
+
+                <!-- Séparateur -->
+                <div class="hidden md:block absolute inset-y-12 left-1/2 w-px bg-gray-300"></div>
+
+                <!-- Colonne de droite -->
+                <div class="p-12 flex flex-col justify-start">
+
+                    <div class="space-y-3 mb-8">
+                        <h2 class="text-orange-500 font-semibold text-lg">
+                            Nouveau du site ?
+                        </h2>
+                        <p class="font-semibold text-gray-800">
+                            Tous les champs sont obligatoires
+                        </p>
+                    </div>
+
+                    <form data-account-target="registerForm" data-action="submit->account#register" class="space-y-5 w-full">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="text" name="lastName" placeholder="Nom" required class="input">
+                            <input type="text" name="firstName" placeholder="Prénom" required class="input">
+                        </div>
+
+                        <input type="email" name="email" placeholder="Adresse mail" required class="input">
+                        <input type="password" name="password" placeholder="Mot de passe" required class="input">
+                        <input type="password" name="passwordConfirm" placeholder="Confirmez le mot de passe" required class="input">
+                        <input type="text" name="address" placeholder="Adresse" required class="input">
+                        <input type="text" name="postalCode" placeholder="Code postal" required class="input">
+                        <input type="text" name="city" placeholder="Choisissez votre ville" required class="input">
+                        <input type="tel" name="phone" placeholder="Téléphone" required class="input">
+
+                        <a href="{{ path('app_legal_rgpd') }}" target="_blank" class="text-blue-600 underline hover:text-blue-800">
+                                Lire la politique de confidentialité
+                            </a>
+
+                        <label class="flex items-center gap-3 text-sm text-gray-700 mt-2">
+                            <input type="checkbox" required class="rounded">
+                            Accord RGPD
+                        </label>
+
+                        <button type="submit"class="bg-orange-500 cursor-pointer text-white px-10 py-4 rounded-xl font-semibold hover:bg-orange-600 transition w-fit mt-4">
+                            S’inscrire
+                        </button>
+                    </form>
+
+                    <p class="text-red-500 text-sm mt-4" data-account-target="registerError"></p>
+                </div>
+
+            </section>
+        </section>
+    </main>
 {% endblock %}
