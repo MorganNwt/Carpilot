@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251206113204 extends AbstractMigration
+final class Version20260122180634 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +21,10 @@ final class Version20251206113204 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE user ADD is_verified TINYINT(1) NOT NULL
+            ALTER TABLE estimation CHANGE estimated_price estimated_price NUMERIC(10, 0) DEFAULT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE vehicle ADD mileage INT DEFAULT NULL
         SQL);
     }
 
@@ -29,7 +32,10 @@ final class Version20251206113204 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE `user` DROP is_verified
+            ALTER TABLE estimation CHANGE estimated_price estimated_price NUMERIC(5, 0) DEFAULT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE vehicle DROP mileage
         SQL);
     }
 }

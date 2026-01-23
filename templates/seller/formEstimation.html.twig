@@ -1,92 +1,98 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<section class="max-w-4xl mx-auto p-8 bg-white shadow-xl rounded-2xl">
+<main class="bg-gray-50 py-12 md:py-20">
+  <section class="max-w-4xl mx-auto p-8 md:p-10 bg-white shadow-xl rounded-2xl">
 
-  <h1 class="text-2xl font-bold mb-6">Estimation de votre véhicule</h1>
+    <h1 class="text-orange-500 text-2xl font-bold mb-6">Votre véhicule a bien été retrouvé !</h1>
+    <h2 class="font-bold text-lg mb-6">Veuillez vérifier les informations saisies avant de continuer :</h2>
+    
+    <form data-controller="form-prefill" class="space-y-4">
 
-  <form data-controller="form-prefill" class="space-y-4">
+      <div>
+        <label>Immatriculation</label>
+        <input name="plate" class="input w-full" data-form-prefill-target="plate">
+      </div>
 
-    <div>
-      <label>Immatriculation</label>
-      <input name="plate" class="input w-full" data-form-prefill-target="plate">
-    </div>
+      <div>
+        <label>VIN</label>
+        <input name="vin" class="input w-full" data-form-prefill-target="vin">
+      </div>
 
-    <div>
-      <label>VIN</label>
-      <input name="vin" class="input w-full" data-form-prefill-target="vin">
-    </div>
+      <div>
+        <label>Marque</label>
+        <input name="brand" class="input w-full" data-form-prefill-target="brand">
+      </div>
 
-    <div>
-      <label>Marque</label>
-      <input name="brand" class="input w-full" data-form-prefill-target="brand">
-    </div>
+      <div>
+        <label>Modèle</label>
+        <input name="model" class="input w-full" data-form-prefill-target="model">
+      </div>
 
-    <div>
-      <label>Modèle</label>
-      <input name="model" class="input w-full" data-form-prefill-target="model">
-    </div>
+      <div>
+        <label>Version</label>
+        <input name="version" class="input w-full" data-form-prefill-target="version">
+      </div>
 
-    <div>
-      <label>Version</label>
-      <input name="version" class="input w-full" data-form-prefill-target="version">
-    </div>
+      <div>
+        <label>Énergie</label>
+        <input name="energy" class="input w-full" data-form-prefill-target="energy">
+      </div>
 
-    <div>
-      <label>Énergie</label>
-      <input name="energy" class="input w-full" data-form-prefill-target="energy">
-    </div>
+      <div>
+          <label>Puissance (ch)</label>
+          <input name="horsePower" class="input w-full" data-form-prefill-target="horsePower">
+      </div>
 
-    <div>
-        <label>Puissance (ch)</label>
-        <input name="horsePower" class="input w-full" data-form-prefill-target="horsePower">
-    </div>
+      <div>
+          <label>Puissance fiscale</label>
+          <input name="fiscalPower"class="input w-full"data-form-prefill-target="fiscalPower">
+      </div>
 
-    <div>
-        <label>Puissance fiscale</label>
-         <input name="fiscalPower"class="input w-full"data-form-prefill-target="fiscalPower">
-    </div>
+      <div>
+          <label>Boîte de vitesses</label>
+          <input name="gearBox" class="input w-full" data-form-prefill-target="gearBox">
+      </div>
 
-    <div>
-        <label>Boîte de vitesses</label>
-        <input name="gearBox" class="input w-full" data-form-prefill-target="gearBox">
-    </div>
+      <div>
+          <label>Nombre de portes</label>
+          <input name="doors" class="input w-full" data-form-prefill-target="doors">
+      </div>
 
-    <div>
-        <label>Nombre de portes</label>
-        <input name="doors" class="input w-full" data-form-prefill-target="doors">
-    </div>
+      <div>
+          <label>Nombre de places</label>
+          <input name="seats" class="input w-full" data-form-prefill-target="seats">
+      </div>
 
-    <div>
-        <label>Nombre de places</label>
-        <input name="seats" class="input w-full" data-form-prefill-target="seats">
-    </div>
+      <div>
+          <label>Type de carrosserie</label>
+          <input name="bodyType" class="input w-full" data-form-prefill-target="bodyType">
+      </div>
 
-    <div>
-        <label>Type de carrosserie</label>
-        <input name="bodyType" class="input w-full" data-form-prefill-target="bodyType">
-    </div>
+      <div>
+          <label>Poids (kg)</label>
+          <input name="weightKg" class="input w-full" data-form-prefill-target="weightKg">
+      </div>
 
-    <div>
-        <label>Poids (kg)</label>
-        <input name="weightKg" class="input w-full" data-form-prefill-target="weightKg">
-    </div>
+      <div>
+          <label>Couleur</label>
+          <input name="color" class="input w-full" data-form-prefill-target="color">
+      </div>
 
-    <div>
-        <label>Couleur</label>
-        <input name="color" class="input w-full" data-form-prefill-target="color">
-    </div>
-       
-    <div>
-      <label>Date de mise en circulation</label>
-      <input type="date" name="registrationDate" class="input w-full" data-form-prefill-target="registrationDate">
-    </div>
+      <div>
+          <label>Kilométrage (km)</label>
+          <input name="mileage" class="input w-full" data-form-prefill-target="mileage">
+      </div>
+      <div>
+        <label>Date de mise en circulation</label>
+        <input type="date" name="registrationDate" class="input w-full" data-form-prefill-target="registrationDate">
+      </div>
 
-     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition" data-action="form-prefill#submit">
-            Estimer mon véhicule
-    </button>
+      <button type="submit" class="bg-orange-500 cursor-pointer text-white px-10 py-4 rounded-xl font-semibold hover:bg-orange-600 transition w-fit mt-4" data-action="form-prefill#submit">
+              Estimer mon véhicule
+      </button>
+    </form>
 
-  </form>
-
-</section>
+  </section>
+</main>
 {% endblock %}
