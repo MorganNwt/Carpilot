@@ -60,6 +60,9 @@ class PlateLookupResponseDto
     #[OA\Property(type: "string", example: "Rouge", nullable: true)]
     public ?string $color;
 
+    #[OA\Property(type: "integer", example: 120000, nullable: true)]
+    public ?int $mileage;
+
     #[OA\Property(type: "string", format: "date", example: "2016-05-12", nullable: true)]
     public ?string $registrationDate;
 
@@ -81,6 +84,7 @@ class PlateLookupResponseDto
         ?string $bodyType = null,
         ?int $weightKg = null,
         ?string $color = null,
+        ?int $mileage = null,
         ?string $registrationDate = null
     ) {
         $this->plate = strtoupper($plate);
@@ -97,6 +101,7 @@ class PlateLookupResponseDto
         $this->bodyType = $bodyType;
         $this->weightKg = $weightKg;
         $this->color = $color;
+        $this->mileage = $mileage;
         $this->registrationDate = $registrationDate;
     }
 }

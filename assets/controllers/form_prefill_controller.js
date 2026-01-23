@@ -16,7 +16,8 @@ export default class extends Controller {
     "seats",
     "bodyType",
     "weightKg",
-    "color"
+    "color",
+    ,"mileage"
   ];
 
   connect() {
@@ -42,6 +43,7 @@ export default class extends Controller {
       if (this.hasBodyTypeTarget) this.bodyTypeTarget.value = vehicle.bodyType ?? "";
       if (this.hasWeightKgTarget) this.weightKgTarget.value = vehicle.weightKg ?? "";
       if (this.hasColorTarget) this.colorTarget.value = vehicle.color ?? "";
+      if (this.hasMileageTarget) this.mileageTarget.value = vehicle.mileage ?? "";
     }
   }
 }

@@ -56,9 +56,11 @@ class Vehicle
     #[ORM\Column(type: 'integer')]
     private ?int $weightKg = null;
 
-    //Color
     #[ORM\Column(type: 'string', length: 30)]
     private ?string $color = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $mileage = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $registrationDate = null;
@@ -230,6 +232,17 @@ class Vehicle
     public function setSeats(int $seats): self
     {
         $this->seats = $seats;
+        return $this;
+    }
+
+    public function getMileageKm(): ?int
+    {
+        return $this->mileage;
+    }
+
+    public function setMileageKm(?int $mileage): self
+    {
+        $this->mileage   = $mileage;
         return $this;
     }
 

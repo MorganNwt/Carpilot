@@ -59,6 +59,7 @@ class MockPlateDataProvider
                 'bodyType' => 'CITADINE',
                 'weightKg' => 1050,
                 'color' => 'ROUGE',
+                'mileage' => 125000,
                 'registrationDate' => '2016-05-12'
             ],
             [
@@ -76,6 +77,7 @@ class MockPlateDataProvider
                 'bodyType' => 'CITADINE',
                 'weightKg' => 980,
                 'color' => 'BLEU',
+                'mileage' => 60000,
                 'registrationDate' => '2019-07-23'
             ],
             [
@@ -93,6 +95,7 @@ class MockPlateDataProvider
                 'bodyType' => 'COMPACTE',
                 'weightKg' => 1220,
                 'color' => 'GRIS',
+                'mileage' => 90000,
                 'registrationDate' => '2015-03-18'
             ],
             [
@@ -110,6 +113,7 @@ class MockPlateDataProvider
                 'bodyType' => 'BERLINE',
                 'weightKg' => 1480,
                 'color' => 'NOIR',
+                'mileage' => 110000,
                 'registrationDate' => '2014-11-05'
             ],
             [
@@ -127,6 +131,7 @@ class MockPlateDataProvider
                 'bodyType' => 'SUV',
                 'weightKg' => 1250,
                 'color' => 'ORANGE',
+                'mileage' => 40000,
                 'registrationDate' => '2020-04-10'
             ],
             [
@@ -144,6 +149,7 @@ class MockPlateDataProvider
                 'bodyType' => 'MINICITADINE',
                 'weightKg' => 940,
                 'color' => 'BLANC',
+                'mileage' => 75000,
                 'registrationDate' => '2018-01-15'
             ],
             [
@@ -161,6 +167,7 @@ class MockPlateDataProvider
                 'bodyType' => 'CITADINE',
                 'weightKg' => 1045,
                 'color' => 'VERT',
+                'mileage' => 50000,
                 'registrationDate' => '2017-09-20'
             ],
             [
@@ -178,6 +185,7 @@ class MockPlateDataProvider
                 'bodyType' => 'COMPACTE',
                 'weightKg' => 1280,
                 'color' => 'NOIR',
+                'mileage' => 85000,
                 'registrationDate' => '2013-02-11'
             ],
             [
@@ -195,6 +203,7 @@ class MockPlateDataProvider
                 'bodyType' => 'COMPACTE',
                 'weightKg' => 1240,
                 'color' => 'GRIS',
+                'mileage' => 70000,
                 'registrationDate' => '2015-06-08'
             ],
             [
@@ -212,6 +221,7 @@ class MockPlateDataProvider
                 'bodyType' => 'COMPACTE',
                 'weightKg' => 1320,
                 'color' => 'BLEU MARINE',
+                'mileage' => 95000,
                 'registrationDate' => '2017-10-13'
             ],
         ];

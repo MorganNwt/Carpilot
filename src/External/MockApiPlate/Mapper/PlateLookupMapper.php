@@ -28,6 +28,7 @@ class PlateLookupMapper
             bodyType: $data['bodyType'] ?? null,
             weightKg: $data['weightKg'] ?? null,
             color: $data['color'] ?? null,
+            mileage: $data['mileage'] ?? null,
             registrationDate: $data['registrationDate'] ?? null
         );
     }
