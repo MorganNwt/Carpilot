@@ -13,6 +13,9 @@
         <a href="#contact" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == '#contact'? 'text-orange-600 ' : '' }}" data-header-target="scrollLink">Nous contacter</a>
         <a href="{{ path('app_astuces') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_astuces'? 'text-orange-600 ' : '' }}" data-header-target="scrollLink">Nos articles</a>
         <a href="{{ path('app_account') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_account'? 'text-orange-600 ' : '' }}">Mon compte</a>
+        <button data-controller="logout" data-action="click->logout#logout"  class="text-sm font-semibold hover:text-orange-500 cursor-pointer">
+            Déconnexion
+        </button>
 
         <!-- Menu déroulant "Nos agences" -->
         <div class="relative inline-block text-left">
