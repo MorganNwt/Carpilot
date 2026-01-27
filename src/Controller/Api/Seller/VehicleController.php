@@ -53,13 +53,13 @@ final class VehicleController extends AbstractController
         $token = $request->toArray()['estimation_token'] ?? null;
 
         if (!$token) {
-            return new JsonResponse('Missing token', RESPONSE::HTTP_BAD_REQUEST);
+            return new JsonResponse('Missing token', Response::HTTP_BAD_REQUEST);
         }
 
         $vehicle = $this->vehicleService->createVehicleFromEstimation($token, $seller);
         $responseDto = $this->vehicleMapper->fromEntityToResponseDto($vehicle);
 
-        return new JsonResponse($responseDto, RESPONSE::HTTP_CREATED);
+        return new JsonResponse($responseDto, Response::HTTP_CREATED);
     }
 
 

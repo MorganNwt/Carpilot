@@ -43,7 +43,7 @@ class VehicleService
      * @return Vehicle The newly created Vehicle entity.
      * @throws NotFoundHttpException If the estimation token is expired or not found in cache.
      */
-    public function createVehicleFromEstimation(string $token, Seller $seller)
+    public function createVehicleFromEstimation(string $token, Seller $seller): Vehicle
     {
         $cache = new FilesystemAdapter();
         $item = $cache->getItem($token);
@@ -53,30 +53,60 @@ class VehicleService
         }
 
         $data = $item->get();
-        $vehicleData = $data['vehicle_data'];
+        $vehicleData = $data['vehicle_data'] ?? null;
 
+        if (!$vehicleData) {
+            throw new NotFoundHttpException('Estimation data missing.');
+        }
+
+        // DTO depuis le cache
         $dto = new EstimationRequestDto();
-
         foreach ($vehicleData as $key => $value) {
             if (property_exists($dto, $key)) {
                 $dto->$key = $value;
             }
         }
 
-        $vehicle = $this->mapper->fromCreateDtoToEntity($dto);
-        $vehicle->setSeller($seller);
+        // Chercher véhicule existant (plate OU vin)
+        $existing = null;
 
-        $estimation = new Estimation();
+        if (!empty($dto->vin)) {
+            $existing = $this->repository->findOneBy(['vin' => $dto->vin]);
+        }
+
+        if (!$existing && !empty($dto->plate)) {
+            $existing = $this->repository->findOneBy(['plate' => $dto->plate]);
+        }
+
+        // Si existe, on contrôle le propriétaire
+        if ($existing) {
+            if ($existing->getSeller()?->getId() !== $seller->getId()) {
+                // plaque déjà utilisée par un autre vendeur -> on refuse
+                throw new \RuntimeException("Ce véhicule est déjà associé à un autre vendeur.");
+            }
+        } else {
+            // Sinon : on crée
+            $vehicle = $this->mapper->fromCreateDtoToEntity($dto);
+            $vehicle->setSeller($seller);
+            $this->em->persist($vehicle);
+        }
+
+        // Gestion de l'estimation (OneToOne)
+        $estimation = $vehicle->getEstimation() ?? new Estimation();
         $estimation->setEstimatedPrice($data['price']);
+
+        // si ton Estimation a un status par défaut, tu peux le setter ici
+        // $estimation->setStatus('estimated');
+
         $vehicle->setEstimation($estimation);
 
-        $this->em->persist($vehicle);
         $this->em->flush();
 
         $cache->deleteItem($token);
 
         return $vehicle;
     }
+
 
 
     /**
