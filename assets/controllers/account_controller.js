@@ -53,6 +53,10 @@ export default class extends Controller {
       const decoded = this.decodeJwt(data.token);
       const roles = decoded.roles ?? [];
 
+      console.log('JWT décodé:', decoded);
+      console.log('Rôles détectés:', roles);
+
+
       //  Redirection par rôle
       if (roles.includes('ROLE_ADMIN')) {
         window.location.href = '/admin/dashboard';

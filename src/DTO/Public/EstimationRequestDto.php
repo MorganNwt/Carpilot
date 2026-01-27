@@ -70,12 +70,12 @@ class EstimationRequestDto
     #[Assert\NotBlank]
     public string $color;
 
+    #[OA\Property(example: 85000, nullable: true)]
+    #[Assert\Positive]
+    public ?int $mileage = null;
+
     #[OA\Property(example: "2019-07-23")]
     #[Assert\NotBlank(message: "The registration date is required.")]
     #[Assert\Date(message: "The registration date format must be YYYY-MM-DD.")]
     public string $registrationDate;
-
-    #[OA\Property(example: 85000, nullable: true)]
-    #[Assert\Positive]
-    public ?int $mileage = null;
 }

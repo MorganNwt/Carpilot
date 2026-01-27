@@ -72,6 +72,11 @@ class CreateVehicleDto
     #[Assert\NotBlank]
     public ?string $color = null;
 
+    #[OA\Property(description: "The vehicle's mileage in kilometers.", example: 45000)]
+    #[Assert\NotBlank(message: "Mileage cannot be blank.")]
+    #[Assert\Positive(message: "Mileage must be a positive number.")]
+    public ?int $mileage = null;
+
     #[OA\Property(description: "The first registration date of the vehicle.", example: "2019-07-23")]
     #[Assert\NotBlank(message: "The registration date is required.")]
     #[Assert\Date(message: "The registration date format is invalid. Please use YYYY-MM-DD.")]

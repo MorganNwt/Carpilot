@@ -235,12 +235,12 @@ class Vehicle
         return $this;
     }
 
-    public function getMileageKm(): ?int
+    public function getMileage(): ?int
     {
         return $this->mileage;
     }
 
-    public function setMileageKm(?int $mileage): self
+    public function setMileage(?int $mileage): self
     {
         $this->mileage   = $mileage;
         return $this;

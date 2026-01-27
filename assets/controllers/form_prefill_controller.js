@@ -17,11 +17,11 @@ export default class extends Controller {
     "bodyType",
     "weightKg",
     "color",
-    "mileage"
+    "mileage",
   ];
 
   static values = {
-    endpoint: String // "/mock/plate-lookup"
+    endpoint: String, // "/mock/plate-lookup"
   };
 
   async connect() {
@@ -42,17 +42,18 @@ export default class extends Controller {
     // sinon (cas plaque -> login -> retour), on relance le lookup maintenant
     if (!plate) return;
 
-    const vehicle = await this.fetchVehicle(plate);
+    // ✅ si endpoint non fourni, on stoppe
+    if (!this.hasEndpointValue || !this.endpointValue) return;
 
+    const vehicle = await this.fetchVehicle(plate);
     const found = !!vehicle;
 
-    // on met à jour le storage pour les prochains reloads
     sessionStorage.setItem(
       "plate_prefill",
       JSON.stringify({
         ...data,
         found,
-        vehicle: found ? vehicle : null
+        vehicle: found ? vehicle : null,
       })
     );
 
@@ -60,12 +61,10 @@ export default class extends Controller {
   }
 
   async fetchVehicle(plate) {
-    // endpoint injecté depuis Twig
     const url = `${this.endpointValue}/${encodeURIComponent(plate)}`;
 
     const headers = { Accept: "application/json" };
 
-    // Si ton endpoint devient protégé un jour, on envoie le token si présent
     const token = localStorage.getItem("token");
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -73,7 +72,7 @@ export default class extends Controller {
       const res = await fetch(url, { headers, credentials: "same-origin" });
       const json = await res.json().catch(() => null);
 
-      // Format attendu: { error: false, data: {...} }
+      // Format mock attendu: { error: false, data: {...} }
       const found = !!json && json.error === false && !!json.data;
       return found ? json.data : null;
     } catch (e) {
@@ -87,7 +86,7 @@ export default class extends Controller {
     if (this.hasModelTarget) this.modelTarget.value = vehicle.model ?? "";
     if (this.hasVersionTarget) this.versionTarget.value = vehicle.version ?? "";
     if (this.hasEnergyTarget) this.energyTarget.value = vehicle.energy ?? "";
-    if (this.hasRegistrationDateTarget)this.registrationDateTarget.value = vehicle.registrationDate ?? "";
+    if (this.hasRegistrationDateTarget) this.registrationDateTarget.value = vehicle.registrationDate ?? "";
     if (this.hasHorsePowerTarget) this.horsePowerTarget.value = vehicle.horsePower ?? "";
     if (this.hasFiscalPowerTarget) this.fiscalPowerTarget.value = vehicle.fiscalPower ?? "";
     if (this.hasGearBoxTarget) this.gearBoxTarget.value = vehicle.gearBox ?? "";
