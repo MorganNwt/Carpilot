@@ -9,7 +9,7 @@ use App\DTO\Vehicle\EstimationResponseDto;
 class EstimationMapper
 {
 
-    public function fromEntityToResponseDto(Estimation $estimation)
+    public function fromEntityToResponseDto(Estimation $estimation): EstimationResponseDto
     {
         return new EstimationResponseDto(
             $estimation->getId(),
