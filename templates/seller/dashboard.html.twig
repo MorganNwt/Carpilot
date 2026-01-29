@@ -1,59 +1,148 @@
+{# dashboard.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Dashboard vendeur{% endblock %}
 
 {% block stylesheets %}
-    {# TODO : move to app.scss #}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('layouts/_dashboard.scss') }}">
+  {{ parent() }}
 
-<style>
-
-.input {
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem;
-}
-
-.badge {
-    background: #f3f4f6;
-    padding: 4px 10px;
-    border-radius: 90px;
-}
-</style>
-
+  <style>
+    .input {
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+    }
+    .badge {
+      background: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 90px;
+    }
+  </style>
 {% endblock %}
 
 {% block body %}
-
-
 <main class="min-h-screen bg-gray-50 p-8" data-controller="seller-profile seller-vehicle">
 
-    <h1 class="text-2xl font-bold mb-8">
-        Mon espace vendeur
-    </h1>
+  <h1 class="text-2xl font-bold mb-8">Mon espace vendeur</h1>
 
-    {# =====================
-       PROFIL
-       ===================== #}
-    <section class="bg-white p-6 shadow-xl rounded-2xl mb-10 max-w-4xl mx-auto">
-        <h2 class="text-orange-500 font-semibold text-lg mb-4">Mon profil</h2>
+  <section class="bg-white p-6 shadow-xl rounded-2xl mb-10 max-w-4xl mx-auto">
+    <h2 class="text-orange-500 font-semibold text-lg mb-4">Mon profil</h2>
+    <div data-seller-profile-target="profile">
+      <p class="text-gray-400">Chargement du profil…</p>
+    </div>
+  </section>
 
-        <div data-seller-profile-target="profile">
-            <p class="text-gray-400">Chargement du profil…</p>
+  <section class="mt-15 bg-white p-6 shadow-xl rounded-2xl max-w-6xl mx-auto">
+    <h2 class="text-orange-500 font-semibold text-lg mb-4">Mes véhicules</h2>
+
+    <div data-seller-vehicle-target="vehicles">
+      <p class="text-gray-400">Chargement des véhicules…</p>
+    </div>
+
+    {# ===== TEMPLATE CLONABLE ===== #}
+    <template data-seller-vehicle-target="vehicleTemplate">
+      <div class="border-b py-6" data-id="">
+        <!-- ================= LECTURE ================= -->
+        <div class="flex flex-col gap-4" data-view>
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-lg font-semibold" data-field="plate"></p>
+              <p class="text-gray-600">
+                <span data-field="brand"></span> <span data-field="model"></span>
+              </p>
+              <p class="text-gray-400 text-sm">
+                Ajouté le <span data-field="createdAt"></span>
+              </p>
+            </div>
+
+            <div class="flex gap-2">
+              <button
+                type="button"
+                class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer"
+                data-action="click->seller-vehicle#toggleEdit">
+                Modifier
+              </button>
+
+              <button
+                type="button"
+                class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition cursor-pointer"
+                data-action="click->seller-vehicle#deleteVehicle">
+                Supprimer
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 text-sm" data-badges>
+            <span class="badge" data-field="energy"></span>
+            <span class="badge" data-field="gearBox"></span>
+            <span class="badge" data-field="horsePower"></span>
+            <span class="badge" data-field="doors"></span>
+            <span class="badge" data-field="seats"></span>
+            <span class="badge" data-field="bodyType"></span>
+            <span class="badge" data-field="color"></span>
+          </div>
+
+         <p class="text-sm">
+            Estimation :
+            <span data-field="estimationValue" class="font-semibold"></span>
+            </p>
+
+            <div class="mt-2 flex items-center gap-3">
+            <label class="text-sm text-gray-600">
+                Mon prix :
+            </label>
+
+            <input
+                type="text"
+                inputmode="decimal"
+                placeholder="Votre offre"
+                class="border border-gray-300 rounded-lg px-3 py-1 text-sm w-32"
+                data-input="offerPrice"
+            />
+
+            <button
+                type="button"
+                class="bg-orange-500 text-white px-4 py-1.5 rounded-lg text-sm
+                    hover:bg-orange-600 transition cursor-pointer"
+                data-action="click->seller-vehicle#saveOffer"
+            >
+                Valider
+            </button>
+            </div>
+
         </div>
-    </section>
 
-    {# =====================
-       VÉHICULES
-       ===================== #}
-    <section class="mt-15 bg-white p-6 shadow-xl rounded-2xl max-w-6xl mx-auto">
-        <h2 class="text-orange-500 font-semibold text-lg mb-4">Mes véhicules</h2>
+        <!-- ================= ÉDITION ================= -->
+        <form
+          class="hidden mt-6 grid grid-cols-2 md:grid-cols-4 gap-4"
+          data-edit
+          data-action="submit->seller-vehicle#updateVehicle"
+          data-id=""
+        >
+          <input name="plate" class="input" placeholder="Plaque" data-input="plate"/>
+          <input name="vin" class="input" placeholder="VIN" data-input="vin"/>
+          <input name="brand" class="input" placeholder="Marque" data-input="brand"/>
+          <input name="model" class="input" placeholder="Modèle" data-input="model"/>
+          <input name="version" class="input" placeholder="Version" data-input="version"/>
+          <input name="energy" class="input" placeholder="Énergie" data-input="energy"/>
+          <input name="horsePower" class="input" placeholder="Puissance (ch)" data-input="horsePower"/>
+          <input name="fiscalPower" class="input" placeholder="Puissance fiscale" data-input="fiscalPower"/>
+          <input name="gearBox" class="input" placeholder="Boîte de vitesse" data-input="gearBox"/>
+          <input name="doors" class="input" placeholder="Nombre de portes" data-input="doors"/>
+          <input name="seats" class="input" placeholder="Nombre de places" data-input="seats"/>
+          <input name="bodyType" class="input" placeholder="Type de carrosserie" data-input="bodyType"/>
+          <input name="color" class="input" placeholder="Couleur" data-input="color"/>
+          <input name="weightKg" class="input" placeholder="Poids (kg)" data-input="weightKg"/>
 
-        <div data-seller-vehicle-target="vehicles">
-            <p class="text-gray-400">Chargement des véhicules…</p>
-        </div>
-    </section>
+          <div class="col-span-full flex gap-3 justify-end mt-4">
+            <button type="submit" class="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer">
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </template>
+  </section>
 </main>
 {% endblock %}
