@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/api/seller/estimations', name: 'api_seller_estimations_')]
 final class EstimationController extends AbstractController
 {
-    #[Route('/{id}/offer', name: 'offer_price', methods: ['POST'])]
+    #[Route('/{id}/offer', name: 'offer_price', methods: ['PUT'])]
     #[IsGranted('ESTIMATION_OFFER', subject: 'estimation')]
     public function offerPrice(
         Estimation $estimation,
@@ -28,14 +28,21 @@ final class EstimationController extends AbstractController
             ], 409);
         }
 
-        $estimation->setOfferPrice((string) $dto->offer_price);
+        // ✅ cohérent : si offer_price est float dans DTO, set float
+        $estimation->setOfferPrice($dto->offer_price);
+
         $estimation->setStatus(EstimationStatus::OFFER_MADE);
+        // si tu as un updatedAt :
+        // $estimation->setUpdatedAt(new \DateTimeImmutable());
 
         $em->flush();
 
         return $this->json([
             'message' => 'Offer price successfully submitted.',
-            'offer_price' => $dto->offer_price
+            'id' => $estimation->getId(),
+            'status' => $estimation->getStatus()->value,
+            'offer_price' => $estimation->getOfferPrice(),
+            'estimated_price' => $estimation->getEstimatedPrice(),
         ]);
     }
 }
