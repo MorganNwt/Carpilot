@@ -59,7 +59,6 @@ class VehicleService
             throw new NotFoundHttpException('Estimation data missing.');
         }
 
-        // DTO depuis le cache
         $dto = new EstimationRequestDto();
         foreach ($vehicleData as $key => $value) {
             if (property_exists($dto, $key)) {
@@ -67,7 +66,7 @@ class VehicleService
             }
         }
 
-        // Chercher véhicule existant (plate OU vin)
+        // Chercher véhicule existant (vin puis plate)
         $existing = null;
 
         if (!empty($dto->vin)) {
@@ -78,27 +77,30 @@ class VehicleService
             $existing = $this->repository->findOneBy(['plate' => $dto->plate]);
         }
 
-        // Si existe, on contrôle le propriétaire
         if ($existing) {
             if ($existing->getSeller()?->getId() !== $seller->getId()) {
-                // plaque déjà utilisée par un autre vendeur -> on refuse
                 throw new \RuntimeException("Ce véhicule est déjà associé à un autre vendeur.");
             }
+            $vehicle = $existing;
+            // Optionnel: si tu veux mettre à jour des champs du véhicule à partir du DTO,
+            // tu peux appeler un mapper update ici.
         } else {
-            // Sinon : on crée
             $vehicle = $this->mapper->fromCreateDtoToEntity($dto);
             $vehicle->setSeller($seller);
             $this->em->persist($vehicle);
         }
 
-        // Gestion de l'estimation (OneToOne)
+        // Estimation (OneToOne)
         $estimation = $vehicle->getEstimation() ?? new Estimation();
         $estimation->setEstimatedPrice($data['price']);
 
-        // si ton Estimation a un status par défaut, tu peux le setter ici
-        // $estimation->setStatus('estimated');
-
         $vehicle->setEstimation($estimation);
+
+        // Si pas de cascade persist sur Vehicle->Estimation =>
+
+        // if (!$estimation->getId()) {
+        //     $this->em->persist($estimation);
+        // }
 
         $this->em->flush();
 
@@ -106,6 +108,7 @@ class VehicleService
 
         return $vehicle;
     }
+
 
 
 

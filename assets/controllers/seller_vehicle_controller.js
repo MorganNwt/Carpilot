@@ -121,7 +121,7 @@ export default class extends Controller {
                         <p class="text-sm">
                             Estimation :
                             <span class="${vehicle.estimation ? 'text-green-600' : 'text-gray-400'} font-semibold">
-                                ${vehicle.estimation?.amount ? vehicle.estimation.amount + ' €' : 'Aucune estimation'}
+                                ${vehicle.estimation?.estimated_price != null ? vehicle.estimation.estimated_price + ' €' : 'Aucune estimation'}
                             </span>
                         </p>
                     </div>
@@ -213,7 +213,7 @@ export default class extends Controller {
         await this.loadVehicles();
 
         } catch (e) {
-            toastr.error('Erreur réseau');
+            toastr.error('Erreur lors de la mise à jour du véhicule');
         }
     }
 

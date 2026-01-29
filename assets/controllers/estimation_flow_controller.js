@@ -14,7 +14,7 @@ export default class extends Controller {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      // sécurité : si jamais on arrive ici non connecté
+      // sécurité : si on arrive ici non connecté
       sessionStorage.setItem("after_login_redirect", this.resultRedirectValue || "/seller/estimation/result");
       window.location.href = this.accountUrlValue || "/account";
       return;
@@ -24,11 +24,11 @@ export default class extends Controller {
     this.setError("");
 
     try {
-      // 1) construire payload depuis le form HTML
+      // construire payload depuis le form HTML
       const form = event.currentTarget;
       const payload = this.formToJson(form);
 
-      // 2) CALCULATE -> estimation_token
+      // CALCULATE -> estimation_token
       const calculateRes = await fetch(this.calculateUrlValue, {
         method: "POST",
         headers: {
@@ -50,7 +50,7 @@ export default class extends Controller {
         throw new Error("Token d’estimation manquant dans la réponse.");
       }
 
-        // 3) CREATE-FROM-ESTIMATION -> véhicule + estimation
+        // CREATE-FROM-ESTIMATION -> véhicule + estimation
         const createRes = await fetch(this.createUrlValue, {
           method: "POST",
           headers: {
@@ -69,10 +69,10 @@ export default class extends Controller {
 
       const created = await createRes.json();
 
-      // 4) stocker le résultat pour la page suivante
+      //stocker le résultat pour la page suivante
       sessionStorage.setItem("estimationResult", JSON.stringify(created));
 
-      // 5) redirect vers la vue résultat
+      // redirect vers la vue résultat
       window.location.href = this.resultRedirectValue;
 
     } catch (e) {
@@ -84,7 +84,7 @@ export default class extends Controller {
   }
 
   formToJson(form) {
-    // récupère tous les champs name=...
+    // récupère tous les champs du form en un objet
     const fd = new FormData(form);
     const obj = Object.fromEntries(fd.entries());
 

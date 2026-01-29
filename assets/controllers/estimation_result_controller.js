@@ -9,7 +9,7 @@ export default class extends Controller {
 
     const data = JSON.parse(raw);
 
-    // d’après ton JSON Postman : data.estimation.estimated_price
+    // afficher les infos sur la page du resultat
     const price = data?.estimation?.estimated_price;
     const plate = data?.plate ?? "";
     const brand = data?.brand ?? "";
