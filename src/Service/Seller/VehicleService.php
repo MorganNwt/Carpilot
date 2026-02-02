@@ -13,6 +13,7 @@ use App\DTO\Public\EstimationRequestDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 /**
  * Class VehicleService
@@ -79,7 +80,7 @@ class VehicleService
 
         if ($existing) {
             if ($existing->getSeller()?->getId() !== $seller->getId()) {
-                throw new \RuntimeException("Ce véhicule est déjà associé à un autre vendeur.");
+                throw new ConflictHttpException("Ce véhicule est déjà associé à un autre vendeur.");
             }
             $vehicle = $existing;
             // Optionnel: si tu veux mettre à jour des champs du véhicule à partir du DTO,

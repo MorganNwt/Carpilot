@@ -98,10 +98,20 @@ export default class extends Controller {
         });
 
         if (!createRes.ok) {
-          const text = await createRes.text().catch(() => "");
-          console.error("create-from-estimation failed:", createRes.status, text);
-          throw new Error(`Erreur serveur (${createRes.status}) lors de l’enregistrement.`);
-      }
+          const contentType = createRes.headers.get("content-type") || "";
+          let msg = `Erreur (${createRes.status}) lors de l’enregistrement.`;
+
+          if (contentType.includes("application/json")) {
+            const err = await createRes.json().catch(() => null);
+            msg = err?.detail || err?.message || msg;
+          } else {
+            const text = await createRes.text().catch(() => "");
+            if (text) msg = text;
+          }
+
+          console.error("create-from-estimation failed:", createRes.status, msg);
+          throw new Error(msg);
+        }
 
       const created = await createRes.json();
 
