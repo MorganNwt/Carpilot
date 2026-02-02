@@ -20,6 +20,7 @@ export default class extends Controller {
     return {
       Authorization: `Bearer ${this.token}`,
       "Content-Type": "application/json",
+      Accept: "application/json",
     };
   }
 
@@ -86,6 +87,10 @@ export default class extends Controller {
     // ✅ estimation id for offer endpoint
     node.dataset.estimationId = vehicle?.estimation?.id ? String(vehicle.estimation.id) : "";
 
+    // ✅ can edit offer from API (derived from status)
+    const canEditOffer = !!vehicle?.estimation?.can_edit_offer;
+    node.dataset.canEditOffer = canEditOffer ? "1" : "0";
+
     // Fill fields
     this.setText(node, "plate", vehicle.plate ?? "—");
     this.setText(node, "brand", vehicle.brand ?? "");
@@ -116,12 +121,37 @@ export default class extends Controller {
       }
     }
 
-    // ✅ Prefill offer input if exists
+    // ✅ Offer input + button lock
     const offerInput = node.querySelector('[data-input="offerPrice"]');
+    const offerBtn = node.querySelector('[data-action*="seller-vehicle#saveOffer"]');
+
+    const hasEstimation = !!vehicle?.estimation?.id;
+    const locked = !hasEstimation || !canEditOffer;
+
     if (offerInput) {
       offerInput.value = vehicle?.estimation?.offer_price ?? "";
-      // Optionnel: désactiver si pas d'estimation
-      offerInput.disabled = !vehicle?.estimation?.id;
+      offerInput.disabled = locked;
+      offerInput.classList.toggle("opacity-60", locked);
+      offerInput.classList.toggle("cursor-not-allowed", locked);
+
+      // UX: placeholder différent si verrouillé
+      if (locked) {
+        offerInput.placeholder = "Offre verrouillée";
+      }
+    }
+
+    if (offerBtn) {
+      offerBtn.disabled = locked;
+      offerBtn.classList.toggle("opacity-60", locked);
+      offerBtn.classList.toggle("cursor-not-allowed", locked);
+
+      // UX: label du bouton
+      const hasOffer = vehicle?.estimation?.offer_price != null && String(vehicle.estimation.offer_price).trim() !== "";
+      offerBtn.textContent = hasOffer ? "Mettre à jour" : "Valider";
+
+      if (locked) {
+        offerBtn.textContent = "Verrouillé";
+      }
     }
 
     // Prefill edit inputs
@@ -153,49 +183,70 @@ export default class extends Controller {
     if (input) input.value = value ?? "";
   }
 
-  // ✅ NEW: submit offer_price for an estimation
+  // ✅ submit offer_price for an estimation
   async saveOffer(event) {
-    const container = event.currentTarget.closest("[data-id]");
-    if (!container) return;
+  const container = event.currentTarget.closest("[data-id]");
+  if (!container) return;
 
-    const estimationId = container.dataset.estimationId;
-    if (!estimationId) {
-      toastr.error("Aucune estimation associée à ce véhicule");
-      return;
-    }
-
-    const input = container.querySelector('[data-input="offerPrice"]');
-    const value = input?.value?.trim();
-
-    if (!value) {
-      toastr.error("Veuillez saisir un prix");
-      return;
-    }
-
-    // Optionnel: normaliser virgule -> point
-    const normalized = value.replace(",", ".");
-
-    try {
-      const response = await fetch(`/api/seller/estimations/${estimationId}/offer`, {
-        method: "PUT",
-        headers: this.headers,
-        body: JSON.stringify({
-          offer_price: normalized, // ✅ string
-        }),
-      });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => null);
-        toastr.error(err?.message ?? "Erreur lors de l'envoi de l'offre");
-        return;
-      }
-
-      toastr.success("Offre enregistrée");
-      await this.loadVehicles();
-    } catch {
-      toastr.error("Erreur réseau");
-    }
+  const estimationId = container.dataset.estimationId;
+  if (!estimationId) {
+    toastr.error("Aucune estimation associée à ce véhicule");
+    return;
   }
+
+  // ✅ lock check (from API derived rule)
+  const canEdit = container.dataset.canEditOffer === "1";
+  if (!canEdit) {
+    toastr.error("Offre verrouillée : elle est en cours de traitement ou clôturée.");
+    return;
+  }
+
+  const input = container.querySelector('[data-input="offerPrice"]');
+  const value = input?.value?.trim();
+
+  if (!value) {
+    toastr.error("Veuillez saisir un prix");
+    return;
+  }
+
+  // Normaliser virgule -> point
+  const normalized = value.replace(",", ".");
+
+  // Validation front (optionnelle mais utile)
+  const num = Number.parseFloat(normalized);
+  if (!Number.isFinite(num) || num <= 0) {
+    toastr.error("Veuillez saisir un prix valide");
+    return;
+  }
+
+  // ✅ IMPORTANT : DTO attend une string
+  const payload = { offer_price: String(normalized) };
+  console.log("payload offer:", payload, typeof payload.offer_price);
+
+  try {
+    const response = await fetch(`/api/seller/estimations/${estimationId}/offer`, {
+      method: "PUT",
+      headers: this.headers,
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const contentType = response.headers.get("content-type") || "";
+      const err = contentType.includes("application/json")
+        ? await response.json().catch(() => null)
+        : await response.text().catch(() => null);
+
+      toastr.error(err?.message ?? "Erreur lors de l'envoi de l'offre");
+      return;
+    }
+
+    toastr.success("Offre enregistrée");
+    await this.loadVehicles();
+  } catch {
+    toastr.error("Erreur réseau");
+  }
+}
+
 
   async updateVehicle(event) {
     event.preventDefault();

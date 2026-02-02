@@ -30,25 +30,61 @@ export default class extends Controller {
 
       // CALCULATE -> estimation_token
       const calculateRes = await fetch(this.calculateUrlValue, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (!calculateRes.ok) {
-        throw new Error("Impossible de calculer l’estimation. Vérifiez les champs.");
+    if (!calculateRes.ok) {
+      const contentType = calculateRes.headers.get("content-type") || "";
+      let apiBody = null;
+
+      try {
+        apiBody = contentType.includes("application/json")
+          ? await calculateRes.json()
+          : await calculateRes.text();
+      } catch (_) {
+        apiBody = null;
       }
 
-      const calculateJson = await calculateRes.json();
-      const estimationToken = calculateJson?.estimation_token;
+      console.error("calculate failed:", calculateRes.status, apiBody);
 
-      if (!estimationToken) {
-        throw new Error("Token d’estimation manquant dans la réponse.");
+      // Message utilisateur plus clair selon le code
+      if (calculateRes.status === 409) {
+        throw new Error(
+          (apiBody && apiBody.message) ||
+          "Un véhicule avec cette plaque existe déjà sur votre compte. Ouvrez l’offre en cours ou mettez-la à jour."
+        );
       }
+
+      if (calculateRes.status === 422) {
+        throw new Error(
+          (apiBody && apiBody.message) ||
+          "Certains champs sont invalides. Vérifiez le formulaire."
+        );
+      }
+
+      if (calculateRes.status === 401 || calculateRes.status === 403) {
+        throw new Error("Votre session a expiré. Veuillez vous reconnecter.");
+      }
+
+      throw new Error(
+        (apiBody && apiBody.message) ||
+        `Impossible de calculer l’estimation (HTTP ${calculateRes.status}).`
+      );
+    }
+
+    const calculateJson = await calculateRes.json();
+    const estimationToken = calculateJson?.estimation_token;
+
+    if (!estimationToken) {
+      console.error("calculate response missing estimation_token:", calculateJson);
+      throw new Error("Réponse serveur invalide : token d’estimation manquant.");
+    }
 
         // CREATE-FROM-ESTIMATION -> véhicule + estimation
         const createRes = await fetch(this.createUrlValue, {

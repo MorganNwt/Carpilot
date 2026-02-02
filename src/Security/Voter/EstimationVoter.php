@@ -3,8 +3,8 @@
 namespace App\Security\Voter;
 
 use App\Entity\Estimation;
-use App\Entity\User\Seller;
 use App\Entity\User\Agent;
+use App\Entity\User\Seller;
 use App\Enum\EstimationStatus;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -19,18 +19,11 @@ final class EstimationVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         return $subject instanceof Estimation
-            && in_array($attribute, [
-                self::OFFER,
-                self::ACCEPT,
-                self::REFUSE,
-            ], true);
+            && in_array($attribute, [self::OFFER, self::ACCEPT, self::REFUSE], true);
     }
 
-    protected function voteOnAttribute(
-        string $attribute,
-        mixed $subject,
-        TokenInterface $token
-    ): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    {
         $user = $token->getUser();
 
         if (!$user instanceof UserInterface) {
@@ -50,8 +43,25 @@ final class EstimationVoter extends Voter
 
     private function canOffer(Estimation $estimation, UserInterface $user): bool
     {
-        return $user instanceof Seller
-            && $estimation->getStatus() === EstimationStatus::ESTIMATED;
+        if (!$user instanceof Seller) {
+            return false;
+        }
+
+        // L'estimation doit appartenir au vendeur connecté
+        $vehicle = $estimation->getVehicle();
+        if (!$vehicle || !$vehicle->getSeller()) {
+            return false;
+        }
+
+        if ($vehicle->getSeller()->getId() !== $user->getId()) {
+            return false;
+        }
+
+        //  statut : modifiable uniquement si pas verrouillé
+        return in_array($estimation->getStatus(), [
+            EstimationStatus::ESTIMATED,
+            EstimationStatus::OFFER_MADE,
+        ], true);
     }
 
     private function canAccept(Estimation $estimation, UserInterface $user): bool
