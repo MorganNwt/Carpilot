@@ -57,13 +57,13 @@ final class EstimationController extends AbstractController
         }
 
         /**
-         * 4 Mise à jour de l’offre
+         *  Mise à jour de l’offre
          * Stockage en float en base
          */
         $estimation->setOfferPrice($offerPrice);
 
         /**
-         * 5️ Transition de statut
+         * Transition de statut
          * ESTIMATED → OFFER_MADE uniquement à la première soumission
          */
         if ($estimation->getStatus() === EstimationStatus::ESTIMATED) {
@@ -71,7 +71,7 @@ final class EstimationController extends AbstractController
         }
 
         /**
-         * 6updatedAt Mise à jour de la date de modification
+         * updatedAt Mise à jour de la date de modification
          */
         if (method_exists($estimation, 'setUpdatedAt')) {
             $estimation->setUpdatedAt(new \DateTimeImmutable());
@@ -79,9 +79,6 @@ final class EstimationController extends AbstractController
 
         $em->flush();
 
-        /**
-         * Réponse API
-         */
         return $this->json([
             'message' => 'Offre enregistrée.',
             'estimation' => [
