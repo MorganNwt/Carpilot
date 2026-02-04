@@ -19,11 +19,18 @@ final class EstimationVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         return $subject instanceof Estimation
-            && in_array($attribute, [self::OFFER, self::ACCEPT, self::REFUSE], true);
+            && in_array($attribute, [
+                self::OFFER,
+                self::ACCEPT,
+                self::REFUSE,
+            ], true);
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
-    {
+    protected function voteOnAttribute(
+        string $attribute,
+        mixed $subject,
+        TokenInterface $token
+    ): bool {
         $user = $token->getUser();
 
         if (!$user instanceof UserInterface) {
@@ -41,13 +48,27 @@ final class EstimationVoter extends Voter
         };
     }
 
+    /**
+     * ADMIN = agent+
+     */
+    private function isAdmin(UserInterface $user): bool
+    {
+        return method_exists($user, 'getRoles')
+            && in_array('ROLE_ADMIN', $user->getRoles(), true);
+    }
+
+    /**
+     * Le vendeur peut proposer / modifier son offre uniquement si :
+     * - il est propriétaire du véhicule
+     * - le statut n’est pas verrouillé
+     */
     private function canOffer(Estimation $estimation, UserInterface $user): bool
     {
         if (!$user instanceof Seller) {
             return false;
         }
 
-        // L'estimation doit appartenir au vendeur connecté
+        // Ownership : l’estimation doit appartenir au vendeur connecté
         $vehicle = $estimation->getVehicle();
         if (!$vehicle || !$vehicle->getSeller()) {
             return false;
@@ -57,22 +78,40 @@ final class EstimationVoter extends Voter
             return false;
         }
 
-        //  statut : modifiable uniquement si pas verrouillé
+        // Statuts modifiables par le vendeur
         return in_array($estimation->getStatus(), [
             EstimationStatus::ESTIMATED,
             EstimationStatus::OFFER_MADE,
         ], true);
     }
 
+    /**
+     * Agent ou Admin peut accepter une estimation
+     */
     private function canAccept(Estimation $estimation, UserInterface $user): bool
     {
-        return $user instanceof Agent
-            && $estimation->getStatus() === EstimationStatus::OFFER_MADE;
+        if (!($user instanceof Agent) && !$this->isAdmin($user)) {
+            return false;
+        }
+
+        return in_array($estimation->getStatus(), [
+            EstimationStatus::OFFER_MADE,
+            EstimationStatus::IN_REVIEW,
+        ], true);
     }
 
+    /**
+     * Agent ou Admin peut refuser une estimation
+     */
     private function canRefuse(Estimation $estimation, UserInterface $user): bool
     {
-        return $user instanceof Agent
-            && $estimation->getStatus() === EstimationStatus::OFFER_MADE;
+        if (!($user instanceof Agent) && !$this->isAdmin($user)) {
+            return false;
+        }
+
+        return in_array($estimation->getStatus(), [
+            EstimationStatus::OFFER_MADE,
+            EstimationStatus::IN_REVIEW,
+        ], true);
     }
 }

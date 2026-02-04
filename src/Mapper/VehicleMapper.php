@@ -124,6 +124,8 @@ class VehicleMapper
 
         return new VehicleResponseDto(
             $vehicle->getId(),
+            $vehicle->getSeller()?->getFirstName(),
+            $vehicle->getSeller()?->getLastName(),
             $vehicle->getPlate(),
             $vehicle->getVin(),
             $vehicle->getBrand(),

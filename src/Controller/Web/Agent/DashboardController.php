@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Controller\Web\Seller;
+namespace App\Controller\Web\Agent;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class DashboardController extends AbstractController
 {
-    #[Route('/seller/dashboard', name: 'seller_dashboard')]
+    #[Route('/agent/dashboard', name: 'agent_dashboard', methods: ['GET'])]
     public function index(): Response
     {
-        return $this->render('seller/dashboard.html.twig');
+        return $this->render('agent/dashboard.html.twig');
     }
 }
