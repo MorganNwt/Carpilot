@@ -46,8 +46,8 @@ export default class extends Controller {
 
   badge(status) {
     const map = {
-      estimated: ["Estimée", "bg-blue-100 text-blue-700"],
-      offer_made: ["Offre reçue", "bg-orange-100 text-orange-700"],
+      estimated: ["Estimation...", "bg-blue-100 text-blue-700"],
+      offer_made: ["Offre en attente", "bg-orange-100 text-orange-700"],
       in_review: ["En cours d’étude", "bg-yellow-100 text-yellow-800"],
       rejected: ["Refusée", "bg-red-100 text-red-700"],
       transaction_completed: ["Acceptée", "bg-green-100 text-green-700"],

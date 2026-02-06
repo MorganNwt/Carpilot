@@ -38,28 +38,37 @@ final class VehicleController extends AbstractController
     ) {}
 
 
+    // MAJ - Renforcer la sécurité de cette route en vérifiant que le token d'estimation appartient bien au vendeur connecté
     #[Route('create-from-estimation', name: 'create_from_estimation', methods: ['POST'])]
-    public function createFromEstimation(
-        Request $request,
-        #[CurrentUser] ?Seller $seller
-    ) {
-        if (!$seller) {
+    #[OA\Post(
+        summary: "Create a vehicle from an estimation",
+        description: "Creates a new vehicle based on a provided estimation token, if the token belongs to the authenticated seller."
+    )]
+    public function createFromEstimation(Request $request): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof Seller) {
             return $this->json(
-                ['message' => 'Forbidden access. You must be logged in as a seller.'],
+                ['message' => 'Accès refusé : vous devez être connecté avec un compte vendeur.'],
                 Response::HTTP_FORBIDDEN
             );
         }
 
-        $token = $request->toArray()['estimation_token'] ?? null;
+        $payload = $request->toArray();
+        $token = $payload['estimation_token'] ?? null;
 
         if (!$token) {
-            return new JsonResponse('Missing token', Response::HTTP_BAD_REQUEST);
+            return $this->json(
+                ['message' => 'estimation_token manquant.'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
-        $vehicle = $this->vehicleService->createVehicleFromEstimation($token, $seller);
+        $vehicle = $this->vehicleService->createVehicleFromEstimation($token, $user);
         $responseDto = $this->vehicleMapper->fromEntityToResponseDto($vehicle);
 
-        return new JsonResponse($responseDto, Response::HTTP_CREATED);
+        return $this->json($responseDto, Response::HTTP_CREATED);
     }
 
 

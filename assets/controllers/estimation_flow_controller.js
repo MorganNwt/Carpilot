@@ -14,8 +14,10 @@ export default class extends Controller {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      // sécurité : si on arrive ici non connecté
-      sessionStorage.setItem("after_login_redirect", this.resultRedirectValue || "/seller/estimation/result");
+      sessionStorage.setItem(
+        "after_login_redirect",
+        this.resultRedirectValue || "/seller/estimation/result"
+      );
       window.location.href = this.accountUrlValue || "/account";
       return;
     }
@@ -24,117 +26,133 @@ export default class extends Controller {
     this.setError("");
 
     try {
-      // construire payload depuis le form HTML
       const form = event.currentTarget;
       const payload = this.formToJson(form);
 
-      // CALCULATE -> estimation_token
+      // ===== 1) CALCULATE =====
       const calculateRes = await fetch(this.calculateUrlValue, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (!calculateRes.ok) {
-      const contentType = calculateRes.headers.get("content-type") || "";
-      let apiBody = null;
-
-      try {
-        apiBody = contentType.includes("application/json")
-          ? await calculateRes.json()
-          : await calculateRes.text();
-      } catch (_) {
-        apiBody = null;
+      if (!calculateRes.ok) {
+        const apiErr = await this.parseError(calculateRes);
+        console.error("calculate failed:", calculateRes.status, apiErr);
+        throw new Error(this.userMessage(calculateRes.status, apiErr, "calculate"));
       }
 
-      console.error("calculate failed:", calculateRes.status, apiBody);
+      const calculateJson = await calculateRes.json();
+      const estimationToken = calculateJson?.estimation_token;
 
-      // Message utilisateur plus clair selon le code
-      if (calculateRes.status === 409) {
-        throw new Error(
-          (apiBody && apiBody.message) ||
-          "Un véhicule avec cette plaque existe déjà sur votre compte. Ouvrez l’offre en cours ou mettez-la à jour."
-        );
+      if (!estimationToken) {
+        console.error("calculate response missing estimation_token:", calculateJson);
+        throw new Error("Réponse serveur invalide : token d’estimation manquant.");
       }
 
-      if (calculateRes.status === 422) {
-        throw new Error(
-          (apiBody && apiBody.message) ||
-          "Certains champs sont invalides. Vérifiez le formulaire."
-        );
+      // ===== 2) CREATE-FROM-ESTIMATION =====
+      const createRes = await fetch(this.createUrlValue, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ estimation_token: estimationToken }),
+      });
+
+      if (!createRes.ok) {
+        const apiErr = await this.parseError(createRes);
+        console.error("create-from-estimation failed:", createRes.status, apiErr);
+        throw new Error(this.userMessage(createRes.status, apiErr, "create"));
       }
-
-      if (calculateRes.status === 401 || calculateRes.status === 403) {
-        throw new Error("Votre session a expiré. Veuillez vous reconnecter.");
-      }
-
-      throw new Error(
-        (apiBody && apiBody.message) ||
-        `Impossible de calculer l’estimation (HTTP ${calculateRes.status}).`
-      );
-    }
-
-    const calculateJson = await calculateRes.json();
-    const estimationToken = calculateJson?.estimation_token;
-
-    if (!estimationToken) {
-      console.error("calculate response missing estimation_token:", calculateJson);
-      throw new Error("Réponse serveur invalide : token d’estimation manquant.");
-    }
-
-        // CREATE-FROM-ESTIMATION -> véhicule + estimation
-        const createRes = await fetch(this.createUrlValue, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ estimation_token: estimationToken }),
-        });
-
-        if (!createRes.ok) {
-          const contentType = createRes.headers.get("content-type") || "";
-          let msg = `Erreur (${createRes.status}) lors de l’enregistrement.`;
-
-          if (contentType.includes("application/json")) {
-            const err = await createRes.json().catch(() => null);
-            msg = err?.detail || err?.message || msg;
-          } else {
-            const text = await createRes.text().catch(() => "");
-            if (text) msg = text;
-          }
-
-          console.error("create-from-estimation failed:", createRes.status, msg);
-          throw new Error(msg);
-        }
 
       const created = await createRes.json();
 
-      //stocker le résultat pour la page suivante
       sessionStorage.setItem("estimationResult", JSON.stringify(created));
-
-      // redirect vers la vue résultat
       window.location.href = this.resultRedirectValue;
 
     } catch (e) {
       console.error(e);
-      this.setError(e.message || "Une erreur est survenue.");
+      this.setError(e?.message || "Une erreur est survenue.");
     } finally {
       this.setLoading(false);
     }
   }
 
+  // ============= Helpers erreurs (robuste JSON / texte) =============
+  async parseError(res) {
+    const contentType = res.headers.get("content-type") || "";
+
+    // Essaie JSON
+    if (contentType.includes("application/json")) {
+      const json = await res.json().catch(() => null);
+      return {
+        type: "json",
+        json,
+        message: json?.message || json?.detail || null,
+        raw: json,
+      };
+    }
+
+    // Sinon texte
+    const text = await res.text().catch(() => "");
+    return {
+      type: "text",
+      text,
+      message: text || null,
+      raw: text,
+    };
+  }
+
+  userMessage(status, apiErr, step) {
+    const rawMsg = (apiErr?.message || "").toString();
+
+    // 🔒 Auth / droits
+    if (status === 401) {
+      return "Votre session a expiré. Veuillez vous reconnecter.";
+    }
+
+    // 403 = connecté mais pas le bon rôle (Agent/Admin sur flow vendeur)
+    if (
+      status === 403 ||
+      rawMsg.includes("Access Denied") ||
+      rawMsg.includes("ROLE_SELLER") ||
+      rawMsg.includes("Seller") // parfois: "Seller expected"
+    ) {
+      return "Accès refusé : connectez-vous avec un compte vendeur pour enregistrer un véhicule.";
+    }
+
+    // Conflit métier (ex: déjà associé)
+    if (status === 409) {
+      // si backend renvoie un message précis, on le garde
+      if (rawMsg && rawMsg.length < 200) return rawMsg;
+
+      // fallback selon l'étape
+      if (step === "calculate") {
+        return "Un véhicule avec cette plaque existe déjà sur votre compte. Ouvrez l’offre en cours ou mettez-la à jour.";
+      }
+      return "Ce véhicule ne peut pas être enregistré (conflit). Il est peut-être déjà lié à un autre vendeur.";
+    }
+
+    // Validation
+    if (status === 422) {
+      return rawMsg || "Certains champs sont invalides. Vérifiez le formulaire.";
+    }
+
+    // Fallback générique (si backend a déjà un message -> on l'affiche)
+    return rawMsg || `Une erreur est survenue (HTTP ${status}).`;
+  }
+
+  // ============= Form parsing =============
   formToJson(form) {
-    // récupère tous les champs du form en un objet
     const fd = new FormData(form);
     const obj = Object.fromEntries(fd.entries());
 
-    // conversions utiles (sinon tout arrive en string)
     const toInt = (v) => (v === "" || v == null ? null : parseInt(v, 10));
     const toFloat = (v) => (v === "" || v == null ? null : parseFloat(v));
 
@@ -154,10 +172,11 @@ export default class extends Controller {
       weightKg: toInt(obj.weightKg),
       color: obj.color ?? "",
       mileage: toInt(obj.mileage),
-      registrationDate: obj.registrationDate ?? "", // "YYYY-MM-DD"
+      registrationDate: obj.registrationDate ?? "",
     };
   }
 
+  // ============= UI =============
   setLoading(isLoading) {
     if (this.hasBtnTarget) {
       this.btnTarget.disabled = isLoading;
