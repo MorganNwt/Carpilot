@@ -38,6 +38,12 @@ export default class extends Controller {
     const container = event.currentTarget.closest("[data-id]");
     if (!container) return;
 
+    // ✅ bloquer ouverture si véhicule verrouillé
+    if (container.dataset.vehicleLocked === "1") {
+      toastr.error("Modification impossible : dossier en cours de traitement ou clôturé.");
+      return;
+    }
+
     const view = container.querySelector("[data-view]");
     const edit = container.querySelector("[data-edit]");
     if (!view || !edit) return;
@@ -84,10 +90,10 @@ export default class extends Controller {
     const form = node.querySelector("form[data-edit]");
     if (form) form.dataset.id = String(vehicle.id ?? "");
 
-    // ✅ estimation id for offer endpoint
+    // estimation id for offer endpoint
     node.dataset.estimationId = vehicle?.estimation?.id ? String(vehicle.estimation.id) : "";
 
-    // ✅ can edit offer from API (derived from status)
+    // can edit offer from API (derived from status)
     const canEditOffer = !!vehicle?.estimation?.can_edit_offer;
     node.dataset.canEditOffer = canEditOffer ? "1" : "0";
 
@@ -121,36 +127,82 @@ export default class extends Controller {
       }
     }
 
-    // ✅ Offer input + button lock
+    // Offer input + button lock
     const offerInput = node.querySelector('[data-input="offerPrice"]');
     const offerBtn = node.querySelector('[data-action*="seller-vehicle#saveOffer"]');
 
     const hasEstimation = !!vehicle?.estimation?.id;
-    const locked = !hasEstimation || !canEditOffer;
+    const offerLocked = !hasEstimation || !canEditOffer;
 
+    // ✅ status estimation
+    const status = vehicle?.estimation?.status ?? null;
+
+    // ✅ verrouillage édition véhicule si dossier pris en charge / clôturé
+    const vehicleLockedStatuses = ["in_review", "rejected", "transaction_completed", "cancelled"];
+    const vehicleLocked = status ? vehicleLockedStatuses.includes(status) : false;
+
+    // on stocke dans le DOM pour toggleEdit()
+    node.dataset.vehicleLocked = vehicleLocked ? "1" : "0";
+
+    // Offer input
     if (offerInput) {
       offerInput.value = vehicle?.estimation?.offer_price ?? "";
-      offerInput.disabled = locked;
-      offerInput.classList.toggle("opacity-60", locked);
-      offerInput.classList.toggle("cursor-not-allowed", locked);
+      offerInput.disabled = offerLocked;
+      offerInput.classList.toggle("opacity-60", offerLocked);
+      offerInput.classList.toggle("cursor-not-allowed", offerLocked);
 
-      // UX: placeholder différent si verrouillé
-      if (locked) {
-        offerInput.placeholder = "Offre verrouillée";
+      if (offerLocked) {
+        if (status === "rejected") offerInput.placeholder = "Offre refusée";
+        else if (status === "transaction_completed") offerInput.placeholder = "Offre acceptée";
+        else offerInput.placeholder = "Offre verrouillée";
       }
     }
 
+    // Offer button label
     if (offerBtn) {
-      offerBtn.disabled = locked;
-      offerBtn.classList.toggle("opacity-60", locked);
-      offerBtn.classList.toggle("cursor-not-allowed", locked);
+      offerBtn.disabled = offerLocked;
+      offerBtn.classList.toggle("opacity-60", offerLocked);
+      offerBtn.classList.toggle("cursor-not-allowed", offerLocked);
 
-      // UX: label du bouton
-      const hasOffer = vehicle?.estimation?.offer_price != null && String(vehicle.estimation.offer_price).trim() !== "";
-      offerBtn.textContent = hasOffer ? "Mettre à jour" : "Valider";
+      const hasOffer =
+        vehicle?.estimation?.offer_price != null &&
+        String(vehicle.estimation.offer_price).trim() !== "";
 
-      if (locked) {
+      if (status === "rejected") {
+        offerBtn.textContent = "Offre refusée";
+      } else if (status === "transaction_completed") {
+        offerBtn.textContent = "Offre acceptée";
+      } else if (offerLocked) {
         offerBtn.textContent = "Verrouillé";
+      } else {
+        offerBtn.textContent = hasOffer ? "Mettre à jour" : "Valider";
+      }
+    }
+
+    // ✅ bouton "Modifier" (toggleEdit)
+    const editBtn = node.querySelector('[data-action*="seller-vehicle#toggleEdit"]');
+
+    if (editBtn) {
+      editBtn.disabled = vehicleLocked;
+      editBtn.classList.toggle("opacity-60", vehicleLocked);
+      editBtn.classList.toggle("cursor-not-allowed", vehicleLocked);
+
+      if (vehicleLocked) {
+        editBtn.textContent = "Verrouillé";
+        editBtn.title = "Modification impossible : dossier en cours de traitement ou clôturé.";
+      } else {
+        editBtn.textContent = "Modifier";
+        editBtn.removeAttribute("title");
+      }
+    }
+
+    // ✅ Si verrouillé, forcer l'affichage en mode VIEW
+    if (vehicleLocked) {
+      const view = node.querySelector("[data-view]");
+      const edit = node.querySelector("[data-edit]");
+      if (view && edit) {
+        view.classList.remove("hidden");
+        edit.classList.add("hidden");
       }
     }
 
@@ -183,70 +235,64 @@ export default class extends Controller {
     if (input) input.value = value ?? "";
   }
 
-  // ✅ submit offer_price for an estimation
+  // submit offer_price for an estimation
   async saveOffer(event) {
-  const container = event.currentTarget.closest("[data-id]");
-  if (!container) return;
+    const container = event.currentTarget.closest("[data-id]");
+    if (!container) return;
 
-  const estimationId = container.dataset.estimationId;
-  if (!estimationId) {
-    toastr.error("Aucune estimation associée à ce véhicule");
-    return;
-  }
-
-  // ✅ lock check (from API derived rule)
-  const canEdit = container.dataset.canEditOffer === "1";
-  if (!canEdit) {
-    toastr.error("Offre verrouillée : elle est en cours de traitement ou clôturée.");
-    return;
-  }
-
-  const input = container.querySelector('[data-input="offerPrice"]');
-  const value = input?.value?.trim();
-
-  if (!value) {
-    toastr.error("Veuillez saisir un prix");
-    return;
-  }
-
-  // Normaliser virgule -> point
-  const normalized = value.replace(",", ".");
-
-  // Validation front (optionnelle mais utile)
-  const num = Number.parseFloat(normalized);
-  if (!Number.isFinite(num) || num <= 0) {
-    toastr.error("Veuillez saisir un prix valide");
-    return;
-  }
-
-  // ✅ IMPORTANT : DTO attend une string
-  const payload = { offer_price: String(normalized) };
-  console.log("payload offer:", payload, typeof payload.offer_price);
-
-  try {
-    const response = await fetch(`/api/seller/estimations/${estimationId}/offer`, {
-      method: "PUT",
-      headers: this.headers,
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const contentType = response.headers.get("content-type") || "";
-      const err = contentType.includes("application/json")
-        ? await response.json().catch(() => null)
-        : await response.text().catch(() => null);
-
-      toastr.error(err?.message ?? "Erreur lors de l'envoi de l'offre");
+    const estimationId = container.dataset.estimationId;
+    if (!estimationId) {
+      toastr.error("Aucune estimation associée à ce véhicule");
       return;
     }
 
-    toastr.success("Offre enregistrée");
-    await this.loadVehicles();
-  } catch {
-    toastr.error("Erreur réseau");
-  }
-}
+    const canEdit = container.dataset.canEditOffer === "1";
+    if (!canEdit) {
+      toastr.error("Offre verrouillée : elle est en cours de traitement ou clôturée.");
+      return;
+    }
 
+    const input = container.querySelector('[data-input="offerPrice"]');
+    const value = input?.value?.trim();
+
+    if (!value) {
+      toastr.error("Veuillez saisir un prix");
+      return;
+    }
+
+    const normalized = value.replace(",", ".");
+    const num = Number.parseFloat(normalized);
+    if (!Number.isFinite(num) || num <= 0) {
+      toastr.error("Veuillez saisir un prix valide");
+      return;
+    }
+
+    // DTO attend une string
+    const payload = { offer_price: String(normalized) };
+
+    try {
+      const response = await fetch(`/api/seller/estimations/${estimationId}/offer`, {
+        method: "PUT",
+        headers: this.headers,
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get("content-type") || "";
+        const err = contentType.includes("application/json")
+          ? await response.json().catch(() => null)
+          : await response.text().catch(() => null);
+
+        toastr.error(err?.message ?? "Erreur lors de l'envoi de l'offre");
+        return;
+      }
+
+      toastr.success("Offre enregistrée");
+      await this.loadVehicles();
+    } catch {
+      toastr.error("Erreur réseau");
+    }
+  }
 
   async updateVehicle(event) {
     event.preventDefault();
@@ -254,6 +300,12 @@ export default class extends Controller {
     const form = event.currentTarget;
     const id = form.dataset.id;
     if (!id) return;
+
+    const container = form.closest("[data-id]");
+    if (container?.dataset.vehicleLocked === "1") {
+      toastr.error("Modification impossible : dossier en cours de traitement ou clôturé.");
+      return;
+    }
 
     const raw = Object.fromEntries(new FormData(form));
 
@@ -288,7 +340,7 @@ export default class extends Controller {
         if (err?.violations?.length) {
           toastr.error(err.violations.map((v) => `${v.propertyPath} : ${v.message}`).join("<br/>"));
         } else {
-          toastr.error("Erreur lors de la mise à jour du véhicule");
+          toastr.error(err?.message ?? "Erreur lors de la mise à jour du véhicule");
         }
         return;
       }
@@ -309,6 +361,11 @@ export default class extends Controller {
       return;
     }
 
+    if (container?.dataset.vehicleLocked === "1") {
+      toastr.error("Suppression impossible : dossier en cours de traitement ou clôturé.");
+      return;
+    }
+
     if (!confirm("Supprimer ce véhicule ?")) return;
 
     try {
@@ -318,7 +375,8 @@ export default class extends Controller {
       });
 
       if (!response.ok) {
-        toastr.error("Erreur lors de la suppression du véhicule");
+        const err = await response.json().catch(() => null);
+        toastr.error(err?.message ?? "Erreur lors de la suppression du véhicule");
         return;
       }
 
