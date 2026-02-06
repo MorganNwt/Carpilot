@@ -46,12 +46,12 @@ export default class extends Controller {
 
   badge(status) {
     const map = {
-      estimated: ["Estimation...", "bg-blue-100 text-blue-700"],
-      offer_made: ["Offre en attente", "bg-orange-100 text-orange-700"],
-      in_review: ["En cours d’étude", "bg-yellow-100 text-yellow-800"],
+      estimated: ["Offre en attente", "bg-orange-100 text-orange-700"],
+      offer_made: ["À traiter", "bg-orange-100 text-orange-700"],
+      in_review: ["En cours d’étude", "bg-orange-100 text-orange-700"],
       rejected: ["Refusée", "bg-red-100 text-red-700"],
       transaction_completed: ["Acceptée", "bg-green-100 text-green-700"],
-      cancelled: ["Annulée", "bg-gray-200 text-gray-600"],
+      cancelled: ["Annulée", "bg-red-200 text-red-700"],
     };
 
     const [label, cls] = map[status] || ["—", "bg-gray-100 text-gray-400"];
@@ -61,7 +61,7 @@ export default class extends Controller {
   actions(est) {
     if (est.status === "offer_made") {
       return `
-        <button class="px-3 py-1.5 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
+        <button class="px-3 py-1.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 cursor-pointer transition"
                 data-action="click->agent-estimations#review"
                 data-id="${est.id}">
           Prendre en charge
@@ -71,12 +71,12 @@ export default class extends Controller {
 
     if (est.status === "in_review") {
       return `
-        <button class="px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700"
+        <button class="px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 cursor-pointer transition"
                 data-action="click->agent-estimations#accept"
                 data-id="${est.id}">
           Accepter
         </button>
-        <button class="px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2"
+        <button class="px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2 cursor-pointer transition"
                 data-action="click->agent-estimations#reject"
                 data-id="${est.id}">
           Refuser
@@ -87,21 +87,9 @@ export default class extends Controller {
     return `<span class="text-gray-400 text-xs">Aucune action</span>`;
   }
 
-  /**
-   * Si ton API renvoie des VEHICLES (comme ton exemple), adapte ici :
-   * - est = e.estimation
-   * - v = e
-   * - seller = e.seller / e.sellerFirstName...
-   */
-    row(e) {
+  row(e) {
     // Vehicle peut être: e (vehicle dto) OU e.vehicle (wrapper/estimation dto)
     const vehicle = e?.plate ? e : (e?.vehicle ?? {});
-
-    // Estimation peut être:
-    // - e.estimation (vehicle dto)
-    // - e.estimation (wrapper)
-    // - e (si e est déjà une estimation dto)
-    // - vehicle.estimation (vehicle dto)
     const est =
         e?.estimated_price != null || e?.status
         ? e

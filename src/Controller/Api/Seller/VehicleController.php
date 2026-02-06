@@ -8,6 +8,7 @@ use App\Mapper\VehicleMapper;
 
 use OpenApi\Attributes as OA;
 use App\DTO\Vehicle\UpdateVehicleDto;
+use App\Enum\EstimationStatus;
 use App\Service\Seller\VehicleService;
 use App\DTO\Vehicle\VehicleResponseDto;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -138,16 +139,44 @@ final class VehicleController extends AbstractController
         #[CurrentUser] ?Seller $seller
     ) {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
-            return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
+            return $this->json(
+                ['message' => 'Accès refusé : vous n’êtes pas le propriétaire de ce véhicule.'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        // Verrouillage si dossier en cours / clôturé
+        $estimation = $vehicle->getEstimation();
+        if ($estimation) {
+            $lockedStatuses = [
+                EstimationStatus::IN_REVIEW,
+                EstimationStatus::REJECTED,
+                EstimationStatus::TRANSACTION_COMPLETED,
+                EstimationStatus::CANCELLED,
+            ];
+
+            if (in_array($estimation->getStatus(), $lockedStatuses, true)) {
+                return $this->json([
+                    'message' => 'Véhicule verrouillé : impossible de modifier les informations car le dossier est en cours ou clôturé.',
+                    'status' => $estimation->getStatus()->value,
+                ], Response::HTTP_CONFLICT);
+            }
         }
 
         try {
             $responseDto = $this->vehicleService->updateVehicle($vehicle, $dto);
             return $this->json($responseDto);
         } catch (UniqueConstraintViolationException $e) {
-            return $this->json(['error' => 'Data conflict', 'message' => 'A vehicle with this license plate or VIN already exists.'], Response::HTTP_CONFLICT);
+            return $this->json([
+                'error' => 'Data conflict',
+                'message' => 'Un véhicule avec cette plaque ou ce VIN existe déjà.'
+            ], Response::HTTP_CONFLICT);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'An unexpected error occurred', 'message' => 'Could not update the vehicle.', 'debug' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'error' => 'An unexpected error occurred',
+                'message' => 'Impossible de mettre à jour le véhicule.',
+                'debug' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 
