@@ -100,6 +100,14 @@ export default class extends Controller {
       return;
     }
 
+  
+    const rgpdConsent = form.querySelector('[name="rgpdConsent"]').checked;
+
+    if (!rgpdConsent) {
+      this.registerErrorTarget.textContent = 'Vous devez accepter la politique de confidentialité (RGPD).';
+      return;
+    }
+
     try {
       const response = await fetch('/api/sellers', {
         method: 'POST',
@@ -115,7 +123,8 @@ export default class extends Controller {
           address: form.address.value,
           city: form.city.value,
           postalCode: form.postalCode.value,
-          country: 'France'
+          country: 'France',
+          rgpdConsent: form.querySelector('[name="rgpdConsent"]').checked
         })
       });
 

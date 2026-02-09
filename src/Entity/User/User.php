@@ -89,6 +89,16 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+
+    /**
+     * Consentement RGPD
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $rgpdConsent = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $rgpdConsentAt = null;
+
     /**
      * ==========================================
      * == CALLBACKS DOCTRINE (LIFECYCLE EVENTS) ==
@@ -279,6 +289,36 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isVerified = $isVerified;
 
+        return $this;
+    }
+
+    public function hasRgpdConsent(): bool
+    {
+        return $this->rgpdConsent;
+    }
+
+    /**
+     * Définit le consentement RGPD et la date associée
+     */
+    public function setRgpdConsent(bool $rgpdConsent): static
+    {
+        $this->rgpdConsent = $rgpdConsent;
+
+        if ($rgpdConsent && $this->rgpdConsentAt === null) {
+            $this->rgpdConsentAt = new \DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
+    public function getRgpdConsentAt(): ?\DateTimeImmutable
+    {
+        return $this->rgpdConsentAt;
+    }
+
+    public function setRgpdConsentAt(?\DateTimeImmutable $rgpdConsentAt): static
+    {
+        $this->rgpdConsentAt = $rgpdConsentAt;
         return $this;
     }
 }
