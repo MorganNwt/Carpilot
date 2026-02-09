@@ -100,7 +100,19 @@ export default class extends Controller {
       return;
     }
 
-  
+    const specialsCount = (password.match(/[^a-zA-Z0-9]/g) || []).length;
+
+    if (
+      password.length < 13 ||
+      !/[A-Z]/.test(password) ||
+      !/[0-9]/.test(password) ||
+      specialsCount < 2
+    ) {
+      this.registerErrorTarget.textContent =
+        'Mot de passe invalide : 13 caractères, 1 majuscule, 1 chiffre et 2 caractères spéciaux requis.';
+      return;
+    }
+
     const rgpdConsent = form.querySelector('[name="rgpdConsent"]').checked;
 
     if (!rgpdConsent) {

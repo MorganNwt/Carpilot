@@ -73,13 +73,80 @@
                         </div>
 
                         <input type="email" name="email" placeholder="Adresse mail" required class="input">
-                        <input type="password" name="password" placeholder="Mot de passe" required class="input">
-                        <input type="password" name="passwordConfirm" placeholder="Confirmez le mot de passe" required class="input">
+                        
+                        <div data-controller="password--password-match" class="space-y-5">
+                            <div data-controller="password--password-rules" class="space-y-2">
+                                <div class="relative">
+                                    <input type="password" name="password" placeholder="Mot de passe" class="input w-full block pr-12" required 
+                                        data-password--password-rules-target="password"
+                                        data-password--password-match-target="password"
+                                        data-action="input->password--password-rules#check input->password-match#check"
+                                    >
+
+                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        data-controller="password--password-toggle"
+                                        data-action="click->password--password-toggle#toggle"
+                                        aria-label="Afficher le mot de passe"
+                                    >
+                                        <!-- Eye -->
+                                        <svg data-password--password-toggle-target="eye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+
+                                        <!-- Eye Off -->
+                                        <svg data-password--password-toggle-target="eyeOff" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 3l18 18"/>
+                                            <path d="M10.6 10.6A2 2 0 0 0 12 14a2 2 0 0 0 1.4-.6"/>
+                                            <path d="M9.9 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-4.3 5.2"/>
+                                            <path d="M6.1 6.1C3.3 8.2 2 12 2 12s3.5 7 10 7c1.1 0 2.1-.2 3-.5"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <ul class="text-sm space-y-1">
+                                    <li data-password--password-rules-target="len" class="text-red-500">* 13 caractères minimum</li>
+                                    <li data-password--password-rules-target="upper" class="text-red-500">* 1 majuscule minimum</li>
+                                    <li data-password--password-rules-target="digit" class="text-red-500">* 1 chiffre minimum</li>
+                                    <li data-password--password-rules-target="special" class="text-red-500">* 2 caractères spéciaux minimum</li>
+                                </ul>
+                            </div>
+
+                            <div class="relative" data-controller="password--password-toggle">
+                                <input type="password" name="passwordConfirm" placeholder="Confirmez le mot de passe" class="input w-full block pr-12" required
+                                    data-password--password-toggle-target="input"
+                                    data-password--password-match-target="confirm"
+                                    data-action="input->password--password-match#check"
+                                >
+
+                                <button
+                                    type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    data-action="click->password--password-toggle#toggle"
+                                    aria-label="Afficher le mot de passe"
+                                >
+                                <svg data-password--password-toggle-target="eye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg data-password--password-toggle-target="eyeOff" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 3l18 18"/>
+                                    <path d="M10.6 10.6A2 2 0 0 0 12 14a2 2 0 0 0 1.4-.6"/>
+                                    <path d="M9.9 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-4.3 5.2"/>
+                                    <path d="M6.1 6.1C3.3 8.2 2 12 2 12s3.5 7 10 7c1.1 0 2.1-.2 3-.5"/>
+                                </svg>
+                                </button>
+                            </div>
+
+                            <p data-password--password-match-target="message" class="text-sm text-red-500">
+                                Les mots de passe ne correspondent pas
+                            </p>
+                        </div>
+
                         <input type="text" name="address" placeholder="Adresse" required class="input">
                         <input type="text" name="postalCode" placeholder="Code postal" required class="input">
                         <input type="text" name="city" placeholder="Choisissez votre ville" required class="input">
                         <input type="tel" name="phone" placeholder="Téléphone" required class="input">
-
+                        
                         <a href="{{ path('app_legal_rgpd') }}" target="_blank" class="text-blue-600 underline hover:text-blue-800">
                                 Lire la politique de confidentialité
                             </a>
