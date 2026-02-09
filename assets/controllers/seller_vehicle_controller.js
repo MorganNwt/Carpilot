@@ -38,7 +38,7 @@ export default class extends Controller {
     const container = event.currentTarget.closest("[data-id]");
     if (!container) return;
 
-    // ✅ bloquer ouverture si véhicule verrouillé
+    // bloquer ouverture si véhicule verrouillé
     if (container.dataset.vehicleLocked === "1") {
       toastr.error("Modification impossible : dossier en cours de traitement ou clôturé.");
       return;
@@ -134,10 +134,10 @@ export default class extends Controller {
     const hasEstimation = !!vehicle?.estimation?.id;
     const offerLocked = !hasEstimation || !canEditOffer;
 
-    // ✅ status estimation
+    //  status estimation
     const status = vehicle?.estimation?.status ?? null;
 
-    // ✅ verrouillage édition véhicule si dossier pris en charge / clôturé
+    //  verrouillage édition véhicule si dossier pris en charge / clôturé
     const vehicleLockedStatuses = ["in_review", "rejected", "transaction_completed", "cancelled"];
     const vehicleLocked = status ? vehicleLockedStatuses.includes(status) : false;
 

@@ -12,7 +12,15 @@
   <form class="bg-gray-100 p-12 rounded-b-lg" data-action="submit->plate-prefill#submit">
     <label class="block font-semibold mb-6">Pour immatriculation</label>
 
-    <input type="text"placeholder="GW-713-AC"class="w-full px-4 py-2 mb-4 rounded border border-gray-300 text-center font-mono text-lg bg-white"data-plate-prefill-target="plate">
+    <input
+      type="text"
+      placeholder="GW-713-AC"
+      maxlength="9"
+      class="w-full px-4 py-2 mb-4 rounded border border-gray-300 text-center font-mono text-lg bg-white"
+      data-plate-prefill-target="plate"
+      data-action="input->plate-prefill#onInput blur->plate-prefill#onBlur"
+    >
+
 
     <p class="text-sm text-gray-500 mb-6 mt-2">
       Pour un pré-remplissage des informations rapide et fiable !
