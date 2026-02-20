@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Appointment;
+use App\Entity\User\User;
 use App\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -36,9 +38,13 @@ class Agency
     #[ORM\OneToMany(mappedBy: 'agency', targetEntity: Appointment::class)]
     private Collection $appointments;
 
+    #[ORM\OneToMany(mappedBy: 'agency', targetEntity: User::class)]
+    private Collection $users;
+
     public function __construct()
     {
         $this->appointments = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,6 +141,35 @@ class Agency
         if ($this->appointments->removeElement($appointment)) {
             if ($appointment->getAgency() === $this) {
                 $appointment->setAgency(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setAgency($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            if ($user->getAgency() === $this) {
+                $user->setAgency(null);
             }
         }
 

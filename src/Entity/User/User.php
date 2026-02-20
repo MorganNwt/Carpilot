@@ -10,6 +10,7 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Agency;
 use App\Entity\Notification;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -107,6 +108,10 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'user')]
     private Collection $notifications;
+
+    #[ORM\ManyToOne(targetEntity: Agency::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Agency $agency = null;
 
     public function __construct()
     {
@@ -362,6 +367,23 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $notification->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of agency
+     *
+     * @return ?Agency
+     */
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): self
+    {
+        $this->agency = $agency;
 
         return $this;
     }
