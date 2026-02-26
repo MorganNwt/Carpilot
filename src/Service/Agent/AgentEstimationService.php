@@ -13,15 +13,17 @@ final class AgentEstimationService
         private readonly VehicleMapper $vehicleMapper,
     ) {}
 
-    public function listByStatus(?EstimationStatus $status): array
+    public function listByStatus(?string $status): array
     {
+        // filtrage status estimation
         $qb = $this->vehicleRepository->createQueryBuilder('v')
-            ->innerJoin('v.estimation', 'e')
+            ->leftJoin('v.estimation', 'e')
             ->addSelect('e')
             ->leftJoin('v.seller', 's')
-            ->addSelect('s');
+            ->addSelect('s')
+            ->andWhere('e.id IS NOT NULL');
 
-        if ($status !== null) {
+        if ($status) {
             $qb->andWhere('e.status = :status')
                 ->setParameter('status', $status);
         }
