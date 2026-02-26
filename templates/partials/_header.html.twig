@@ -1,57 +1,86 @@
-<!-- Récupération du nom de la route Symfony actuellement active-->
 {% set currentRoute = app.request.attributes.get('_route') %}
+{% set selectedAgencyName = app.session.get('selected_agency_name') %}
 
-<div data-controller="header" class="w-full px-4 py-4 mt-6 flex items-center">
-    <!-- Logo -->
-    <a href="{{ path('app_home') }}" class="text-2xl font-bold text-orange-600">
-        <img src="/images/logo.png" alt="CarPilot" class="h-12">
-    </a>
+<div data-controller="header" class="w-full px-4 py-4 mt-6">
+    <div class="grid grid-cols-3 items-center">
 
-    <nav class="ml-auto hidden md:flex items-center space-x-6">
-        <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_home'? 'text-orange-600 ' : '' }}">Vendre ma voiture</a>
-        <a href="{{ path('app_estimez_maintenant') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_estimez_maintenant'? 'text-orange-600 ' : '' }}">Estimer ma voiture</a>
-        <a href="#contact" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == '#contact'? 'text-orange-600 ' : '' }}" data-header-target="scrollLink">Nous contacter</a>
-        <a href="{{ path('app_astuces') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_astuces'? 'text-orange-600 ' : '' }}" data-header-target="scrollLink">Nos articles</a>
-        <a href="{{ path('app_account') }}" 
-            class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_account'? 'text-orange-600 ' : '' }}"
-            data-controller="account-link"
-            data-account-link-dashboard-url-value="/seller/dashboard"
-            data-action="click->account-link#go">
-                Mon compte
+        <!-- Logo -->
+        <a href="{{ path('app_home') }}" class="text-2xl font-bold text-orange-600">
+            <img src="/images/logo.png" alt="CarPilot" class="h-12">
         </a>
-        <button data-controller="logout" data-action="click->logout#logout"  class="text-sm font-semibold hover:text-orange-500 cursor-pointer">
-            Déconnexion
-        </button>
 
-        <!-- Menu déroulant "Nos agences" -->
-        <div class="relative inline-block text-left">
-            <button 
-                id="agencesButton" 
-                data-header-target="button"
-                class="bg-orange-500 cursor-pointer hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm inline-flex items-center space-x-1 focus:outline-none">
-                
-                <span>Nos agences</span>
-                <!-- Icône flèche -->
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
+        {# Message bienvenue #}
+        {% if selectedAgencyName %}
+            <div class="justify-self-center text-center hidden md:block">
+                <p class="font-semibold text-gray-700 text-base md:text-lg lg:text-xl">
+                Bienvenue sur votre agence de
+                <span class="text-orange-600">{{ selectedAgencyName }}</span>
+                </p>
+            </div>
+        {% endif %}
+
+        <nav class="ml-auto hidden md:flex items-center space-x-6">
+            <a href="{{ path('app_home') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_home' ? 'text-orange-600' : '' }}">
+                Vendre ma voiture
+            </a>
+
+            <a href="{{ path('app_estimez_maintenant') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_estimez_maintenant' ? 'text-orange-600' : '' }}">
+                Estimer ma voiture
+            </a>
+
+            <a href="#contact" class="text-sm font-semibold hover:text-orange-500"
+                data-header-target="scrollLink">
+                Nous contacter
+            </a>
+
+            <a href="{{ path('app_astuces') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_astuces' ? 'text-orange-600' : '' }}">
+                Nos articles
+            </a>
+
+            <a href="{{ path('app_account') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_account' ? 'text-orange-600' : '' }}"
+                data-controller="account-link"
+                data-account-link-dashboard-url-value="/seller/dashboard"
+                data-action="click->account-link#go">
+                Mon compte
+            </a>
+
+            <button data-controller="logout"
+                data-action="click->logout#logout"
+                class="text-sm font-semibold hover:text-orange-500 cursor-pointer">
+                Déconnexion
             </button>
 
-            <!-- Dropdown -->
-            <div 
-                id="agencesMenu" 
-                data-header-target="menu"
-                class="hidden origin-top-right absolute right-0 mt-1 w-34 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                
-                <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="agencesButton">
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Eprogny</a>
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Annecy</a>
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Unieux</a>
-                    <a href="{{ path('app_home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">Valence</a>
+            <!-- Menu déroulant "Nos agences" -->
+            <div class="relative inline-block text-left">
+                <button id="agencesButton"
+                    data-header-target="button"
+                    class="bg-orange-500 cursor-pointer hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm inline-flex items-center space-x-1 focus:outline-none">
+                    
+                    <span>{{ selectedAgencyName ?? 'Nos agences' }}</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div id="agencesMenu"
+                    data-header-target="menu"
+                    class="hidden origin-top-right absolute right-0 mt-1 w-34 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+
+                    <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="agencesButton">
+                        {% for agency in agencyEntities %}
+                            <form method="POST" action="{{ path('web_public_select_agency', { id: agency.id }) }}">
+                                <button type="submit"
+                                        class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white">
+                                    {{ agency.name }}
+                                </button>
+                            </form>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+
+    </div>  
 </div>
 
 <div class="h-1 bg-orange-500 w-full my-4"></div>

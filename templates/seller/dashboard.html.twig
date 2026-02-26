@@ -36,13 +36,13 @@
   <template data-seller-profile-target="profileTemplate">
     <div class="max-w-3xl mx-auto">
       <form class="space-y-4" data-action="submit->seller-profile#updateProfile">
-        <input type="text" name="firstName" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Prénom" required data-input="firstName"/>
-        <input type="text" name="lastName" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Nom" required data-input="lastName"/>
-        <input type="email" name="email" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Email" required data-input="email"/>
-        <input type="text" name="phone" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-sm"placeholder="Téléphone" data-input="phone"/>
-        <input type="text" name="address" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Adresse" data-input="address"/>
-        <input type="text" name="postalCode" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Code postal" data-input="postalCode"/>
-        <input type="text" name="city" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-sm"placeholder="Ville" data-input="city"/>
+        <input type="text" name="firstName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Prénom" required data-input="firstName"/>
+        <input type="text" name="lastName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Nom" required data-input="lastName"/>
+        <input type="email" name="email" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Email" required data-input="email"/>
+        <input type="text" name="phone" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm"placeholder="Téléphone" data-input="phone"/>
+        <input type="text" name="address" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Adresse" data-input="address"/>
+        <input type="text" name="postalCode" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Code postal" data-input="postalCode"/>
+        <input type="text" name="city" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm"placeholder="Ville" data-input="city"/>
 
         <div class="flex gap-4 pt-4 justify-center">
           <button type="submit"
@@ -120,11 +120,11 @@
                     type="text" 
                     inputmode="decimal"
                     placeholder="Votre offre" 
-                    class="border border-gray-300 rounded-lg px-3 py-1 text-sm w-32"
+                    class="focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-200/50 transition border border-gray-300 rounded-lg px-3 py-1 text-sm w-32"
                     data-input="offerPrice" 
                 />
 
-                <button type="button"class="bg-orange-500 text-white px-4 py-1.5 rounded-lg text-sm  hover:bg-orange-600 transition cursor-pointer" data-action="click->seller-vehicle#saveOffer">
+                <button type="button"class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition cursor-pointer" data-action="click->seller-vehicle#saveOffer">
                     Valider
                 </button>
             </div>
