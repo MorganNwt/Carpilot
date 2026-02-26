@@ -173,7 +173,7 @@ export default class extends Controller {
       } else if (status === "transaction_completed") {
         offerBtn.textContent = "Offre acceptée";
       } else if (offerLocked) {
-        offerBtn.textContent = "Verrouillé";
+        offerBtn.textContent = "En cours de traitement";
       } else {
         offerBtn.textContent = hasOffer ? "Mettre à jour" : "Valider";
       }
@@ -188,7 +188,7 @@ export default class extends Controller {
       editBtn.classList.toggle("cursor-not-allowed", vehicleLocked);
 
       if (vehicleLocked) {
-        editBtn.textContent = "Verrouillé";
+        editBtn.textContent = "En cours de traitement";
         editBtn.title = "Modification impossible : dossier en cours de traitement ou clôturé.";
       } else {
         editBtn.textContent = "Modifier";
