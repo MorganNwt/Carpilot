@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+  <h1>Dashboard Admin</h1>
+
+  <div>
+    <p>Utilisateurs : {{ dashboard.counts.users }}</p>
+    <p>Agents : {{ dashboard.counts.agents }}</p>
+    <p>Sellers : {{ dashboard.counts.sellers }}</p>
+    <p>Véhicules : {{ dashboard.counts.vehicles }}</p>
+  </div>
+{% endblock %}
