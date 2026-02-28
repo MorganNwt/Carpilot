@@ -28,11 +28,11 @@
                             Me connecter
                         </h2>
 
-                        <form data-action="submit->account#login"class="mt-17 space-y-5">
-                            <input type="email" placeholder="Adresse mail" data-account-target="loginEmail" required class="input">
-                            <input type="password" placeholder="Mot de passe" data-account-target="loginPassword" required class="input">
-
-                            <button type="submit"class="bg-blue-900 cursor-pointer text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition w-fit">
+                       <form method="post" action="/account" class="mt-17 space-y-5">
+                            <input type="email" name="email"placeholder="Adresse mail" required  class="input"  autocomplete="email">
+                            <input type="password" name="password" placeholder="Mot de passe"required class="input" autocomplete="current-password" >
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            <button type="submit" class="bg-blue-900 cursor-pointer text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition w-fit">
                                 Me connecter
                             </button>
                         </form>

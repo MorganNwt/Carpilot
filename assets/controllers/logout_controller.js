@@ -1,16 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      this.element.remove();
-    }
-  }
-
-  logout() {
+  logout(event) {
+    // laisse la navigation vers /logout se faire
+    // mais on nettoie le JWT pour l’API
     localStorage.removeItem("token");
     sessionStorage.clear();
-    window.location.href = "/home";
+    // pas de window.location ici -> le lien <a href="/logout"> fait le job
   }
 }

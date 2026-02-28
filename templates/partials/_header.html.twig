@@ -37,18 +37,36 @@
                 Nos articles
             </a>
 
-            <a href="{{ path('app_account') }}" class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_account' ? 'text-orange-600' : '' }}"
-                data-controller="account-link"
-                data-account-link-dashboard-url-value="/seller/dashboard"
-                data-action="click->account-link#go">
-                Mon compte
+            {# --- COMPTE / DASHBOARD / LOGOUT (session web) --- #}
+            {% if app.user %}
+            {# Lien Dashboard selon rôle #}
+            {% set dashUrl = '/' %}
+            {% if is_granted('ROLE_ADMIN') %}
+                {% set dashUrl = path('admin_dashboard') %}
+            {% elseif is_granted('ROLE_AGENT') %}
+                {% set dashUrl = path('agent_dashboard') %}
+            {% elseif is_granted('ROLE_SELLER') %}
+                {% set dashUrl = path('seller_dashboard') %}
+            {% endif %}
+
+            <a href="{{ dashUrl }}"
+                class="text-sm font-semibold hover:text-orange-500">
+                Dashboard
             </a>
 
-            <button data-controller="logout"
+            <a href="{{ path('app_logout') }}"
+                data-controller="logout"
                 data-action="click->logout#logout"
                 class="text-sm font-semibold hover:text-orange-500 cursor-pointer">
                 Déconnexion
-            </button>
+            </a>
+
+            {% else %}
+            <a href="{{ path('app_account') }}"
+                class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_account' ? 'text-orange-600' : '' }}">
+                Mon compte
+            </a>
+            {% endif %}
 
             <!-- Menu déroulant "Nos agences" -->
             <div class="relative inline-block text-left">
