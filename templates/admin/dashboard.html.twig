@@ -3,12 +3,129 @@
 {% block title %}Dashboard Admin{% endblock %}
 
 {% block body %}
-  <h1>Dashboard Admin</h1>
+<main
+  class="min-h-screen bg-gray-50 p-8"
+  data-controller="admin-dashboard"
+  data-admin-dashboard-token-value="{{ jwt }}"
+  data-admin-dashboard-agents-url-value="/api/admin/agents"
+  data-admin-dashboard-sellers-url-value="/api/admin/sellers"
+  data-admin-dashboard-vehicles-url-value="/api/admin/vehicles/"
+>
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">Tableau de bord admin</h1>
 
-  <div>
-    <p>Utilisateurs : {{ dashboard.counts.users }}</p>
-    <p>Agents : {{ dashboard.counts.agents }}</p>
-    <p>Sellers : {{ dashboard.counts.sellers }}</p>
-    <p>Véhicules : {{ dashboard.counts.vehicles }}</p>
+    {# STATS #}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white shadow rounded-2xl p-4">
+        <p class="text-sm text-gray-500">Utilisateurs</p>
+        <p class="text-2xl font-bold" data-admin-dashboard-target="countUsers">—</p>
+      </div>
+      <div class="bg-white shadow rounded-2xl p-4">
+        <p class="text-sm text-gray-500">Agents</p>
+        <p class="text-2xl font-bold" data-admin-dashboard-target="countAgents">—</p>
+      </div>
+      <div class="bg-white shadow rounded-2xl p-4">
+        <p class="text-sm text-gray-500">Sellers</p>
+        <p class="text-2xl font-bold" data-admin-dashboard-target="countSellers">—</p>
+      </div>
+      <div class="bg-white shadow rounded-2xl p-4">
+        <p class="text-sm text-gray-500">Véhicules</p>
+        <p class="text-2xl font-bold" data-admin-dashboard-target="countVehicles">—</p>
+      </div>
+    </div>
+
+    {# ONGLET / FILTRES #}
+    <div class="flex flex-wrap gap-3 mb-6">
+      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition"
+              data-action="click->admin-dashboard#show"
+              data-section="agents">
+        Agents
+      </button>
+
+      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition"
+              data-action="click->admin-dashboard#show"
+              data-section="sellers">
+        Sellers
+      </button>
+
+      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition"
+              data-action="click->admin-dashboard#show"
+              data-section="vehicles">
+        Véhicules
+      </button>
+    </div>
+
+    {# TABLE AGENTS #}
+    <section class="bg-white shadow-xl rounded-2xl overflow-hidden mb-6"
+             data-admin-dashboard-target="section"
+             data-section="agents">
+      <div class="p-4 border-b">
+        <h2 class="font-semibold">Liste des agents</h2>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-gray-100 text-left">
+          <tr>
+            <th class="p-4">ID</th>
+            <th class="p-4">Nom</th>
+            <th class="p-4">Email</th>
+            <th class="p-4">Téléphone</th>
+            <th class="p-4">Employee ID</th>
+          </tr>
+        </thead>
+        <tbody data-admin-dashboard-target="agentsTbody">
+          <tr><td class="p-4 text-gray-400" colspan="5">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    {# TABLE SELLERS #}
+    <section class="bg-white shadow-xl rounded-2xl overflow-hidden mb-6 hidden"
+             data-admin-dashboard-target="section"
+             data-section="sellers">
+      <div class="p-4 border-b">
+        <h2 class="font-semibold">Liste des sellers</h2>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-gray-100 text-left">
+          <tr>
+            <th class="p-4">ID</th>
+            <th class="p-4">Nom</th>
+            <th class="p-4">Email</th>
+            <th class="p-4">Téléphone</th>
+            <th class="p-4">Adresse</th>
+            <th class="p-4">Véhicules</th>
+          </tr>
+        </thead>
+        <tbody data-admin-dashboard-target="sellersTbody">
+          <tr><td class="p-4 text-gray-400" colspan="6">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    {# TABLE VEHICLES #}
+    <section class="bg-white shadow-xl rounded-2xl overflow-hidden mb-6 hidden"
+             data-admin-dashboard-target="section"
+             data-section="vehicles">
+      <div class="p-4 border-b">
+        <h2 class="font-semibold">Liste des véhicules</h2>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-gray-100 text-left">
+          <tr>
+            <th class="p-4">ID</th>
+            <th class="p-4">Marque / Modèle</th>
+            <th class="p-4">Année</th>
+            <th class="p-4">Immat</th>
+            <th class="p-4">VIN</th>
+            <th class="p-4">Prix</th>
+          </tr>
+        </thead>
+        <tbody data-admin-dashboard-target="vehiclesTbody">
+          <tr><td class="p-4 text-gray-400" colspan="6">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
   </div>
+</main>
 {% endblock %}

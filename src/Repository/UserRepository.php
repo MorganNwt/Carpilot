@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User\Admin;
 use App\Entity\User\Agent;
 use App\Entity\User\Seller;
 use App\Entity\User\User;
@@ -51,6 +52,17 @@ final class UserRepository extends ServiceEntityRepository
     }
 
     /**
+     * Retrieves a paginated list of Admins only.
+     */
+    public function findPaginatedAdmins(int $page, int $limit): Paginator
+    {
+        $qb = $this->createBaseQb();
+        $this->filterByUserType($qb, Admin::class);
+
+        return $this->paginate($qb, $page, $limit);
+    }
+
+    /**
      * Count ALL users.
      */
     public function countAllUsers(): int
@@ -83,6 +95,19 @@ final class UserRepository extends ServiceEntityRepository
             ->select('COUNT(u.id)');
 
         $this->filterByUserType($qb, Seller::class);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Count Admins (inheritance).
+     */
+    public function countAdmins(): int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)');
+
+        $this->filterByUserType($qb, Admin::class);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
