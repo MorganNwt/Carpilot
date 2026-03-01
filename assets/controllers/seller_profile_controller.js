@@ -3,43 +3,63 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["profile", "profileTemplate"];
 
-  connect() {
-    const token = localStorage.getItem("token");
-    if (!token) {
+  static values = {
+    token: String, // ✅ injecté par Twig: data-xxx-token-value="{{ jwt_token }}"
+  };
+
+  async connect() {
+    // ✅ même logique que ton admin
+    if (!this.tokenValue) {
       window.location.href = "/account";
       return;
     }
 
-    this.loadProfile();
-  }
-
-  get token() {
-    return localStorage.getItem("token");
+    await this.loadProfile();
   }
 
   get headers() {
     return {
-      Authorization: `Bearer ${this.token}`,
+      Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${this.tokenValue}`,
     };
   }
 
-  async loadProfile() {
+  async safeJson(url, options = {}) {
     try {
-      const response = await fetch("/api/sellers/profile", {
-        headers: this.headers,
+      const res = await fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          ...this.headers,
+        },
       });
 
-      if (!response.ok) throw new Error();
+      if (res.status === 401) {
+        window.location.href = "/account";
+        return null;
+      }
 
-      const profile = await response.json();
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message ?? `HTTP ${res.status}`);
+      }
 
-      this.profileTarget.innerHTML = "";
-      this.profileTarget.appendChild(this.renderProfile(profile));
-    } catch {
-      localStorage.removeItem("token");
-      window.location.href = "/account";
+      // si DELETE peut renvoyer vide, on protège
+      const txt = await res.text();
+      return txt ? JSON.parse(txt) : {};
+    } catch (e) {
+      console.error("API error:", url, e);
+      return null;
     }
+  }
+
+  async loadProfile() {
+    const profile = await this.safeJson("/api/sellers/profile", { method: "GET" });
+    if (!profile) return;
+
+    this.profileTarget.innerHTML = "";
+    this.profileTarget.appendChild(this.renderProfile(profile));
   }
 
   renderProfile(profile) {
@@ -77,26 +97,33 @@ export default class extends Controller {
     };
 
     try {
-      const response = await fetch("/api/sellers/profile", {
+      const res = await fetch("/api/sellers/profile", {
         method: "PUT",
         headers: this.headers,
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const err = await response.json().catch(() => null);
+      if (res.status === 401) {
+        window.location.href = "/account";
+        return;
+      }
 
-        // Si ton API renvoie violations (Symfony validator)
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+
         if (err?.violations?.length) {
-          toastr.error(err.violations.map((v) => `${v.propertyPath} : ${v.message}`).join("<br/>"));
+          toastr.error(
+            err.violations
+              .map((v) => `${v.propertyPath} : ${v.message}`)
+              .join("<br/>")
+          );
         } else {
-          toastr.error("Erreur lors de la mise à jour du profil");
+          toastr.error(err?.message ?? "Erreur lors de la mise à jour du profil");
         }
         return;
       }
 
       toastr.success("Profil mis à jour avec succès");
-      // Optionnel: recharger pour afficher les valeurs normalisées côté API
       await this.loadProfile();
     } catch {
       toastr.error("Erreur réseau");
@@ -107,17 +134,23 @@ export default class extends Controller {
     if (!confirm("Supprimer définitivement votre compte ?")) return;
 
     try {
-      const response = await fetch("/api/sellers/profile", {
+      const res = await fetch("/api/sellers/profile", {
         method: "DELETE",
         headers: this.headers,
       });
 
-      if (!response.ok) {
-        toastr.error("Erreur lors de la suppression du compte");
+      if (res.status === 401) {
+        window.location.href = "/account";
         return;
       }
 
-      localStorage.removeItem("token");
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        toastr.error(err?.message ?? "Erreur lors de la suppression du compte");
+        return;
+      }
+
+      // plus de localStorage token
       window.location.href = "/";
     } catch {
       toastr.error("Erreur réseau");

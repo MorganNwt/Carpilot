@@ -36,6 +36,7 @@ security:
       jwt: ~
 
     main:
+      pattern: ^/(?!api)
       lazy: true
       provider: app_user_provider
       form_login:

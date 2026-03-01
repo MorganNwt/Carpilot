@@ -23,7 +23,45 @@ final class AdminController extends AbstractController
 
     #[Route('', name: 'list', methods: ['GET'])]
     #[OA\Get(summary: 'List all admins (paginated)')]
-    public function index(Request $request): JsonResponse
+    #[OA\Parameter(
+        name: 'page',
+        in: 'query',
+        description: 'Page number for pagination (default: 1)',
+        schema: new OA\Schema(type: 'integer', default: 1)
+    )]
+    #[OA\Parameter(
+        name: 'limit',
+        in: 'query',
+        description: 'Number of items per page for pagination (default: 20, max: 100)',
+        schema: new OA\Schema(type: 'integer', default: 20)
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns a paginated list of admins.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(
+                        type: 'object',
+                        properties: [
+                            new OA\Property(property: 'id', type: 'integer'),
+                            new OA\Property(property: 'email', type: 'string'),
+                            new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string')),
+                        ]
+                    )
+                ),
+                new OA\Property(property: 'meta', type: 'object', properties: [
+                    new OA\Property(property: 'current_page', type: 'integer'),
+                    new OA\Property(property: 'total_pages', type: 'integer'),
+                    new OA\Property(property: 'total_items', type: 'integer'),
+                ]),
+            ]
+        )
+    )]
+    public function listAdmins(Request $request): JsonResponse
     {
         $page = max(1, $request->query->getInt('page', 1));
         $limit = min(100, $request->query->getInt('limit', 20));

@@ -2,31 +2,63 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["tbody"];
+
   static values = {
-    listUrl: String, // "/api/agent/estimations"
+    token: String,   // JWT token pour l'authentification API
+    listUrl: String, // ex: "/api/agent/estimations"
   };
 
-  connect() {
-    const token = localStorage.getItem("token");
-    if (!token) {
+  async connect() {
+    
+    // Si pas de token, rediriger vers la page de connexion
+    if (!this.tokenValue) {
       window.location.href = "/account";
       return;
     }
 
+    // Par défaut, on affiche les offres en attente de prise en charge
     this.currentStatus = "offer_made";
-    this.load();
+    await this.load();
   }
 
-  get token() {
-    return localStorage.getItem("token");
-  }
-
+  // En-têtes d'authentification pour les requêtes API
   get headers() {
     return {
-      Authorization: `Bearer ${this.token}`,
-      "Content-Type": "application/json",
       Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.tokenValue}`,
     };
+  }
+
+  // Méthode utilitaire pour faire des requêtes API avec gestion d'erreurs et redirection si non autorisé
+  async safeJson(url, options = {}) {
+    try {
+      const res = await fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}), // fusionne les en-têtes personnalisés avec les en-têtes d'authentification
+          ...this.headers, // ajoute les en-têtes d'authentification
+        },
+      });
+
+      // Si le token est invalide ou expiré, rediriger vers la page de connexion
+      if (res.status === 401) {
+        window.location.href = "/account";
+        return null;
+      }
+
+      if (!res.ok) {
+        // on tente de lire le message JSON
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message ?? `HTTP ${res.status}`);
+      }
+
+      return await res.json();
+    } catch (e) {
+      console.error("API error:", url, e);
+      toastr?.error?.(e.message ?? "Erreur API");
+      return null;
+    }
   }
 
   formatDate(dateString) {
@@ -88,76 +120,62 @@ export default class extends Controller {
   }
 
   row(e) {
-    // Vehicle peut être: e (vehicle dto) OU e.vehicle (wrapper/estimation dto)
     const vehicle = e?.plate ? e : (e?.vehicle ?? {});
     const est =
-        e?.estimated_price != null || e?.status
+      e?.estimated_price != null || e?.status
         ? e
         : (e?.estimation ?? vehicle?.estimation ?? null);
 
-    // Client : peut être sur vehicle (ton VehicleResponseDto)
     const firstName = vehicle?.sellerFirstName ?? e?.sellerFirstName ?? "";
     const lastName = vehicle?.sellerLastName ?? e?.sellerLastName ?? "";
     const sellerId = vehicle?.sellerId ?? e?.sellerId ?? null;
 
     const client =
-        (firstName || lastName)
+      (firstName || lastName)
         ? `${firstName} ${lastName}`.trim()
         : (sellerId ? `Client #${sellerId}` : "—");
 
     const estDate = est?.createdAt ?? null;
 
     return `
-        <tr class="border-t">
+      <tr class="border-t">
         <td class="p-4">
-            <div class="font-semibold">${vehicle?.plate ?? "—"}</div>
-            <div class="text-gray-500">${(vehicle?.brand ?? "")} ${(vehicle?.model ?? "")}</div>
+          <div class="font-semibold">${this.escape(vehicle?.plate ?? "—")}</div>
+          <div class="text-gray-500">${this.escape(`${vehicle?.brand ?? ""} ${vehicle?.model ?? ""}`.trim())}</div>
         </td>
 
-        <td class="p-4">${client}</td>
+        <td class="p-4">${this.escape(client)}</td>
 
-        <td class="p-4">${this.formatDate(estDate)}</td>
+        <td class="p-4">${this.escape(this.formatDate(estDate))}</td>
 
-        <td class="p-4">${est?.estimated_price != null ? `${est.estimated_price} €` : "—"}</td>
+        <td class="p-4">${est?.estimated_price != null ? this.escape(`${est.estimated_price} €`) : "—"}</td>
 
-        <td class="p-4">${est?.offer_price != null ? `${est.offer_price} €` : "—"}</td>
+        <td class="p-4">${est?.offer_price != null ? this.escape(`${est.offer_price} €`) : "—"}</td>
 
         <td class="p-4">${this.badge(est?.status)}</td>
 
         <td class="p-4 text-right">
-            ${est?.id ? this.actions(est) : `<span class="text-gray-400 text-xs">Aucune estimation</span>`}
+          ${est?.id ? this.actions(est) : `<span class="text-gray-400 text-xs">Aucune estimation</span>`}
         </td>
-        </tr>
+      </tr>
     `;
-    }
-
-
+  }
 
   async load() {
-    try {
-      this.tbodyTarget.innerHTML = `<tr><td class="p-4 text-gray-400" colspan="7">Chargement…</td></tr>`;
+    this.tbodyTarget.innerHTML = `<tr><td class="p-4 text-gray-400" colspan="7">Chargement…</td></tr>`;
 
-      const qs = this.currentStatus ? `?status=${encodeURIComponent(this.currentStatus)}` : "";
-      const url = (this.listUrlValue || "/api/agent/estimations") + qs;
+    const qs = this.currentStatus ? `?status=${encodeURIComponent(this.currentStatus)}` : "";
+    const url = (this.listUrlValue || "/api/agent/estimations") + qs;
 
-      const res = await fetch(url, { headers: this.headers });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        toastr.error(err?.message ?? "Impossible de charger les estimations");
-        return;
-      }
+    const data = await this.safeJson(url);
 
-      const data = await res.json();
-
-      if (!data.length) {
-        this.tbodyTarget.innerHTML = `<tr><td class="p-4 text-gray-400" colspan="7">Aucun dossier</td></tr>`;
-        return;
-      }
-
-      this.tbodyTarget.innerHTML = data.map((item) => this.row(item)).join("");
-    } catch {
-      toastr.error("Erreur réseau");
+    const rows = Array.isArray(data) ? data : (data?.data ?? []);
+    if (!rows.length) {
+      this.tbodyTarget.innerHTML = `<tr><td class="p-4 text-gray-400" colspan="7">Aucun dossier</td></tr>`;
+      return;
     }
+
+    this.tbodyTarget.innerHTML = rows.map((item) => this.row(item)).join("");
   }
 
   async review(event) {
@@ -173,22 +191,25 @@ export default class extends Controller {
   }
 
   async postAction(id, action, successMsg) {
-    try {
-      const res = await fetch(`/api/agent/estimations/${id}/${action}`, {
-        method: "POST",
-        headers: this.headers,
-      });
+    const url = `/api/agent/estimations/${id}/${action}`;
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        toastr.error(err?.message ?? "Action impossible");
-        return;
-      }
+    const res = await this.safeJson(url, {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
 
-      toastr.success(successMsg);
-      await this.load();
-    } catch {
-      toastr.error("Erreur réseau");
-    }
+    if (!res) return;
+
+    toastr?.success?.(successMsg);
+    await this.load();
+  }
+
+  escape(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 }

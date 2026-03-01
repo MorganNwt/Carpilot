@@ -22,9 +22,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  * Handles CRUD operations for ADMIN on all vehicles.
  */
 #[Route('/api/admin/vehicles/', name: 'api_admin_vehicle_')]
-#[OA\Tag(name: 'Admin Vehicles')]
-#[Security(name: 'bearerAuth')]
 #[IsGranted('ROLE_ADMIN')]
+#[Security(name: 'bearerAuth')]
+#[OA\Tag(name: 'Admin Vehicles')]
+
+
 final class VehicleController extends AbstractController
 {
     public function __construct(

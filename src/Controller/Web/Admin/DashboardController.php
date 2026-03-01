@@ -24,7 +24,7 @@ final class DashboardController extends AbstractController
         $jwt = $jwtManager->create($user);
 
         return $this->render('admin/dashboard.html.twig', [
-            'jwt' => $jwt,
+            'jwt_token' => $jwt,
         ]);
     }
 }

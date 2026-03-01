@@ -3,24 +3,25 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["vehicles", "vehicleTemplate"];
 
-  connect() {
-    const token = localStorage.getItem("token");
-    if (!token) {
+  static values = {
+    token: String, // ✅ injecté par Twig: data-seller-vehicle-token-value="{{ jwt_token }}"
+  };
+
+  async connect() {
+    // ✅ même fonctionnement que côté admin (token injecté Twig)
+    if (!this.tokenValue) {
       window.location.href = "/account";
       return;
     }
-    this.loadVehicles();
-  }
 
-  get token() {
-    return localStorage.getItem("token");
+    await this.loadVehicles();
   }
 
   get headers() {
     return {
-      Authorization: `Bearer ${this.token}`,
-      "Content-Type": "application/json",
       Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.tokenValue}`,
     };
   }
 
@@ -60,6 +61,12 @@ export default class extends Controller {
   async loadVehicles() {
     try {
       const response = await fetch("/api/seller/vehicles", { headers: this.headers });
+
+      if (response.status === 401) {
+        window.location.href = "/account";
+        return;
+      }
+
       if (!response.ok) throw new Error();
 
       const vehicles = await response.json();
@@ -76,9 +83,9 @@ export default class extends Controller {
         frag.appendChild(this.renderVehicle(vehicle));
       }
       this.vehiclesTarget.appendChild(frag);
-    } catch {
-      localStorage.removeItem("token");
-      window.location.href = "/account";
+    } catch (e) {
+      console.error("API error: /api/seller/vehicles", e);
+      toastr.error("Erreur lors du chargement des véhicules");
     }
   }
 
@@ -277,6 +284,11 @@ export default class extends Controller {
         body: JSON.stringify(payload),
       });
 
+      if (response.status === 401) {
+        window.location.href = "/account";
+        return;
+      }
+
       if (!response.ok) {
         const contentType = response.headers.get("content-type") || "";
         const err = contentType.includes("application/json")
@@ -335,6 +347,11 @@ export default class extends Controller {
         body: JSON.stringify(payload),
       });
 
+      if (response.status === 401) {
+        window.location.href = "/account";
+        return;
+      }
+
       if (!response.ok) {
         const err = await response.json().catch(() => null);
         if (err?.violations?.length) {
@@ -374,6 +391,11 @@ export default class extends Controller {
         headers: this.headers,
       });
 
+      if (response.status === 401) {
+        window.location.href = "/account";
+        return;
+      }
+
       if (!response.ok) {
         const err = await response.json().catch(() => null);
         toastr.error(err?.message ?? "Erreur lors de la suppression du véhicule");
@@ -385,5 +407,14 @@ export default class extends Controller {
     } catch {
       toastr.error("Erreur lors de la suppression du véhicule");
     }
+  }
+
+  escape(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 }
