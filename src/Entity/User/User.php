@@ -52,17 +52,17 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Identité de l'utilisateur
      */
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     protected ?string $firstName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     protected ?string $lastName = null;
 
     /**
      * Identifiant de connexion
      * Longueur 320 : standard RFC pour les emails
      */
-    #[ORM\Column(length: 320, unique: true)]
+    #[ORM\Column(length: 180, unique: true)]
     protected ?string $email = null;
 
     /**
@@ -141,6 +141,14 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
+
+    /**
+     * Undocumented variable
+     *
+     * @var \DateTimeImmutable|null
+     */
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
 
     /**
      * ==========================================
@@ -385,6 +393,32 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->agency = $agency;
 
+        return $this;
+    }
+
+    /**
+     * Summary of getDeletedAt
+     * @return \DateTimeImmutable|null
+     */
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deletedAt !== null;
+    }
+
+    public function softDelete(): self
+    {
+        $this->deletedAt = new \DateTimeImmutable();
+        return $this;
+    }
+
+    public function restore(): self
+    {
+        $this->deletedAt = null;
         return $this;
     }
 }

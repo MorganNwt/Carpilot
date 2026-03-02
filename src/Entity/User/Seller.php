@@ -23,7 +23,7 @@ class Seller extends User
      */
 
 
-    #[ORM\Column(length: 500)]
+    #[ORM\Column(length: 150)]
     private ?string $address;
 
     #[ORM\Column(length: 100)]

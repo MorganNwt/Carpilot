@@ -19,7 +19,7 @@ class Admin extends User
      * ==========================================
      */
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 10)]
     private ?string $employeeId;
 
 
