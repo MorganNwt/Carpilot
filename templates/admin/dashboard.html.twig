@@ -14,7 +14,7 @@
   <div class="max-w-6xl mx-auto">
     <h1 class="text-2xl font-bold mb-6">Tableau de bord admin</h1>
 
-    {# STATS #}
+    {# Statistiques globales #}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div class="bg-white shadow rounded-2xl p-4">
         <p class="text-sm text-gray-500">Utilisateurs</p>
@@ -34,28 +34,28 @@
       </div>
     </div>
 
-    {# ONGLET / FILTRES #}
+    {# Onglet de fitre #}
     <div class="flex flex-wrap gap-3 mb-6">
-      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition"
+      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition cursor-pointer"
               data-action="click->admin-dashboard#show"
               data-section="agents">
         Agents
       </button>
 
-      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition"
+      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition cursor-pointer"
               data-action="click->admin-dashboard#show"
               data-section="sellers">
         Sellers
       </button>
 
-      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition"
+      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition cursor-pointer"
               data-action="click->admin-dashboard#show"
               data-section="vehicles">
         Véhicules
       </button>
     </div>
 
-    {# TABLE AGENTS #}
+    {# Table agent #}
     <section class="bg-white shadow-xl rounded-2xl overflow-hidden mb-6"
              data-admin-dashboard-target="section"
              data-section="agents">
@@ -78,7 +78,7 @@
       </table>
     </section>
 
-    {# TABLE SELLERS #}
+    {# Table sellers #}
     <section class="bg-white shadow-xl rounded-2xl overflow-hidden mb-6 hidden"
              data-admin-dashboard-target="section"
              data-section="sellers">
@@ -102,7 +102,7 @@
       </table>
     </section>
 
-    {# TABLE VEHICLES #}
+    {# Table véhicules #}
     <section class="bg-white shadow-xl rounded-2xl overflow-hidden mb-6 hidden"
              data-admin-dashboard-target="section"
              data-section="vehicles">
@@ -114,10 +114,9 @@
           <tr>
             <th class="p-4">ID</th>
             <th class="p-4">Marque / Modèle</th>
-            <th class="p-4">Année</th>
+            <th class="p-4">Date d'enregistrement</th>
             <th class="p-4">Immat</th>
             <th class="p-4">VIN</th>
-            <th class="p-4">Prix</th>
           </tr>
         </thead>
         <tbody data-admin-dashboard-target="vehiclesTbody">

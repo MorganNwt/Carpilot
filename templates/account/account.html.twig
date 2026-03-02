@@ -63,8 +63,17 @@
                     <form data-account-target="registerForm" data-action="submit->account#register" class="space-y-5 w-full">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <input type="text" name="lastName" placeholder="Nom" required class="input">
-                            <input type="text" name="firstName" placeholder="Prénom" required class="input">
+                            <input type="text" name="lastName" placeholder="Jean" required class="input"
+                                minlength="2" maxlength="50"
+                                pattern="^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$"
+                                title="2 à 50 caractères, lettres uniquement (espaces, tirets et apostrophes autorisés)"
+                            >
+
+                            <input type="text" name="firstName" placeholder="Dujardin" required class="input"
+                                minlength="2" maxlength="50"
+                                pattern="^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$"
+                                title="2 à 50 caractères, lettres uniquement (espaces, tirets et apostrophes autorisés)"
+                            >
                         </div>
 
                         <input type="email" name="email" placeholder="Adresse mail" required class="input">
@@ -137,17 +146,31 @@
                             </p>
                         </div>
 
-                        <input type="text" name="address" placeholder="Adresse" required class="input">
-                        <input type="text" name="postalCode" placeholder="Code postal" required class="input">
-                        <input type="text" name="city" placeholder="Choisissez votre ville" required class="input">
-                        <input type="tel" name="phone" placeholder="Téléphone" required class="input">
+                        <input type="text" name="address" placeholder="Adresse" required class="input"
+                            minlength="5" maxlength="120"
+                            title="Adresse trop courte ou trop longue"
+                        >
+                        <input type="text" name="postalCode" placeholder="Code postal" required class="input"
+                            pattern="^\d{5}$"
+                            title="Le code postal doit comporter exactement 5 chiffres"
+                        >
+                        <input type="text" name="city" placeholder="Choisissez votre ville" required class="input"
+                            minlength="2" maxlength="100"
+                            pattern="^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,100}$"
+                            title="La ville doit comporter entre 2 et 100 caractères, lettres uniquement (espaces, tirets et apostrophes autorisés)"
+                        >
+                        
+                        <input type="tel" name="phone" placeholder="Téléphone" required class="input" 
+                            pattern="^(?:\+33|0)[1-9](?:[ .\-]?\d{2}){4}$"
+                            title="Téléphone français attendu (ex : 06 12 34 56 78)"
+                        >
                         
                         <a href="{{ path('app_legal_rgpd') }}" target="_blank" class="text-blue-600 underline hover:text-blue-800">
                                 Lire la politique de confidentialité
                             </a>
 
                         <label class="flex items-center gap-3 text-sm text-gray-700 mt-2">
-                            <input type="checkbox" name="rgpdConsent" required class="rounded">
+                            <input type="checkbox" name="rgpdConsent" class="rounded">
                             Accord RGPD
                         </label>
 

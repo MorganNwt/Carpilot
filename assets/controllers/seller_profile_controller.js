@@ -4,11 +4,11 @@ export default class extends Controller {
   static targets = ["profile", "profileTemplate"];
 
   static values = {
-    token: String, // ✅ injecté par Twig: data-xxx-token-value="{{ jwt_token }}"
+    token: String, // injecté par Twig: data-xxx-token-value="{{ jwt_token }}"
   };
 
   async connect() {
-    // ✅ même logique que ton admin
+
     if (!this.tokenValue) {
       window.location.href = "/account";
       return;
@@ -144,14 +144,19 @@ export default class extends Controller {
         return;
       }
 
-      if (!res.ok) {
+      if (!res.ok && res.status !== 204) {
         const err = await res.json().catch(() => null);
         toastr.error(err?.message ?? "Erreur lors de la suppression du compte");
         return;
       }
 
-      // plus de localStorage token
-      window.location.href = "/";
+      // SUPPRESSION DU JWT 
+      localStorage.removeItem("token");
+      sessionStorage.clear();
+
+      //  Puis logout Symfony (session)
+      window.location.href = "/logout";
+
     } catch {
       toastr.error("Erreur réseau");
     }

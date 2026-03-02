@@ -88,9 +88,9 @@ final class ProfileController extends AbstractController
     }
 
     #[Route('', name: 'delete', methods: ['DELETE'])]
-    #[OA\Delete(
-        summary: "Delete current seller's account",
-        description: "Allows the authenticated seller to permanently delete their own account and all associated data."
+   #[OA\Delete(
+    summary: "Delete current seller's account",
+    description: "Soft-deletes the authenticated seller account (deletedAt set). Associated data is preserved."
     )]
     #[OA\Response(response: 204, description: "Account deleted successfully.")]
     #[OA\Response(response: 403, description: "Access Denied.")]

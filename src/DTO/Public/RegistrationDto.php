@@ -34,14 +34,28 @@ class RegistrationDto
     public ?string $phone = null;
 
     #[OA\Property(description: "Seller's street address.", example: "123 Rue de la République")]
+    #[Assert\NotBlank(message: "The address cannot be blank.")]
     public ?string $address = null;
 
     #[OA\Property(description: "Seller's city.", example: "Lyon")]
+    #[Assert\NotBlank(message: "The city cannot be blank.")]
     public ?string $city = null;
 
     #[OA\Property(description: "Seller's postal code.", example: "69001")]
+    #[Assert\NotBlank(message: "The postal code cannot be blank.")]
     public ?string $postalCode = null;
 
     #[OA\Property(description: "Seller's country.", example: "France")]
+    #[Assert\NotBlank(message: "The country cannot be blank.")]
     public ?string $country = null;
+
+    #[OA\Property(description: "User consent to privacy policy (RGPD).", example: true)]
+    #[Assert\NotNull(message: "RGPD consent is required.")]
+    #[Assert\IsTrue(message: "You must accept the privacy policy.")]
+    public ?bool $rgpdConsent = null;
+
+    #[OA\Property(description: "Selected agency ID.", example: 3)]
+    #[Assert\NotNull(message: "Agency is required.")]
+    #[Assert\Positive(message: "Agency ID must be positive.")]
+    public ?int $agencyId = null;
 }
