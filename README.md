@@ -15,10 +15,11 @@ Bienvenue sur la documentation de l'API de notre plateforme de vente de véhicul
     -   [Réinitialisation de Mot de Passe](#réinitialisation-de-mot-de-passe)
     -   [Gestion Admin](#gestion-admin)
 5.  [Documentation des Endpoints](#documentation-des-endpoints)
+6.  [Tests Unitaire avec Php Unit](#Tests-Unitaire-avec-Php-Unit)
 
 ---
 
-## Prérequis
+## 1. Prérequis
 
 Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre machine :
 
@@ -30,31 +31,30 @@ Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre
 
 ---
 
-## Installation locale
+### 2. Installation locale
 
 Suivez ces étapes pour configurer le projet en local.
 
-1.  **Clonez le dépôt Git**
+### 2.1  **Clonez le dépôt Git**
    ```bash
    git clone git@github.com:MorganNwt/Carpilot.git
    cd Carpilot
    ```
-2.  **Installez les dépendances PHP**
+### 2.2  **Installez les dépendances PHP**
    ```bash
     composer install
    ```
     
-2.1   **Installer les dépendances JavaScript**
+### 2.3   **Installer les dépendances JavaScript**
    ```bash
     npm install
    ```
-   
-2.2   **Compiler les assets**
+### 2.4   **Compiler les assets**
    ```bash
     npm run watch
    ```
 
-3.  **Configurez les variables d'environnement**
+### 2.5  **Configurez les variables d'environnement**
 
     -   Copiez le fichier `.env` en `.env.local`. Ce dernier ne sera pas suivi par Git et contiendra vos configurations personnelles.
         ```bash
@@ -66,7 +66,7 @@ Suivez ces étapes pour configurer le projet en local.
         DATABASE_URL="mysql://root:password@127.0.0.1:3306/votre_db?serverVersion=8.0&charset=utf8mb4"
         ```
 
-4.  **Créez la base de données et appliquez les migrations**
+### 2.6  **Créez la base de données et appliquez les migrations**
 
     -   Assurez-vous que votre serveur de base de données local est bien démarré.
         ```bash
@@ -74,7 +74,7 @@ Suivez ces étapes pour configurer le projet en local.
         symfony console doctrine:migrations:migrate
         ```
 
-5.  **Chargez des données de test**
+### 2.7  **Chargez des données de test**
 
     -   Une fixture d'utilisateur admin est fournie. Vous pouvez également ajouter des données de test pour les vendeurs et les véhicules.
     -   Pour charger les fixtures, exécutez la commande suivante :
@@ -82,14 +82,14 @@ Suivez ces étapes pour configurer le projet en local.
         symfony console doctrine:fixtures:load
         ```
 
-6.  **Générez les clés pour le JWT**
+### 2.8  **Générez les clés pour le JWT**
 
     -   Ces clés sont nécessaires pour signer les tokens d'authentification.
         ```bash
         php bin/console lexik:jwt:generate-keypair
         ```
 
-7.  **Lancez le serveur local**
+### 2.9  **Lancez le serveur local**
     `bash
     symfony server:start
     ```
@@ -98,7 +98,7 @@ Suivez ces étapes pour configurer le projet en local.
 
 ---
 
-## Concepts Clés
+### 3. Concepts Clés
 
 ### Architecture en Couches
 
@@ -119,13 +119,13 @@ Le flux est le suivant : l'utilisateur s'identifie sur `/api/login_check`, reço
 
 ---
 
-## Guide d'utilisation avec Postman
+### 4. Guide d'utilisation avec Postman
 
 Ce guide explique comment appeler chaque endpoint de l'API avec [Postman](http://www.postman.com/).
 
 ### CRUD d'un Compte Vendeur
 
-#### 1.1. Créer le compte vendeur (Create)
+#### 4.1. Créer le compte vendeur (Create)
 
 Cette première étape est publique.
 
@@ -147,7 +147,7 @@ Cette première étape est publique.
     ```
 -   **Résultat attendu** : Un code `201 Created` avec les informations du profil créé.
 
-#### 1.2. Se connecter et obtenir le Token
+#### 4.2. Se connecter et obtenir le Token
 
 -   **Méthode** : `POST`
 -   **URL** : `http://127.0.0.1:8000/api/login_check`
@@ -160,14 +160,14 @@ Cette première étape est publique.
     ```
 -   **Action** : Envoyez la requête. La réponse contiendra un `token`. Copiez cette valeur pour les étapes suivantes.
 
-#### 1.3. Lire le profil (Read)
+#### 4.3. Lire le profil (Read)
 
 -   **Méthode** : `GET`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/profile`
 -   **Authorization** : Dans l'onglet, sélectionnez `Bearer Token` et collez votre token.
 -   **Résultat attendu** : Un code `200 OK` avec les détails du profil du vendeur connecté.
 
-#### 1.4. Mettre à jour le profil (Update)
+#### 4.4. Mettre à jour le profil (Update)
 
 -   **Méthode** : `PUT`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/profile`
@@ -180,7 +180,7 @@ Cette première étape est publique.
     ```
 -   **Résultat attendu** : Un code `200 OK` avec le profil mis à jour.
 
-#### 1.5. Changer le mot de passe (Update)
+#### 4.5. Changer le mot de passe (Update)
 
 -   **Méthode** : `POST`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/profile/change-password`
@@ -194,7 +194,7 @@ Cette première étape est publique.
     ```
 -   **Résultat attendu** : Un code `200 OK`. Pour vérifier, vous pouvez refaire l'étape 1.2 avec le nouveau mot de passe.
 
-#### 1.6. Supprimer le compte (Delete)
+#### 4.6. Supprimer le compte (Delete)
 
 -   **Méthode** : `DELETE`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/profile`
@@ -203,11 +203,11 @@ Cette première étape est publique.
 
 ---
 
-### Réinitialisation de Mot de Passe
+### 4.7 Réinitialisation de Mot de Passe
 
 Simulation du processus si l'utilisateur oublie son mot de passe.
 
-#### Configurer Mailtrap.io
+#### 4.8 Configurer Mailtrap.io
 
 Mailtrap est une plateforme qui simule une boîte de réception pour capturer les e-mails envoyés en environnement de développement.
 
@@ -224,7 +224,7 @@ Mailtrap est une plateforme qui simule une boîte de réception pour capturer le
         MAILER_DSN=smtp://VOTRE_USERNAME:VOTRE_PASSWORD@sandbox.smtp.mailtrap.io:2525
         ```
 
-#### Lancer Symfony Messenger
+#### 4.9 Lancer Symfony Messenger
 
 Symfony Messenger est un composant qui permet à votre application de gérer des tâches de manière asynchrone.
 Son but principal est de découpler les actions rapides (comme répondre à une requête web) des actions lentes (comme envoyer un e-mail).
@@ -234,7 +234,7 @@ Son but principal est de découpler les actions rapides (comme répondre à une 
     symfony console messenger:consume async -vv
     ```
 
-#### Demander la réinitialisation depuis Postman
+#### 4.10 Demander la réinitialisation depuis Postman
 
 -   **Méthode** : `POST`
 -   **URL** : `https://127.0.0.1:8000/api/reset-password/request`
@@ -246,7 +246,7 @@ Son but principal est de découpler les actions rapides (comme répondre à une 
     ```
 -   **Action** : Envoyez la requête. Symfony Messenger va traiter le message et l'envoyer à Mailtrap.
 
-#### Récupérer le Token dans Mailtrap
+#### 4.11 Récupérer le Token dans Mailtrap
 
 1.  Retournez sur le site de **Mailtrap.io**, dans votre boîte de réception.
 2.  Un nouvel e-mail de votre application devrait y être apparu.
@@ -269,11 +269,11 @@ Retournez dans Postman pour finaliser le processus avec le token récupéré.
     ```
 -   **Résultat attendu** : Un code `200 OK`. Le mot de passe de l'utilisateur est maintenant réinitialisé avec succès.
 
-### CRUD d'un Véhicule
+### 4.12 CRUD d'un Véhicule
 
 Cela suppose que vous êtes connecté en tant que vendeur (vous possédez un token de vendeur valide obtenu à l'étape 1.2).
 
-#### 2.1. Créer un véhicule (Create)
+#### 4.13. Créer un véhicule (Create)
 
 -   **Méthode** : `POST`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/vehicles`
@@ -300,13 +300,13 @@ Cela suppose que vous êtes connecté en tant que vendeur (vous possédez un tok
     ```
 -   -   **Résultat attendu** : Un code `201 Created` avec les informations du véhicule créé.
 
-#### 2.2. Lister les véhicules (Read)
+#### 4.14 Lister les véhicules (Read)
 
 -   **Méthode** : `GET`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/vehicles`
 -   **Authorization** : Collez votre token de vendeur.
 
-#### 2.3. Mettre à jour le véhicule (Update)
+#### 4.15 Mettre à jour le véhicule (Update)
 
 -   **Méthode** : `PUT`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/vehicles/{id}` (remplacez `{id}` par l'ID noté précédemment).
@@ -319,7 +319,7 @@ Cela suppose que vous êtes connecté en tant que vendeur (vous possédez un tok
     ```
 -   **Résultat attendu** : Un code `200 OK` avec le véhicule mis à jour.
 
-#### 2.4. Supprimer le véhicule (Delete)
+#### 4.16 Supprimer le véhicule (Delete)
 
 -   **Méthode** : `DELETE`
 -   **URL** : `http://127.0.0.1:8000/api/sellers/vehicles/{id}` (remplacez `{id}` par l'ID du véhicule).
@@ -332,7 +332,7 @@ Cela suppose que vous êtes connecté en tant que vendeur (vous possédez un tok
 
 Cela requiert des identifiants pour un compte avec le rôle `ROLE_ADMIN`.
 
-#### 3.1. Se connecter en tant qu'Admin et obtenir le Token
+#### 4.17. Se connecter en tant qu'Admin et obtenir le Token
 
 -   **Méthode** : `POST`
 -   **URL** : `http://127.0.0.1:8000/api/login_check`
@@ -345,7 +345,7 @@ Cela requiert des identifiants pour un compte avec le rôle `ROLE_ADMIN`.
     ```
 -   **Action** : Copiez le nouveau token qui appartient à l'administrateur.
 
-#### 3.2. Lister tous les vendeurs (Read)
+#### 4.18 Lister tous les vendeurs (Read)
 
 -   **Méthode** : `GET`
 -   **URL** : `http://127.0.0.1:8000/api/admin/sellers`
@@ -355,7 +355,7 @@ Cela requiert des identifiants pour un compte avec le rôle `ROLE_ADMIN`.
     -   `limit` : `5`
 -   **Résultat attendu** : Un code `200 OK` avec la liste paginée de tous les utilisateurs vendeurs.
 
-#### 3.2. Lister tous les agents (Read)
+#### 4.19 Lister tous les agents (Read)
 
 -   **Méthode** : `GET`
 -   **URL** : `http://127.0.0.1:8000/api/admin/agents`
@@ -367,7 +367,7 @@ Cela requiert des identifiants pour un compte avec le rôle `ROLE_ADMIN`.
 
 ---
 
-## Documentation des Endpoints
+### 5. Documentation des Endpoints
 
 Toutes les routes sont préfixées par `/api`.
 
@@ -390,15 +390,41 @@ Toutes les routes sont préfixées par `/api`.
 
 ---
 
-<!-- ##  Lancer les Tests
+####  6. Tests Unitaires avec PHPUnit
 
-Pour garantir le fonctionnement de l'API, vous pouvez lancer la suite de tests automatisés avec la commande suivante :
+Les tests unitaires permettent de vérifier automatiquement que les briques de logique métier (services, calculateurs, helpers) fonctionnent correctement, sans dépendre de la base de données ni des routes HTTP.
+Dans CarPilot, ils sont particulièrement utiles pour sécuriser les calculs d’estimation, les règles métier et éviter les régressions lors des refactorings.
 
-```bash
-php bin/phpunit
-``` -->
+#### 6.1. Installer PHPUnit (Test Pack Symfony)
+ `composer require --dev symfony/test-pack`
 
-----------------------------------------------------------
+#### 6.2. Arborescence recommandée des tests
+Le dossier tests/ doit être placé à la racine du projet (au même niveau que src/).
+
+Pour cibler uniquement les tests unitaires “Service”, tu peux lancer :
+`php bin/phpunit tests/Unit/Service`
+
+#### 6.3. Exemple : Test unitaire du service d’estimation
+
+Service testé
+
+Ton service EstimationCalculatorService calcule un prix estimé à partir :
+- de l’ancienneté (registrationDate)
+- du kilométrage (mileage)
+- avec un plancher à 1000€
+- et un arrondi à la centaine
+
+Crée le fichier :
+`tests/Unit/Service/Vehicle/EstimationCalculatorServiceTest.php`
+
+#### 6.4. Lancer les tests
+
+Lancer tous les tests : `php bin/phpunit`
+Lancer uniquement les tests unitaires Service : `php bin/phpunit tests/Unit/Service`
+Lancer un seul fichier : `php bin/phpunit tests/Unit/Service/Vehicle/EstimationCalculatorServiceTest.php`
+Filtrer un test précis : `php bin/phpunit --filter testPriceIsNeverBelow1000`
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 CMD: utiles
 
 php bin/console --version  
