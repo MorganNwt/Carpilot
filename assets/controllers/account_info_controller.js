@@ -9,7 +9,7 @@ export default class extends Controller {
     const hasRedirectStorage = !!sessionStorage.getItem("after_login_redirect");
 
     if (hasRedirectQuery || hasRedirectStorage) {
-      this.element.classList.remove("hidden");-
+      this.element.classList.remove("hidden");
     }
   }
 }
