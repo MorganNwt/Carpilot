@@ -28,9 +28,10 @@
                             Me connecter
                         </h2>
 
-                       <form method="post" action="/account" class="mt-17 space-y-5">
+                       <form id="login-form" method="post" action="/account" class="mt-17 space-y-5">
                             <input type="email" name="email"placeholder="Adresse mail" required  class="input"  autocomplete="email">
-                            <input type="password" name="password" placeholder="Mot de passe"required class="input" autocomplete="current-password" >
+                            <input type="password" name="password" placeholder="Mot de passe"required class="input" autocomplete="current-password">
+                            <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                             <button type="submit" class="bg-blue-900 cursor-pointer text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition w-fit">
                                 Me connecter
@@ -61,7 +62,7 @@
                     </div>
 
                     <form data-account-target="registerForm" data-action="submit->account#register" class="space-y-5 w-full">
-
+                        <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <input type="text" name="lastName" placeholder="Jean" required class="input"
                                 minlength="2" maxlength="50"

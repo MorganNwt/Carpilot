@@ -1,12 +1,15 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {
-    // Le flag n’existe QUE si on vient du flux plaque
-    const redirect = sessionStorage.getItem("after_login_redirect");
 
-    if (redirect) {
-      this.element.classList.remove("hidden");
+  connect() {
+    // Au chargement du composant, on vérifie si on doit afficher le formulaire (si redirection après login ou query param ?)
+    const url = new URL(window.location.href);
+    const hasRedirectQuery = !!url.searchParams.get("redirect");
+    const hasRedirectStorage = !!sessionStorage.getItem("after_login_redirect");
+
+    if (hasRedirectQuery || hasRedirectStorage) {
+      this.element.classList.remove("hidden");-
     }
   }
 }

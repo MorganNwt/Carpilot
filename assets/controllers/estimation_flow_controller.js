@@ -2,17 +2,21 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["btn", "error"];
+
   static values = {
     calculateUrl: String,   // "/api/estimations/calculate"
     createUrl: String,      // "/api/seller/vehicles/create-from-estimation"
     resultRedirect: String, // "/seller/estimation/result"
-    accountUrl: String      // "/account"
+    accountUrl: String,     // "/account"
   };
 
   async submit(event) {
     event.preventDefault();
+    console.log("estimation-flow submit triggered");
 
     const token = localStorage.getItem("token");
+
+    //  Si pas de token, redirection vers login avec un flag pour revenir à la page résultat après login
     if (!token) {
       sessionStorage.setItem(
         "after_login_redirect",
@@ -29,7 +33,7 @@ export default class extends Controller {
       const form = event.currentTarget;
       const payload = this.formToJson(form);
 
-      // ===== 1) CALCULATE =====
+      // CALCULATE => création de l’estimation et récupération du token d’estimation
       const calculateRes = await fetch(this.calculateUrlValue, {
         method: "POST",
         headers: {
@@ -39,6 +43,24 @@ export default class extends Controller {
         },
         body: JSON.stringify(payload),
       });
+
+      // Vérification du content-type pour éviter de parser une page HTML (ex: redirection vers /account si token expiré)
+      const ct1 = calculateRes.headers.get("content-type") || "";
+      if (!ct1.includes("application/json")) {
+        const text = await calculateRes.text().catch(() => "");
+        console.error("calculate non-json response:", calculateRes.status, text.slice(0, 200));
+        throw new Error("Réponse inattendue (non JSON). L’API est probablement protégée et vous a redirigé vers /account.");
+      }
+
+      // Si token expiré => retour /account
+      if (calculateRes.status === 401) {
+        sessionStorage.setItem(
+          "after_login_redirect",
+          this.resultRedirectValue || "/seller/estimation/result"
+        );
+        window.location.href = this.accountUrlValue || "/account";
+        return;
+      }
 
       if (!calculateRes.ok) {
         const apiErr = await this.parseError(calculateRes);
@@ -54,7 +76,7 @@ export default class extends Controller {
         throw new Error("Réponse serveur invalide : token d’estimation manquant.");
       }
 
-      // ===== 2) CREATE-FROM-ESTIMATION =====
+      // CREATE-FROM-ESTIMATION => création du véhicule à partir de l’estimation (vérifie que l’estimation est valide et appartient bien à l’utilisateur grâce au token d’estimation)
       const createRes = await fetch(this.createUrlValue, {
         method: "POST",
         headers: {
@@ -65,6 +87,24 @@ export default class extends Controller {
         body: JSON.stringify({ estimation_token: estimationToken }),
       });
 
+      // Vérification du content-type pour éviter de parser une page HTML (ex: redirection vers /account si token expiré)
+      const ct2 = createRes.headers.get("content-type") || "";
+      if (!ct2.includes("application/json")) {
+        const text = await createRes.text().catch(() => "");
+        console.error("create non-json response:", createRes.status, text.slice(0, 200));
+        throw new Error("Réponse inattendue (non JSON). L’API est probablement protégée et vous a redirigé vers /account.");
+      }
+
+      // Si token expiré => retour /account
+      if (createRes.status === 401) {
+        sessionStorage.setItem(
+          "after_login_redirect",
+          this.resultRedirectValue || "/seller/estimation/result"
+        );
+        window.location.href = this.accountUrlValue || "/account";
+        return;
+      }
+
       if (!createRes.ok) {
         const apiErr = await this.parseError(createRes);
         console.error("create-from-estimation failed:", createRes.status, apiErr);
@@ -73,7 +113,13 @@ export default class extends Controller {
 
       const created = await createRes.json();
 
+      // Stocker le résultat pour la page result
       sessionStorage.setItem("estimationResult", JSON.stringify(created));
+
+      // Nettoyage du redirect “en attente”
+      sessionStorage.removeItem("after_login_redirect");
+
+      // Redirection vers la page de résultat de l’estimation
       window.location.href = this.resultRedirectValue;
 
     } catch (e) {
@@ -84,11 +130,9 @@ export default class extends Controller {
     }
   }
 
-  // ============= Helpers erreurs (robuste JSON / texte) =============
+  // Redirection vers login si pas de token avant de lancer le flow d’estimation
   async parseError(res) {
     const contentType = res.headers.get("content-type") || "";
-
-    // Essaie JSON
     if (contentType.includes("application/json")) {
       const json = await res.json().catch(() => null);
       return {
@@ -98,57 +142,29 @@ export default class extends Controller {
         raw: json,
       };
     }
-
-    // Sinon texte
     const text = await res.text().catch(() => "");
-    return {
-      type: "text",
-      text,
-      message: text || null,
-      raw: text,
-    };
+    return { type: "text", text, message: text || null, raw: text };
   }
 
+  // Génère un message utilisateur à partir du status HTTP et du message d’erreur de l’API
   userMessage(status, apiErr, step) {
     const rawMsg = (apiErr?.message || "").toString();
 
-    // 🔒 Auth / droits
-    if (status === 401) {
-      return "Votre session a expiré. Veuillez vous reconnecter.";
-    }
+    if (status === 401) return "Votre session API a expiré. Veuillez vous reconnecter.";
+    if (status === 403) return "Accès refusé : connectez-vous avec un compte vendeur.";
 
-    // 403 = connecté mais pas le bon rôle (Agent/Admin sur flow vendeur)
-    if (
-      status === 403 ||
-      rawMsg.includes("Access Denied") ||
-      rawMsg.includes("ROLE_SELLER") ||
-      rawMsg.includes("Seller") // parfois: "Seller expected"
-    ) {
-      return "Accès refusé : connectez-vous avec un compte vendeur pour enregistrer un véhicule.";
-    }
-
-    // Conflit métier (ex: déjà associé)
     if (status === 409) {
-      // si backend renvoie un message précis, on le garde
       if (rawMsg && rawMsg.length < 200) return rawMsg;
-
-      // fallback selon l'étape
-      if (step === "calculate") {
-        return "Un véhicule avec cette plaque existe déjà sur votre compte. Ouvrez l’offre en cours ou mettez-la à jour.";
-      }
-      return "Ce véhicule ne peut pas être enregistré (conflit). Il est peut-être déjà lié à un autre vendeur.";
+      if (step === "calculate") return "Un véhicule avec cette plaque existe déjà sur votre compte.";
+      return "Conflit : ce véhicule est peut-être déjà lié à un autre vendeur.";
     }
 
-    // Validation
-    if (status === 422) {
-      return rawMsg || "Certains champs sont invalides. Vérifiez le formulaire.";
-    }
-
-    // Fallback générique (si backend a déjà un message -> on l'affiche)
+    if (status === 422) return rawMsg || "Certains champs sont invalides. Vérifiez le formulaire.";
     return rawMsg || `Une erreur est survenue (HTTP ${status}).`;
   }
 
-  // ============= Form parsing =============
+  
+  // transforme le formulaire HTML en objet JavaScript pour l’envoyer à l'API.
   formToJson(form) {
     const fd = new FormData(form);
     const obj = Object.fromEntries(fd.entries());
@@ -176,7 +192,6 @@ export default class extends Controller {
     };
   }
 
-  // ============= UI =============
   setLoading(isLoading) {
     if (this.hasBtnTarget) {
       this.btnTarget.disabled = isLoading;

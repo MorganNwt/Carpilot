@@ -2,20 +2,26 @@
 
 {% block body %}
 <main class="bg-gray-50 py-12 md:py-20">
-  <section class="max-w-4xl mx-auto p-8 md:p-10 bg-white shadow-xl rounded-2xl">
+  <section class="max-w-4xl mx-auto p-8 md:p-10 bg-white shadow-xl rounded-2xl"
+    data-controller="form-prefill estimation-flow"
+    data-form-prefill-endpoint-value="/mock/plate-lookup"
+    data-estimation-flow-calculate-url-value="/api/estimations/calculate"
+    data-estimation-flow-create-url-value="/api/seller/vehicles/create-from-estimation"
 
-    <h1 class="text-orange-500 text-2xl font-bold mb-6">Votre véhicule a bien été retrouvé !</h1>
-    <h2 class="font-bold text-lg mb-6">Veuillez vérifier les informations saisies avant de continuer :</h2>
+    {# URL de redirection vers la page de résultat de l'estimation une fois celle-ci calculée et enregistrée #}
+    data-estimation-flow-result-redirect-value="{{ path('seller_estimation_result') }}"
+
+    {# URL de redirection vers la page de connexion si l'utilisateur n'est pas authentifié #}
+    data-estimation-flow-account-url-value="/account"
+  >
+
+    <h1 class="text-orange-500 text-2xl font-bold mb-6" data-form-prefill-target="title">
+      Votre véhicule a bien été retrouvé !</h1>
+    <h2 class="font-bold text-lg mb-6" data-form-prefill-target="subtitle">
+      Veuillez vérifier les informations saisies avant de continuer :
+    </h2>
 
     <form
-      data-controller="form-prefill estimation-flow"
-      data-form-prefill-endpoint-value="/mock/plate-lookup"
-
-      data-estimation-flow-calculate-url-value="/api/estimations/calculate"
-      data-estimation-flow-create-url-value="/api/seller/vehicles/create-from-estimation"
-      data-estimation-flow-result-redirect-value="{{ path('seller_estimation_result') }}"
-      data-estimation-flow-account-url-value="/account"
-
       data-action="submit->estimation-flow#submit"
       class="space-y-4"
     >
@@ -26,77 +32,77 @@
 
       <div>
         <label>VIN</label>
-        <input name="vin" class="input w-full" data-form-prefill-target="vin">
+        <input name="vin" class="input w-full" placeholder="VF15ABHG854895232" data-form-prefill-target="vin">
       </div>
 
       <div>
         <label>Marque</label>
-        <input name="brand" class="input w-full" data-form-prefill-target="brand">
+        <input name="brand" class="input w-full" placeholder="Mercedes" data-form-prefill-target="brand">
       </div>
 
       <div>
         <label>Modèle</label>
-        <input name="model" class="input w-full" data-form-prefill-target="model">
+        <input name="model" class="input w-full" placeholder="ClasseE" data-form-prefill-target="model">
       </div>
 
       <div>
         <label>Version</label>
-        <input name="version" class="input w-full" data-form-prefill-target="version">
+        <input name="version" class="input w-full" placeholder="AMG Line" data-form-prefill-target="version">
       </div>
 
       <div>
         <label>Énergie</label>
-        <input name="energy" class="input w-full" data-form-prefill-target="energy">
+        <input name="energy" class="input w-full" placeholder="Essence" data-form-prefill-target="energy">
       </div>
 
       <div>
         <label>Puissance (ch)</label>
-        <input name="horsePower" class="input w-full" data-form-prefill-target="horsePower">
+        <input name="horsePower" class="input w-full" placeholder="280" data-form-prefill-target="horsePower">
       </div>
 
       <div>
         <label>Puissance fiscale</label>
-        <input name="fiscalPower" class="input w-full" data-form-prefill-target="fiscalPower">
+        <input name="fiscalPower" class="input w-full" placeholder="17" data-form-prefill-target="fiscalPower">
       </div>
 
       <div>
         <label>Boîte de vitesses</label>
-        <input name="gearBox" class="input w-full" data-form-prefill-target="gearBox">
+        <input name="gearBox" class="input w-full" placeholder="Manuelle" data-form-prefill-target="gearBox">
       </div>
 
       <div>
         <label>Nombre de portes</label>
-        <input name="doors" class="input w-full" data-form-prefill-target="doors">
+        <input name="doors" class="input w-full" placeholder="5" data-form-prefill-target="doors">
       </div>
 
       <div>
         <label>Nombre de places</label>
-        <input name="seats" class="input w-full" data-form-prefill-target="seats">
+        <input name="seats" class="input w-full" placeholder="5" data-form-prefill-target="seats">
       </div>
 
       <div>
         <label>Type de carrosserie</label>
-        <input name="bodyType" class="input w-full" data-form-prefill-target="bodyType">
+        <input name="bodyType" class="input w-full" placeholder="Berline" data-form-prefill-target="bodyType">
       </div>
 
       <div>
         <label>Poids (kg)</label>
-        <input name="weightKg" class="input w-full" data-form-prefill-target="weightKg">
+        <input name="weightKg" class="input w-full" placeholder="1500" data-form-prefill-target="weightKg">
       </div>
 
       <div>
         <label>Couleur</label>
-        <input name="color" class="input w-full" data-form-prefill-target="color">
+        <input name="color" class="input w-full" placeholder="Blanc" data-form-prefill-target="color">
       </div>
 
       <div>
         <label>Kilométrage (km)</label>
-        <input name="mileage" class="input w-full" data-form-prefill-target="mileage">
+        <input name="mileage" class="input w-full" placeholder="50000" data-form-prefill-target="mileage">
       </div>
 
       <div>
         <label>Date de mise en circulation</label>
-        <input type="date" name="registrationDate" class="input w-full" data-form-prefill-target="registrationDate">
+        <input type="date" name="registrationDate" class="input w-full" placeholder="2020-01-01" data-form-prefill-target="registrationDate">
       </div>
 
       {#  Affichage des erreur #}

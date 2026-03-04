@@ -45,5 +45,13 @@
         </footer>
     {% endblock %}
 
+     {#  Injection automatique du JWT après login #}
+    {% if app.session.get('jwt') %}
+        <script>
+            localStorage.setItem("token", "{{ app.session.get('jwt') }}");
+        </script>
+        {% do app.session.remove('jwt') %}
+    {% endif %}
+
 </body>
 </html>

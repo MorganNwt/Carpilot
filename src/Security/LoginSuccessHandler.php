@@ -2,18 +2,54 @@
 
 namespace App\Security;
 
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 final class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
-    public function __construct(private RouterInterface $router) {}
+    use TargetPathTrait;
+
+    public function __construct(
+        private RouterInterface $router,
+        private JWTTokenManagerInterface $jwtManager
+    ) {}
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): RedirectResponse
     {
+        // Génère un JWT pour pouvoir appeler /api/* depuis les pages Twig
+        $user = $token->getUser();
+        if ($user instanceof UserInterface) {
+            $jwt = $this->jwtManager->create($user);
+            $request->getSession()->set('jwt', $jwt);
+        }
+
+        // Priorité ABSOLUE : TargetPath (flux plaque → retour form estimation)
+        // Firewall name : adapte si ton firewall ne s'appelle pas "main"
+        $firewallName = 'main';
+
+        if ($request->hasSession()) {
+            $targetPath = $this->getTargetPath($request->getSession(), $firewallName);
+            if (is_string($targetPath) && str_starts_with($targetPath, '/')) {
+                $this->removeTargetPath($request->getSession(), $firewallName);
+                return new RedirectResponse($targetPath);
+            }
+        }
+
+        // Priorité ensuite au redirect (POST puis GET)
+        $redirect = $request->request->get('redirect') ?? $request->query->get('redirect');
+
+        // Sécurité : uniquement chemins internes
+        if (is_string($redirect) && str_starts_with($redirect, '/')) {
+            return new RedirectResponse($redirect);
+        }
+
+        // Sinon → logique par rôle
         $roles = $token->getRoleNames();
 
         if (in_array('ROLE_ADMIN', $roles, true)) {
@@ -28,6 +64,7 @@ final class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
             return new RedirectResponse($this->router->generate('seller_dashboard'));
         }
 
-        return new RedirectResponse($this->router->generate('app_home')); // adapte si besoin
+        // Par défaut → page d'accueil
+        return new RedirectResponse($this->router->generate('app_home'));
     }
 }

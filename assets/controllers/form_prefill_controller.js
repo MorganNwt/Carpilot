@@ -2,6 +2,8 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = [
+    "title",   
+    "subtitle",       
     "plate",
     "vin",
     "brand",
@@ -33,8 +35,12 @@ export default class extends Controller {
 
     if (this.hasPlateTarget) this.plateTarget.value = plate || "";
 
+    //  état initial du message (avant lookup)
+    this.setFoundState(!!data?.found);
+
     // si on a déjà le véhicule (cas connecté dès le départ)
     if (data?.vehicle) {
+      this.setFoundState(true);
       this.fill(data.vehicle);
       return;
     }
@@ -42,7 +48,7 @@ export default class extends Controller {
     // sinon (cas plaque -> login -> retour), on relance le lookup maintenant
     if (!plate) return;
 
-    // ✅ si endpoint non fourni, on stoppe
+    //  si endpoint non fourni, on stoppe
     if (!this.hasEndpointValue || !this.endpointValue) return;
 
     const vehicle = await this.fetchVehicle(plate);
@@ -57,27 +63,68 @@ export default class extends Controller {
       })
     );
 
+    // Message dynamique après lookup
+    this.setFoundState(found);
+
     if (found) this.fill(vehicle);
   }
 
-  async fetchVehicle(plate) {
-    const url = `${this.endpointValue}/${encodeURIComponent(plate)}`;
-
-    const headers = { Accept: "application/json" };
-
-    const token = localStorage.getItem("token");
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-
-    try {
-      const res = await fetch(url, { headers, credentials: "same-origin" });
-      const json = await res.json().catch(() => null);
-
-      // Format mock attendu: { error: false, data: {...} }
-      const found = !!json && json.error === false && !!json.data;
-      return found ? json.data : null;
-    } catch (e) {
-      return null;
+  // Set message trouvé / non trouvé
+  setFoundState(found) {
+    if (found) {
+      if (this.hasTitleTarget) this.titleTarget.textContent = "Votre véhicule a bien été retrouvé !";
+      if (this.hasSubtitleTarget) this.subtitleTarget.textContent = "Veuillez vérifier les informations saisies avant de continuer :";
+      return;
     }
+
+    if (this.hasTitleTarget) this.titleTarget.textContent = "Votre véhicule n’a pas été retrouvé.";
+    if (this.hasSubtitleTarget) this.subtitleTarget.textContent = "Vous devez compléter les informations manuellement pour continuer :";
+  }
+
+
+  // ======================
+  // Logique de lookup + redirection
+  // ======================
+
+  async fetchVehicle(plate) {
+  const headers = { Accept: "application/json" };
+
+  const token = localStorage.getItem("token");
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  //  Essai avec la plaque formatée (ex: EZ-112-TT)
+  try {
+    let url = `${this.endpointValue}/${encodeURIComponent(plate)}`;
+    let res = await fetch(url, { headers, credentials: "same-origin" });
+    let json = await res.json().catch(() => null);
+
+    const found1 = !!json && json.error === false && !!json.data;
+    if (found1) return json.data;
+
+    // Fallback avec la plaque compacte (ex: EZ112TT)
+    const compact = this.compactPlate(plate);
+    if (compact && compact !== plate) {
+      url = `${this.endpointValue}/${encodeURIComponent(compact)}`;
+      res = await fetch(url, { headers, credentials: "same-origin" });
+      json = await res.json().catch(() => null);
+
+      const found2 = !!json && json.error === false && !!json.data;
+      if (found2) return json.data;
+    }
+
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+  // helper compact (keep only letters and numbers, uppercase, no space)
+  compactPlate(v) {
+    return (v || "")
+      .toUpperCase()
+      .trim()
+      .replace(/[^A-Z0-9\s-]/g, "")
+      .replace(/[\s-]+/g, "");
   }
 
   fill(vehicle) {
