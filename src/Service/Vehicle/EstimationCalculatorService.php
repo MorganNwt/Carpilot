@@ -3,6 +3,7 @@
 namespace App\Service\Vehicle;
 
 use App\DTO\Public\EstimationRequestDto;
+
 /**
  * EstimationCalculatorService handles the calculation logic for vehicle estimations.
  *
@@ -14,6 +15,17 @@ use App\DTO\Public\EstimationRequestDto;
 
 class EstimationCalculatorService
 {
+
+    /**
+     * Summary of __construct
+     * @param mixed $now
+     */
+    public function __construct(private ?\DateTimeImmutable $now = null)
+    {
+        $this->now = $this->now ?? new \DateTimeImmutable();
+    }
+
+
     /**
      * Calculates the estimated price of a vehicle based on its registration date and mileage.
      *
@@ -23,9 +35,13 @@ class EstimationCalculatorService
      * @param EstimationRequestDto $dto Data transfer object containing vehicle registration date and mileage.
      * @return float Estimated price of the vehicle.
      */
-    public function calculate(EstimationRequestDto $dto)
+    public function calculate(EstimationRequestDto $dto): float
     {
-        $price = 25000 - (((new \DateTime())->diff(new \DateTime($dto->registrationDate))->y) * 1300) - ($dto->mileage * 0.08);
+        $registration = new \DateTimeImmutable($dto->registrationDate);
+        $years = $this->now->diff($registration)->y;
+
+        $price = 25000 - ($years * 1300) - ($dto->mileage * 0.08);
+
         return max(1000, round($price, -2));
     }
 }
