@@ -100,7 +100,7 @@ export default class extends Controller {
           address: form.address.value.trim(),
           city: form.city.value.trim(),
           postalCode: form.postalCode.value.trim(),
-          country: form.country?.value.trim() || "France",
+          country: form.country?.value.trim(),
           rgpdConsent,
           agencyId,
         }),

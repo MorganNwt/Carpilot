@@ -28,9 +28,9 @@ export default class extends Controller {
       return;
     }
 
-    // Charge les données et affiche la section agents par défaut
+    // Charge les données et affiche la section sellers par défaut
     await this.loadAll();
-    this.showSection("agents");
+    this.showSection("sellers");
   }
 
   // Méthode utilitaire pour faire des requêtes API avec gestion d'erreur et redirection si token invalide

@@ -38,12 +38,6 @@
     <div class="flex flex-wrap gap-3 mb-6">
       <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition cursor-pointer"
               data-action="click->admin-dashboard#show"
-              data-section="agents">
-        Agents
-      </button>
-
-      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition cursor-pointer"
-              data-action="click->admin-dashboard#show"
               data-section="sellers">
         Sellers
       </button>
@@ -52,6 +46,11 @@
               data-action="click->admin-dashboard#show"
               data-section="vehicles">
         Véhicules
+      </button>
+      <button class="px-4 py-2 rounded-lg bg-white shadow hover:bg-gray-100 transition cursor-pointer"
+              data-action="click->admin-dashboard#show"
+              data-section="agents">
+        Agents
       </button>
     </div>
 
@@ -66,7 +65,7 @@
         <thead class="bg-gray-100 text-left">
           <tr>
             <th class="p-4">ID</th>
-            <th class="p-4">Nom</th>
+            <th class="p-4">Nom / Prénom</th>
             <th class="p-4">Email</th>
             <th class="p-4">Téléphone</th>
             <th class="p-4">Employee ID</th>
@@ -89,7 +88,7 @@
         <thead class="bg-gray-100 text-left">
           <tr>
             <th class="p-4">ID</th>
-            <th class="p-4">Nom</th>
+            <th class="p-4">Nom / Prénom</th>
             <th class="p-4">Email</th>
             <th class="p-4">Téléphone</th>
             <th class="p-4">Adresse</th>
@@ -115,7 +114,7 @@
             <th class="p-4">ID</th>
             <th class="p-4">Marque / Modèle</th>
             <th class="p-4">Date d'enregistrement</th>
-            <th class="p-4">Immat</th>
+            <th class="p-4">Immatriculation</th>
             <th class="p-4">VIN</th>
           </tr>
         </thead>

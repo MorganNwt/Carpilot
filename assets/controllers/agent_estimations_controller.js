@@ -16,8 +16,8 @@ export default class extends Controller {
       return;
     }
 
-    // Par défaut, on affiche les offres en attente de prise en charge
-    this.currentStatus = "offer_made";
+    // Par défaut, on affiche les deamndes en attente ou en cours d'étude
+    this.currentStatus = "";
     await this.load();
   }
 
