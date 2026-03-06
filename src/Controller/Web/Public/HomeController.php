@@ -13,7 +13,7 @@ class HomeController extends AbstractController
         $steps = [
             [
                 'icon' => 'fas fa-mouse-pointer',
-                'image' => 'clics.png',
+                'image' => 'Clics.png',
                 'title' => 'En quelques clics',
                 'text' => "Choisir CarPilot, c’est dire adieu aux tracas de la revente d’occasion !",
                 'car_image' => null
