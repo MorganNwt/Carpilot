@@ -12,7 +12,7 @@
 # Variables utilisées pour éviter de répéter les commandes
 # -------------------------------------------------------
 
-# Commande Docker Compose utilisée dans tout le projet
+# Commande Docker Compose
 DC = docker compose -f docker-compose.yml
 
 # Exécuter une commande dans le conteneur PHP (Symfony)
