@@ -1,39 +1,86 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-    static targets = ["scrollLink", "button", "menu"];
+    static targets = [
+        "scrollLink",
+        "button",
+        "menu",
+        "mobileMenu",
+        "mobileAgencyMenu"
+    ];
 
     connect() {
-        this.initSmoothScroll();
-        this.initMenuAgences();
+        this.handleOutsideClick = this.handleOutsideClick.bind(this);
+        document.addEventListener("click", this.handleOutsideClick);
     }
 
-    initSmoothScroll() {
-        this.scrollLinkTargets.forEach(link => {
-            link.addEventListener("click", (e) => {
-                const target = link.getAttribute("href");
-                if (target.length > 1 && document.querySelector(target)) {
-                    e.preventDefault();
-                    document.querySelector(target).scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
+    disconnect() {
+        document.removeEventListener("click", this.handleOutsideClick);
+        document.body.classList.remove("overflow-hidden");
+    }
+
+    scrollToSection(event) {
+        const link = event.currentTarget;
+        const target = link.getAttribute("href");
+
+        if (target && target.length > 1) {
+            const element = document.querySelector(target);
+
+            if (element) {
+                event.preventDefault();
+                element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+                if (this.hasMobileMenuTarget) {
+                    this.closeMobileMenu();
                 }
-            });
-        });
+            }
+        }
     }
 
-    initMenuAgences() {
+    toggleAgencyMenu(event) {
+        event.stopPropagation();
+
+        if (!this.hasMenuTarget) return;
+        this.menuTarget.classList.toggle("hidden");
+    }
+
+    closeAgencyMenu() {
+        if (!this.hasMenuTarget) return;
+        this.menuTarget.classList.add("hidden");
+    }
+
+    openMobileMenu() {
+        if (!this.hasMobileMenuTarget) return;
+        this.mobileMenuTarget.classList.remove("hidden");
+        document.body.classList.add("overflow-hidden");
+    }
+
+    closeMobileMenu() {
+        if (!this.hasMobileMenuTarget) return;
+        this.mobileMenuTarget.classList.add("hidden");
+        document.body.classList.remove("overflow-hidden");
+
+        if (this.hasMobileAgencyMenuTarget) {
+            this.mobileAgencyMenuTarget.classList.add("hidden");
+        }
+    }
+
+    toggleMobileAgencyMenu() {
+        if (!this.hasMobileAgencyMenuTarget) return;
+        this.mobileAgencyMenuTarget.classList.toggle("hidden");
+    }
+
+    handleOutsideClick(event) {
         if (!this.hasButtonTarget || !this.hasMenuTarget) return;
 
-        this.buttonTarget.addEventListener("click", () => {
-            this.menuTarget.classList.toggle("hidden");
-        });
+        const clickedInsideButton = this.buttonTarget.contains(event.target);
+        const clickedInsideMenu = this.menuTarget.contains(event.target);
 
-        document.addEventListener("click", (event) => {
-            if (!this.buttonTarget.contains(event.target) && !this.menuTarget.contains(event.target)) {
-                this.menuTarget.classList.add("hidden");
-            }
-        });
+        if (!clickedInsideButton && !clickedInsideMenu) {
+            this.closeAgencyMenu();
+        }
     }
 }
