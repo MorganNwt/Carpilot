@@ -19,35 +19,40 @@
 </div>
  
 <!-- Formulaire de contact -->
-<div id="contact" class="max-w-4xl mx-auto bg-orange-500 text-white p-6 rounded shadow-md mb-10 mt-15 mb-20 w-170">
-    <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-            <label for="prenom" class="block text-sm font-medium mb-1 text-black">Prénom</label>
-            <input type="text" id="prenom" name="prenom" placeholder="Votre prénom"
-                    class="w-full p-2 rounded text-black bg-white">
-        </div>
-        <div>
-            <label for="email" class="block text-sm font-medium mb-1 text-black">Email</label>
-            <input type="email" id="email" name="email" placeholder="Votre Email"
-                    class="w-full p-2 rounded text-black bg-white">
-        </div>
-        <div class="md:col-span-2">
-            <label for="message" class="block text-sm font-medium mb-1 text-black">Question</label>
-            <textarea id="message" name="message" placeholder="Votre message"
+<div class="px-4">
+    <div id="contact" class="w-full max-w-4xl mx-auto bg-orange-500 text-white p-4 md:p-6 rounded shadow-md mt-15 mb-20">
+        <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="prenom" class="block text-sm font-medium mb-1 text-black">Prénom</label>
+                <input type="text" id="prenom" name="prenom" placeholder="Votre prénom"
+                        class="w-full p-2 rounded text-black bg-white">
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium mb-1 text-black">Email</label>
+                <input type="email" id="email" name="email" placeholder="Votre Email"
+                        class="w-full p-2 rounded text-black bg-white">
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="message" class="block text-sm font-medium mb-1 text-black">Question</label>
+                <textarea id="message" name="message" placeholder="Votre message"
                         class="w-full p-2 h-28 rounded text-black bg-white"></textarea>
-        </div>
-        <div class="md:col-span-2">
-            <button type="submit"
-                    class="bg-blue-900 hover:bg-[#0b2c4c] text-white px-4 py-2 rounded-sm cursor-pointer">
-                Envoyez !
-            </button>
-        </div>
-    </form>
+            </div>
+
+            <div class="md:col-span-2">
+                <button type="submit"
+                        class="bg-blue-900 hover:bg-[#0b2c4c] text-white px-4 py-2 rounded-sm cursor-pointer">
+                    Envoyez !
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Liens du footer -->
 <div class="justify-center max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-black pb-10 mb-15 px-4">
-    <div>
+   <div class="pl-4">
         <h3 class="font-bold mb-2">Pages</h3>
         <ul class="space-y-1">
             <li><a href="#">Accueil</a></li>
