@@ -107,22 +107,12 @@
                        data-action="click->header#closeMobileMenu"
                        class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
                         <div class="flex items-center gap-4">
-                            <img src="/images/header/mon-compte.png" alt="" class="w-7 h-7">
-                            <span class="text-[#17375e] font-semibold text-lg">Dashboard</span>
+                            <img src="/images/Man_On_Phone.png" alt="tête d'homme orange" class="w-7 h-7">
+                            <span class="text-[#17375e] font-semibold text-lg">Mon compte</span>
                         </div>
                         <span class="text-gray-300 text-3xl">›</span>
                     </a>
 
-                    <a href="{{ path('app_logout') }}"
-                       data-controller="logout"
-                       data-action="click->logout#logout"
-                       class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
-                        <div class="flex items-center gap-4">
-                            <img src="/images/header/mon-compte.png" alt="" class="w-7 h-7">
-                            <span class="text-[#17375e] font-semibold text-lg">Déconnexion</span>
-                        </div>
-                        <span class="text-gray-300 text-3xl">›</span>
-                    </a>
                 {% else %}
                     <a href="{{ path('app_account') }}"
                        data-action="click->header#closeMobileMenu"
@@ -144,6 +134,16 @@
                     </div>
                     <span class="text-gray-300 text-3xl">›</span>
                 </a>
+                 <a href="{{ path('app_logout') }}"
+                       data-controller="logout"
+                       data-action="click->logout#logout"
+                       class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <img src="/images/Man_On_Phone.png" alt="tête d'homme orange" class="w-7 h-7">
+                            <span class="text-[#17375e] font-semibold text-lg">Déconnexion</span>
+                        </div>
+                        <span class="text-gray-300 text-3xl">›</span>
+                    </a>
             </nav>
         </div>
     </div>
