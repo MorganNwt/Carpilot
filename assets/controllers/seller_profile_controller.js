@@ -3,13 +3,10 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["profile", "profileTemplate"];
 
-  static values = {
-    token: String, // injecté par Twig: data-xxx-token-value="{{ jwt_token }}"
-  };
-
   async connect() {
+    const token = localStorage.getItem("token");
 
-    if (!this.tokenValue) {
+    if (!token) {
       window.location.href = "/account";
       return;
     }
@@ -18,24 +15,34 @@ export default class extends Controller {
   }
 
   get headers() {
+    const token = localStorage.getItem("token");
+
     return {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${this.tokenValue}`,
+      Authorization: `Bearer ${token}`,
     };
   }
 
   async safeJson(url, options = {}) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "/account";
+      return null;
+    }
+
     try {
       const res = await fetch(url, {
         ...options,
         headers: {
-          ...(options.headers || {}),
           ...this.headers,
+          ...(options.headers || {}),
         },
       });
 
       if (res.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return null;
       }
@@ -45,7 +52,6 @@ export default class extends Controller {
         throw new Error(err?.message ?? `HTTP ${res.status}`);
       }
 
-      // si DELETE peut renvoyer vide, on protège
       const txt = await res.text();
       return txt ? JSON.parse(txt) : {};
     } catch (e) {
@@ -104,6 +110,7 @@ export default class extends Controller {
       });
 
       if (res.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return;
       }
@@ -140,6 +147,7 @@ export default class extends Controller {
       });
 
       if (res.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return;
       }
@@ -150,13 +158,9 @@ export default class extends Controller {
         return;
       }
 
-      // SUPPRESSION DU JWT 
       localStorage.removeItem("token");
       sessionStorage.clear();
-
-      //  Puis logout Symfony (session)
       window.location.href = "/logout";
-
     } catch {
       toastr.error("Erreur réseau");
     }

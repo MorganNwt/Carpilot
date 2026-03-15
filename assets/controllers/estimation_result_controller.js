@@ -7,9 +7,14 @@ export default class extends Controller {
     const raw = sessionStorage.getItem("estimationResult");
     if (!raw) return;
 
-    const data = JSON.parse(raw);
+    let data;
 
-    // afficher les infos sur la page du resultat
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      return;
+    }
+
     const price = data?.estimation?.estimated_price;
     const plate = data?.plate ?? "";
     const brand = data?.brand ?? "";

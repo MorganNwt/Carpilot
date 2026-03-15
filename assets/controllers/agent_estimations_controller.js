@@ -4,51 +4,55 @@ export default class extends Controller {
   static targets = ["tbody"];
 
   static values = {
-    token: String,   // JWT token pour l'authentification API
     listUrl: String, // ex: "/api/agent/estimations"
   };
 
   async connect() {
-    
-    // Si pas de token, rediriger vers la page de connexion
-    if (!this.tokenValue) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
       window.location.href = "/account";
       return;
     }
 
-    // Par défaut, on affiche les deamndes en attente ou en cours d'étude
     this.currentStatus = "";
     await this.load();
   }
 
-  // En-têtes d'authentification pour les requêtes API
   get headers() {
+    const token = localStorage.getItem("token");
+
     return {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${this.tokenValue}`,
+      Authorization: `Bearer ${token}`,
     };
   }
 
-  // Méthode utilitaire pour faire des requêtes API avec gestion d'erreurs et redirection si non autorisé
   async safeJson(url, options = {}) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "/account";
+      return null;
+    }
+
     try {
       const res = await fetch(url, {
         ...options,
         headers: {
-          ...(options.headers || {}), // fusionne les en-têtes personnalisés avec les en-têtes d'authentification
-          ...this.headers, // ajoute les en-têtes d'authentification
+          ...this.headers,
+          ...(options.headers || {}),
         },
       });
 
-      // Si le token est invalide ou expiré, rediriger vers la page de connexion
       if (res.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return null;
       }
 
       if (!res.ok) {
-        // on tente de lire le message JSON
         const err = await res.json().catch(() => null);
         throw new Error(err?.message ?? `HTTP ${res.status}`);
       }

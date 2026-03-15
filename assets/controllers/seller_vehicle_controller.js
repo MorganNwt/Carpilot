@@ -3,13 +3,10 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["vehicles", "vehicleTemplate"];
 
-  static values = {
-    token: String, // ✅ injecté par Twig: data-seller-vehicle-token-value="{{ jwt_token }}"
-  };
-
   async connect() {
-    // ✅ même fonctionnement que côté admin (token injecté Twig)
-    if (!this.tokenValue) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
       window.location.href = "/account";
       return;
     }
@@ -18,15 +15,18 @@ export default class extends Controller {
   }
 
   get headers() {
+    const token = localStorage.getItem("token");
+
     return {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${this.tokenValue}`,
+      Authorization: `Bearer ${token}`,
     };
   }
 
   formatDate(dateString) {
     if (!dateString) return "—";
+
     const date = new Date(dateString);
     return date.toLocaleDateString("fr-FR", {
       day: "2-digit",
@@ -39,7 +39,6 @@ export default class extends Controller {
     const container = event.currentTarget.closest("[data-id]");
     if (!container) return;
 
-    // bloquer ouverture si véhicule verrouillé
     if (container.dataset.vehicleLocked === "1") {
       toastr.error("Modification impossible : dossier en cours de traitement ou clôturé.");
       return;
@@ -59,15 +58,27 @@ export default class extends Controller {
   }
 
   async loadVehicles() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "/account";
+      return;
+    }
+
     try {
-      const response = await fetch("/api/seller/vehicles", { headers: this.headers });
+      const response = await fetch("/api/seller/vehicles", {
+        headers: this.headers,
+      });
 
       if (response.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return;
       }
 
-      if (!response.ok) throw new Error();
+      if (!response.ok) {
+        throw new Error();
+      }
 
       const vehicles = await response.json();
 
@@ -82,6 +93,7 @@ export default class extends Controller {
       for (const vehicle of vehicles) {
         frag.appendChild(this.renderVehicle(vehicle));
       }
+
       this.vehiclesTarget.appendChild(frag);
     } catch (e) {
       console.error("API error: /api/seller/vehicles", e);
@@ -92,19 +104,18 @@ export default class extends Controller {
   renderVehicle(vehicle) {
     const node = this.vehicleTemplateTarget.content.firstElementChild.cloneNode(true);
 
-    // Container / form ids
     node.dataset.id = String(vehicle.id ?? "");
-    const form = node.querySelector("form[data-edit]");
-    if (form) form.dataset.id = String(vehicle.id ?? "");
 
-    // estimation id for offer endpoint
+    const form = node.querySelector("form[data-edit]");
+    if (form) {
+      form.dataset.id = String(vehicle.id ?? "");
+    }
+
     node.dataset.estimationId = vehicle?.estimation?.id ? String(vehicle.estimation.id) : "";
 
-    // can edit offer from API (derived from status)
     const canEditOffer = !!vehicle?.estimation?.can_edit_offer;
     node.dataset.canEditOffer = canEditOffer ? "1" : "0";
 
-    // Fill fields
     this.setText(node, "plate", vehicle.plate ?? "—");
     this.setText(node, "brand", vehicle.brand ?? "");
     this.setText(node, "model", vehicle.model ?? "");
@@ -118,7 +129,6 @@ export default class extends Controller {
     this.setText(node, "bodyType", vehicle.bodyType ?? "—");
     this.setText(node, "color", vehicle.color ? `Couleur : ${vehicle.color}` : "Couleur : —");
 
-    // Estimation display (estimated_price)
     const estEl = node.querySelector('[data-field="estimationValue"]');
     const estimatedPrice = vehicle?.estimation?.estimated_price;
 
@@ -134,24 +144,18 @@ export default class extends Controller {
       }
     }
 
-    // Offer input + button lock
     const offerInput = node.querySelector('[data-input="offerPrice"]');
     const offerBtn = node.querySelector('[data-action*="seller-vehicle#saveOffer"]');
 
     const hasEstimation = !!vehicle?.estimation?.id;
     const offerLocked = !hasEstimation || !canEditOffer;
-
-    //  status estimation
     const status = vehicle?.estimation?.status ?? null;
 
-    //  verrouillage édition véhicule si dossier pris en charge / clôturé
     const vehicleLockedStatuses = ["in_review", "rejected", "transaction_completed", "cancelled"];
     const vehicleLocked = status ? vehicleLockedStatuses.includes(status) : false;
 
-    // on stocke dans le DOM pour toggleEdit()
     node.dataset.vehicleLocked = vehicleLocked ? "1" : "0";
 
-    // Offer input
     if (offerInput) {
       offerInput.value = vehicle?.estimation?.offer_price ?? "";
       offerInput.disabled = offerLocked;
@@ -159,13 +163,16 @@ export default class extends Controller {
       offerInput.classList.toggle("cursor-not-allowed", offerLocked);
 
       if (offerLocked) {
-        if (status === "rejected") offerInput.placeholder = "Offre refusée";
-        else if (status === "transaction_completed") offerInput.placeholder = "Offre acceptée";
-        else offerInput.placeholder = "Offre verrouillée";
+        if (status === "rejected") {
+          offerInput.placeholder = "Offre refusée";
+        } else if (status === "transaction_completed") {
+          offerInput.placeholder = "Offre acceptée";
+        } else {
+          offerInput.placeholder = "Offre verrouillée";
+        }
       }
     }
 
-    // Offer button label
     if (offerBtn) {
       offerBtn.disabled = offerLocked;
       offerBtn.classList.toggle("opacity-60", offerLocked);
@@ -186,7 +193,6 @@ export default class extends Controller {
       }
     }
 
-    // ✅ bouton "Modifier" (toggleEdit)
     const editBtn = node.querySelector('[data-action*="seller-vehicle#toggleEdit"]');
 
     if (editBtn) {
@@ -203,17 +209,16 @@ export default class extends Controller {
       }
     }
 
-    // ✅ Si verrouillé, forcer l'affichage en mode VIEW
     if (vehicleLocked) {
       const view = node.querySelector("[data-view]");
       const edit = node.querySelector("[data-edit]");
+
       if (view && edit) {
         view.classList.remove("hidden");
         edit.classList.add("hidden");
       }
     }
 
-    // Prefill edit inputs
     this.setInput(node, "plate", vehicle.plate);
     this.setInput(node, "vin", vehicle.vin);
     this.setInput(node, "brand", vehicle.brand);
@@ -242,7 +247,6 @@ export default class extends Controller {
     if (input) input.value = value ?? "";
   }
 
-  // submit offer_price for an estimation
   async saveOffer(event) {
     const container = event.currentTarget.closest("[data-id]");
     if (!container) return;
@@ -269,12 +273,12 @@ export default class extends Controller {
 
     const normalized = value.replace(",", ".");
     const num = Number.parseFloat(normalized);
+
     if (!Number.isFinite(num) || num <= 0) {
       toastr.error("Veuillez saisir un prix valide");
       return;
     }
 
-    // DTO attend une string
     const payload = { offer_price: String(normalized) };
 
     try {
@@ -285,6 +289,7 @@ export default class extends Controller {
       });
 
       if (response.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return;
       }
@@ -332,7 +337,6 @@ export default class extends Controller {
       bodyType: raw.bodyType?.trim() || null,
       color: raw.color?.trim() || null,
       registrationDate: raw.registrationDate?.trim() || null,
-
       horsePower: raw.horsePower?.trim() ? Number.parseInt(raw.horsePower, 10) : null,
       fiscalPower: raw.fiscalPower?.trim() ? Number.parseFloat(raw.fiscalPower) : null,
       doors: raw.doors?.trim() ? Number.parseInt(raw.doors, 10) : null,
@@ -348,14 +352,18 @@ export default class extends Controller {
       });
 
       if (response.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return;
       }
 
       if (!response.ok) {
         const err = await response.json().catch(() => null);
+
         if (err?.violations?.length) {
-          toastr.error(err.violations.map((v) => `${v.propertyPath} : ${v.message}`).join("<br/>"));
+          toastr.error(
+            err.violations.map((v) => `${v.propertyPath} : ${v.message}`).join("<br/>")
+          );
         } else {
           toastr.error(err?.message ?? "Erreur lors de la mise à jour du véhicule");
         }
@@ -392,6 +400,7 @@ export default class extends Controller {
       });
 
       if (response.status === 401) {
+        localStorage.removeItem("token");
         window.location.href = "/account";
         return;
       }

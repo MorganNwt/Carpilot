@@ -54,6 +54,7 @@ export default class extends Controller {
 
       // Si token expiré => retour /account
       if (calculateRes.status === 401) {
+        localStorage.removeItem("token");
         sessionStorage.setItem(
           "after_login_redirect",
           this.resultRedirectValue || "/seller/estimation/result"
@@ -97,6 +98,7 @@ export default class extends Controller {
 
       // Si token expiré => retour /account
       if (createRes.status === 401) {
+        localStorage.removeItem("token")
         sessionStorage.setItem(
           "after_login_redirect",
           this.resultRedirectValue || "/seller/estimation/result"
