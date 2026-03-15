@@ -36,7 +36,7 @@ class Seller extends User
     private ?string $country;
 
     #[ORM\OneToMany(mappedBy: 'seller', targetEntity: Vehicle::class, cascade: ['remove'])]
-    private collection $vehicles;
+    private Collection $vehicles;
 
     public function __construct()
     {

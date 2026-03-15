@@ -37,11 +37,8 @@ class Estimation
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    /**
-     * @var Collection<int, Transaction>
-     */
-    #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'estimation', orphanRemoval: true)]
-    private Collection $transaction;
+    #[ORM\OneToOne(mappedBy: 'estimation', cascade: ['persist', 'remove'])]
+    private ?Transaction $transaction = null;
 
     /**
      * @var Collection<int, Notification>
@@ -57,20 +54,10 @@ class Estimation
 
     public function __construct()
     {
-        $this->transaction = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->appointments = new ArrayCollection();
     }
 
-    /**
-     * ==========================================
-     * == CALLBACKS DOCTRINE (LIFECYCLE EVENTS) ==
-     * ==========================================
-     */
-
-    /**
-     * Callback avant persist : définit la date de création
-     */
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
@@ -78,9 +65,6 @@ class Estimation
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    /**
-     * Callback avant update : met à jour la date de dernière modification
-     */
     #[ORM\PreUpdate]
     public function setUpdatedAtValue(): void
     {
@@ -152,24 +136,11 @@ class Estimation
         return $this;
     }
 
-
-    /**
-     * Get the value of status
-     *
-     * @return EstimationStatus
-     */
     public function getStatus(): EstimationStatus
     {
         return $this->status;
     }
 
-    /**
-     * Set the value of status
-     *
-     * @param EstimationStatus $status
-     *
-     * @return self
-     */
     public function setStatus(EstimationStatus $status): self
     {
         $this->status = $status;
@@ -177,32 +148,18 @@ class Estimation
         return $this;
     }
 
-    /**
-     * @return Collection<int, Transaction>
-     */
-    public function getTransaction(): Collection
+    public function getTransaction(): ?Transaction
     {
         return $this->transaction;
     }
 
-    public function addTransaction(Transaction $transaction): static
+    public function setTransaction(?Transaction $transaction): static
     {
-        if (!$this->transaction->contains($transaction)) {
-            $this->transaction->add($transaction);
+        if ($transaction && $transaction->getEstimation() !== $this) {
             $transaction->setEstimation($this);
         }
 
-        return $this;
-    }
-
-    public function removeTransaction(Transaction $transaction): static
-    {
-        if ($this->transaction->removeElement($transaction)) {
-            // set the owning side to null (unless already changed)
-            if ($transaction->getEstimation() === $this) {
-                $transaction->setEstimation(null);
-            }
-        }
+        $this->transaction = $transaction;
 
         return $this;
     }
@@ -228,7 +185,6 @@ class Estimation
     public function removeNotification(Notification $notification): static
     {
         if ($this->notifications->removeElement($notification)) {
-            // set the owning side to null (unless already changed)
             if ($notification->getEstimation() === $this) {
                 $notification->setEstimation(null);
             }
@@ -258,7 +214,6 @@ class Estimation
     public function removeAppointment(Appointment $appointment): static
     {
         if ($this->appointments->removeElement($appointment)) {
-            // set the owning side to null (unless already changed)
             if ($appointment->getEstimation() === $this) {
                 $appointment->setEstimation(null);
             }
