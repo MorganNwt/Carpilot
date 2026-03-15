@@ -52,7 +52,7 @@ security:
 
   access_control:
     - { path: ^/api/login_check$, roles: PUBLIC_ACCESS }
-    - { path: ^/api/sellers$, roles: PUBLIC_ACCESS, methods: [POST] } #  inscription publique
+    - { path: ^/api/sellers$, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/account, roles: PUBLIC_ACCESS }
 
     - { path: ^/admin, roles: ROLE_ADMIN }

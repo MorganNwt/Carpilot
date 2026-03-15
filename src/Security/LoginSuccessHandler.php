@@ -22,7 +22,6 @@ final class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): RedirectResponse
     {
-        // Génère un JWT pour pouvoir appeler /api/* depuis les pages Twig
         $user = $token->getUser();
         if ($user instanceof UserInterface) {
             $jwt = $this->jwtManager->create($user);
