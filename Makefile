@@ -6,7 +6,7 @@
 .PHONY: help start up build stop down restart ps logs logs-app logs-web logs-db \
         bash websh composer install update about cache-clear cc migrate db-create \
         fixtures validate jwt-check nginx-config mysql reset-db reset-app clean \
-        orphans phpunit test
+        orphans phpunit test schema-validate make-migration db-sync db-status
 
 # -------------------------------------------------------
 # Variables utilisées pour éviter de répéter les commandes
@@ -31,33 +31,42 @@ DB = $(DC) exec db
 help:
 	@echo ""
 	@echo "Commandes disponibles pour CarPilot :"
-	@echo "  make start        -> démarre les conteneurs"
-	@echo "  make build        -> build + démarre les conteneurs"
-	@echo "  make stop         -> arrête les conteneurs"
-	@echo "  make restart      -> redémarre les conteneurs"
-	@echo "  make ps           -> affiche les conteneurs"
-	@echo "  make logs         -> logs de tous les services"
-	@echo "  make logs-app     -> logs du conteneur app"
-	@echo "  make logs-web     -> logs du conteneur web"
-	@echo "  make logs-db      -> logs du conteneur db"
-	@echo "  make bash         -> ouvre un bash dans app"
-	@echo "  make websh        -> ouvre un shell dans web"
-	@echo "  make composer     -> composer install"
-	@echo "  make update       -> composer update"
-	@echo "  make about        -> infos Symfony"
-	@echo "  make cc           -> vide le cache Symfony"
-	@echo "  make migrate      -> lance les migrations"
-	@echo "  make db-create    -> crée la base si besoin"
-	@echo "  make fixtures     -> charge les fixtures"
-	@echo "  make validate     -> vérifie la config Symfony"
-	@echo "  make jwt-check    -> vérifie la présence des clés JWT"
-	@echo "  make nginx-config -> affiche la config nginx chargée"
-	@echo "  make mysql        -> ouvre MySQL dans le conteneur db"
-	@echo "  make reset-db     -> supprime et recrée la base"
-	@echo "  make reset-app    -> reinstall + cache + migrations"
-	@echo "  make test         -> lance les tests"
-	@echo "  make clean        -> down -v"
-	@echo "  make orphans      -> supprime les conteneurs orphelins"
+	@echo "  make start            -> démarre les conteneurs"
+	@echo "  make up               -> alias de start"
+	@echo "  make build            -> build + démarre les conteneurs"
+	@echo "  make stop             -> arrête les conteneurs"
+	@echo "  make down             -> alias de stop"
+	@echo "  make restart          -> redémarre complètement les conteneurs"
+	@echo "  make ps               -> affiche les conteneurs"
+	@echo "  make logs             -> logs de tous les services"
+	@echo "  make logs-app         -> logs du conteneur app"
+	@echo "  make logs-web         -> logs du conteneur web"
+	@echo "  make logs-db          -> logs du conteneur db"
+	@echo "  make bash             -> ouvre un bash dans app"
+	@echo "  make websh            -> ouvre un shell dans web"
+	@echo "  make composer         -> composer install"
+	@echo "  make install          -> alias de composer install"
+	@echo "  make update           -> composer update"
+	@echo "  make about            -> infos Symfony"
+	@echo "  make cache-clear      -> vide le cache Symfony"
+	@echo "  make cc               -> alias de cache-clear"
+	@echo "  make db-create        -> crée la base si besoin"
+	@echo "  make schema-validate  -> vérifie mapping Doctrine + synchro base"
+	@echo "  make make-migration   -> génère une migration Doctrine si nécessaire"
+	@echo "  make migrate          -> applique les migrations Doctrine"
+	@echo "  make db-status        -> affiche l'état des migrations"
+	@echo "  make db-sync          -> validate + make:migration + migrate"
+	@echo "  make fixtures         -> charge les fixtures"
+	@echo "  make validate         -> vérifie YAML, Twig et Doctrine"
+	@echo "  make jwt-check        -> vérifie la présence des clés JWT"
+	@echo "  make nginx-config     -> affiche la config nginx chargée"
+	@echo "  make mysql            -> ouvre MySQL dans le conteneur db"
+	@echo "  make reset-db         -> supprime et recrée la base + migrations"
+	@echo "  make reset-app        -> reinstall + cache + migrations"
+	@echo "  make phpunit          -> lance PHPUnit"
+	@echo "  make test             -> alias de phpunit"
+	@echo "  make orphans          -> supprime les conteneurs orphelins"
+	@echo "  make clean            -> down -v"
 	@echo ""
 
 
@@ -162,13 +171,31 @@ cache-clear:
 cc:
 	$(APP) php bin/console cache:clear
 
-# Lance les migrations Doctrine
-migrate:
-	$(APP) php bin/console doctrine:migrations:migrate --no-interaction
-
 # Crée la base de données si elle n’existe pas
 db-create:
 	$(APP) php bin/console doctrine:database:create --if-not-exists
+
+# Vérifie le mapping Doctrine et la synchronisation avec la base
+schema-validate:
+	$(APP) php bin/console doctrine:schema:validate
+
+# Génère une nouvelle migration Doctrine si nécessaire
+make-migration:
+	$(APP) php bin/console make:migration
+
+# Applique les migrations Doctrine
+migrate:
+	$(APP) php bin/console doctrine:migrations:migrate --no-interaction
+
+# Affiche l'état des migrations Doctrine
+db-status:
+	$(APP) php bin/console doctrine:migrations:status
+
+# Vérifie le schéma, génère la migration si besoin puis l'applique
+db-sync:
+	$(APP) php bin/console doctrine:schema:validate
+	$(APP) php bin/console make:migration
+	$(APP) php bin/console doctrine:migrations:migrate --no-interaction
 
 # Charge les fixtures (données de test)
 fixtures:
