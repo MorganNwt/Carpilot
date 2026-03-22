@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api\Public;
 
-use Psr\Log\LoggerInterface;
 use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use App\DTO\Public\EstimationRequestDto;
@@ -23,7 +22,6 @@ final class EstimationController extends AbstractController
     public function __construct(
         private readonly VehicleLookupService $lookupService,
         private readonly EstimationService $estimationService,
-        private readonly LoggerInterface $logger
     ) {}
 
     #[Route('/lookup-by-plate', name: 'plate_lookup', methods: ['POST'])]

@@ -10,7 +10,6 @@ export default class extends Controller {
     const okUpper = /[A-Z]/.test(value);
     const okDigit = /[0-9]/.test(value);
 
-    // "spéciaux" = tout ce qui n'est ni lettre ni chiffre
     const specialsCount = (value.match(/[^a-zA-Z0-9]/g) || []).length;
     const okSpecial = specialsCount >= 2;
 
