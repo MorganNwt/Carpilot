@@ -51,6 +51,7 @@ security:
         target: /account
 
   access_control:
+    - { path: ^/api/doc, roles: PUBLIC_ACCESS }
     - { path: ^/api/login_check$, roles: PUBLIC_ACCESS }
     - { path: ^/api/sellers$, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/account, roles: PUBLIC_ACCESS }
