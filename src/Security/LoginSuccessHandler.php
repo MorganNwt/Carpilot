@@ -25,7 +25,7 @@ final class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
         $user = $token->getUser();
         if ($user instanceof UserInterface) {
             $jwt = $this->jwtManager->create($user);
-            $request->getSession()->set('jwt', $jwt);
+            $request->getSession()->set('token', $jwt);
         }
 
         // Priorité ABSOLUE : TargetPath (flux plaque → retour form estimation)
