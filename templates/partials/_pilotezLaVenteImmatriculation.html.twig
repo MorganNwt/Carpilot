@@ -10,7 +10,7 @@
     <div
       class="mx-auto md:w-1/2 lg:w-2/3 xl:w-1/2 max-w-md lg:max-w-2xl mt-6 mb-10"
       data-controller="plate-prefill"
-      data-plate-prefill-endpoint-value="/mock/plate-lookup"
+      data-plate-prefill-endpoint-value="{{ path('api_public_estimation_plate_lookup') }}"
 
       {# URL de redirection vers la page de formulaire d'estimation une fois les infos pré-remplies #}
       data-plate-prefill-redirect-value="{{ path('public_estimation_form') }}"

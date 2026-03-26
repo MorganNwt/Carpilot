@@ -45,7 +45,7 @@ final class RegistrationService
         $seller->setRgpdConsent(true);
         $seller->setRgpdConsentAt(new \DateTimeImmutable());
 
-        // 🔹 Hash password
+        // Hash password
         $hashedPassword = $this->passwordHasher->hashPassword($seller, $dto->password);
         $seller->setPassword($hashedPassword);
 

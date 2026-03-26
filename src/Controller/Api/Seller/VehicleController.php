@@ -39,7 +39,6 @@ final class VehicleController extends AbstractController
     ) {}
 
 
-    // MAJ - Renforcer la sécurité de cette route en vérifiant que le token d'estimation appartient bien au vendeur connecté
     #[Route('create-from-estimation', name: 'create_from_estimation', methods: ['POST'])]
     #[OA\Post(
         summary: "Create a vehicle from an estimation",

@@ -29,10 +29,10 @@
                         </h2>
 
                        <form id="login-form" method="post" action="/account" class="mt-17 space-y-5">
-                            <input type="email" name="email"placeholder="Adresse mail" required  class="input"  autocomplete="email">
-                            <input type="password" name="password" placeholder="Mot de passe"required class="input" autocomplete="current-password">
-                            <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            <input type="email" name="email"placeholder="Adresse mail" required class="input">
+                            <input type="password" name="password" placeholder="Mot de passe"required class="input">
+                            <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
                             <button type="submit" class="bg-blue-900 cursor-pointer text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition w-fit">
                                 Me connecter
                             </button>
@@ -77,8 +77,11 @@
                             >
                         </div>
 
-                        <input type="email" name="email" placeholder="Adresse mail" required class="input">
-                        
+                        <input type="email" name="email" placeholder="Adresse mail" required class="input"        
+                            pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                            title="Veuillez saisir une adresse email valide."
+                        >
+
                         <div data-controller="password--password-match" class="space-y-5">
                             <div data-controller="password--password-rules" class="space-y-2">
                                 <div class="relative">
