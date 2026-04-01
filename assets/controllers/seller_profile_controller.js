@@ -71,6 +71,14 @@ export default class extends Controller {
   renderProfile(profile) {
     const node = this.profileTemplateTarget.content.firstElementChild.cloneNode(true);
 
+    this.setField(node, "firstName", profile.firstName);
+    this.setField(node, "lastName", profile.lastName);
+    this.setField(node, "email", profile.email);
+    this.setField(node, "phone", profile.phone);
+    this.setField(node, "address", profile.address);
+    this.setField(node, "postalCode", profile.postalCode);
+    this.setField(node, "city", profile.city);
+
     this.setInput(node, "firstName", profile.firstName);
     this.setInput(node, "lastName", profile.lastName);
     this.setInput(node, "email", profile.email);
@@ -86,6 +94,23 @@ export default class extends Controller {
     const input = root.querySelector(`[data-input="${name}"]`);
     if (input) input.value = value ?? "";
   }
+
+  setField(root, name, value) {
+  const el = root.querySelector(`[data-field="${name}"]`);
+  if (el) el.textContent = value ?? "";
+}
+
+toggleEdit(event) {
+  const container = event.currentTarget.closest("[data-profile-card]");
+  if (!container) return;
+
+  const view = container.querySelector("[data-view]");
+  const edit = container.querySelector("[data-edit]");
+  if (!view || !edit) return;
+
+  view.classList.toggle("hidden");
+  edit.classList.toggle("hidden");
+}
 
   async updateProfile(event) {
     event.preventDefault();

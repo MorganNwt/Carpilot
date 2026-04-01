@@ -10,7 +10,6 @@ final class SecurityController extends AbstractController
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // Symfony gère la déconnexion automatiquement, cette méthode ne doit jamais être appelée
         throw new \LogicException('This code should never be reached.');
     }
 }

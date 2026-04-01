@@ -22,10 +22,7 @@
 {% endblock %}
 
 {% block body %}
-<main 
-  class="min-h-screen bg-gray-50 p-8" 
-  data-controller="seller-profile seller-vehicle"
->
+<main class="min-h-screen bg-gray-50 p-8" data-controller="seller-profile seller-vehicle">
 
 <div class="max-w-6xl mx-auto">
   <h1 class="text-2xl font-bold mb-6">Mon espace vendeur</h1>
@@ -38,29 +35,96 @@
     </div>
 
     <template data-seller-profile-target="profileTemplate">
-      <div class="max-w-3xl mx-auto">
-        <form class="space-y-4" data-action="submit->seller-profile#updateProfile">
-          <input type="text" name="firstName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Prénom" required data-input="firstName"/>
-          <input type="text" name="lastName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Nom" required data-input="lastName"/>
-          <input type="email" name="email" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Email" required data-input="email"/>
-          <input type="text" name="phone" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm"placeholder="Téléphone" data-input="phone"/>
-          <input type="text" name="address" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Adresse" data-input="address"/>
-          <input type="text" name="postalCode" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Code postal" data-input="postalCode"/>
-          <input type="text" name="city" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm"placeholder="Ville" data-input="city"/>
+      <div class="max-w-3xl mx-auto border-b py-6" data-profile-card>
 
-          <div class="flex gap-4 pt-4 justify-center">
-            <button type="submit"
-                    class="bg-blue-700 text-white rounded-lg px-8 py-4 font-semibold hover:bg-blue-600 cursor-pointer transition">
-              Mettre à jour
-            </button>
+        {# ================= LECTURE ================= #}
+        <div class="flex flex-col gap-4" data-view>
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-lg font-semibold">
+                <span data-field="firstName"></span> <span data-field="lastName"></span>
+              </p>
 
-            <button type="button"
-                    class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 cursor-pointer transition"
-                    data-action="click->seller-profile#deleteAccount">
-              Supprimer le compte
+              <p class="text-gray-600" data-field="email"></p>
+
+              <p class="text-gray-500 text-sm">
+                <span data-field="phone"></span>
+              </p>
+
+              <p class="text-gray-500 text-sm">
+                <span data-field="address"></span>
+                <span data-field="postalCode"></span>
+                <span data-field="city"></span>
+              </p>
+            </div>
+
+            <div class="flex gap-2">
+              <button
+                type="button"
+                class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 cursor-pointer transition"
+                data-action="click->seller-profile#toggleEdit"
+              >
+                Modifier
+              </button>
+
+              <button
+                type="button"
+                class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 cursor-pointer transition"
+                data-action="click->seller-profile#deleteAccount"
+              >
+                Supprimer le compte
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {# ================= ÉDITION ================= #}
+        <form class="hidden mt-6 space-y-4" data-edit data-action="submit->seller-profile#updateProfile">
+          <div>
+            <label for="firstName" class="block mb-1 text-sm font-medium text-gray-700">Prénom</label>
+            <input id="firstName" type="text" name="firstName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Prénom" required data-input="firstName" autocomplete="given-name"/>
+          </div>
+
+          <div>
+            <label for="lastName" class="block mb-1 text-sm font-medium text-gray-700">Nom</label>
+            <input id="lastName" type="text" name="lastName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Nom" required data-input="lastName" autocomplete="family-name"/>
+          </div>
+
+          <div>
+            <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+            <input id="email" type="email" name="email" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Email" required data-input="email" autocomplete="email"/>
+          </div>
+
+          <div>
+            <label for="phone" class="block mb-1 text-sm font-medium text-gray-700">Téléphone</label>
+            <input id="phone" type="text" name="phone" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Téléphone" data-input="phone" autocomplete="tel"/>
+          </div>
+
+          <div>
+            <label for="address" class="block mb-1 text-sm font-medium text-gray-700">Adresse</label>
+            <input id="address" type="text" name="address" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Adresse" data-input="address" autocomplete="street-address"/>
+          </div>
+
+          <div>
+            <label for="postalCode" class="block mb-1 text-sm font-medium text-gray-700">Code postal</label>
+            <input id="postalCode" type="text" name="postalCode" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Code postal" data-input="postalCode" autocomplete="postal-code"/>
+          </div>
+
+          <div>
+            <label for="city" class="block mb-1 text-sm font-medium text-gray-700">Ville</label>
+            <input id="city" type="text" name="city" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Ville" data-input="city" autocomplete="address-level2"/>
+          </div>
+
+          <div class="flex gap-4 pt-4 justify-end">
+            <button
+              type="submit"
+              class="bg-blue-700 text-white rounded-lg px-8 py-4 font-semibold hover:bg-blue-600 cursor-pointer transition"
+            >
+              Enregistrer
             </button>
           </div>
         </form>
+
       </div>
     </template>
   </section>
@@ -136,26 +200,82 @@
 
           <!-- ================= ÉDITION ================= -->
           <form class="hidden mt-6 grid grid-cols-2 md:grid-cols-4 gap-4" data-edit data-action="submit->seller-vehicle#updateVehicle" data-id="">
-              <input name="plate" class="input" placeholder="Plaque" data-input="plate"/>
-              <input name="vin" class="input" placeholder="VIN" data-input="vin"/>
-              <input name="brand" class="input" placeholder="Marque" data-input="brand"/>
-              <input name="model" class="input" placeholder="Modèle" data-input="model"/>
-              <input name="version" class="input" placeholder="Version" data-input="version"/>
-              <input name="energy" class="input" placeholder="Énergie" data-input="energy"/>
-              <input name="horsePower" class="input" placeholder="Puissance (ch)" data-input="horsePower"/>
-              <input name="fiscalPower" class="input" placeholder="Puissance fiscale" data-input="fiscalPower"/>
-              <input name="gearBox" class="input" placeholder="Boîte de vitesse" data-input="gearBox"/>
-              <input name="doors" class="input" placeholder="Nombre de portes" data-input="doors"/>
-              <input name="seats" class="input" placeholder="Nombre de places" data-input="seats"/>
-              <input name="bodyType" class="input" placeholder="Type de carrosserie" data-input="bodyType"/>
-              <input name="color" class="input" placeholder="Couleur" data-input="color"/>
-              <input name="weightKg" class="input" placeholder="Poids (kg)" data-input="weightKg"/>
+            <div>
+                <label class="text-sm font-medium text-gray-700">Plaque</label>
+                <input name="plate" class="input" placeholder="Plaque" data-input="plate"/>
+            </div>
 
-              <div class="col-span-full flex gap-3 justify-end mt-4">
-                  <button type="submit" class="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer">
-                      Enregistrer
-                  </button>
-              </div>
+            <div>
+                <label class="text-sm font-medium text-gray-700">VIN</label>
+                <input name="vin" class="input" placeholder="VIN" data-input="vin"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Marque</label>
+                <input name="brand" class="input" placeholder="Marque" data-input="brand"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Modèle</label>
+                <input name="model" class="input" placeholder="Modèle" data-input="model"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Version</label>
+                <input name="version" class="input" placeholder="Version" data-input="version"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Énergie</label>
+                <input name="energy" class="input" placeholder="Énergie" data-input="energy"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Puissance (ch)</label>
+                <input name="horsePower" class="input" placeholder="Puissance (ch)" data-input="horsePower"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Puissance fiscale</label>
+                <input name="fiscalPower" class="input" placeholder="Puissance fiscale" data-input="fiscalPower"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Boîte de vitesse</label>
+                <input name="gearBox" class="input" placeholder="Boîte de vitesse" data-input="gearBox"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Nombre de portes</label>
+                <input name="doors" class="input" placeholder="Nombre de portes" data-input="doors"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Nombre de places</label>
+                <input name="seats" class="input" placeholder="Nombre de places" data-input="seats"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Type de carrosserie</label>
+                <input name="bodyType" class="input" placeholder="Type de carrosserie" data-input="bodyType"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Couleur</label>
+                <input name="color" class="input" placeholder="Couleur" data-input="color"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Poids (kg)</label>
+                <input name="weightKg" class="input" placeholder="Poids (kg)" data-input="weightKg"/>
+            </div>
+
+            <div class="col-span-full flex gap-3 justify-end mt-4">
+                <button type="submit"
+                        class="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer">
+                    Enregistrer
+                </button>
+            </div>
           </form>
         </div>
 

@@ -62,6 +62,7 @@
                     </div>
 
                     <form data-account-target="registerForm" data-action="submit->account#register" class="space-y-5 w-full">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
                         <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <input type="text" name="lastName" placeholder="Jean" required class="input"

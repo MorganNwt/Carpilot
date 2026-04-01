@@ -48,7 +48,7 @@ security:
         success_handler: App\Security\LoginSuccessHandler
       logout:
         path: /logout
-        target: /account
+        target: /home
 
   access_control:
     - { path: ^/api/doc, roles: PUBLIC_ACCESS }
