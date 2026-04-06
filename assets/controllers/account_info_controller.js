@@ -3,7 +3,8 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
 
   connect() {
-    // Au chargement du composant, on vérifie si on doit afficher le formulaire (si redirection après login ou query param ?)
+    // Gestion de l'affichage du message "Récupération de votre véhicule en cours..." 
+    // lorsque l'utilisateur est redirigé vers la page de connexion depuis une page nécessitant une authentification.
     const url = new URL(window.location.href);
     const hasRedirectQuery = !!url.searchParams.get("redirect");
     const hasRedirectStorage = !!sessionStorage.getItem("after_login_redirect");

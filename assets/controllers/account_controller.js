@@ -98,7 +98,7 @@ export default class extends Controller {
       // Nettoyage préventif d'un ancien token
       localStorage.removeItem("token");
 
-      // 1) Création du compte seller
+      // Création du compte seller
       const registerResponse = await fetch("/api/sellers", {
         method: "POST",
         headers: {
@@ -141,7 +141,7 @@ export default class extends Controller {
         throw new Error(message);
       }
 
-      // 2) Login API pour récupérer le JWT
+      // Login API pour récupérer le JWT
       const loginApiResponse = await fetch("/api/login_check", {
         method: "POST",
         headers: {
@@ -163,7 +163,7 @@ export default class extends Controller {
       // Stockage unique du JWT côté front
       localStorage.setItem("token", loginData.token);
 
-      // 3) Login Symfony web pour créer la session côté site
+      //
       const csrf = document.querySelector('form[action="/account"] input[name="_csrf_token"]')?.value || "";
 
       const postLogin = document.createElement("form");
@@ -194,6 +194,7 @@ export default class extends Controller {
     }
   }
 
+  // Permet de s'assurer que les redirections ne pointent que vers des chemins internes sûrs
   safeRedirect(value) {
     const v = String(value || "").trim();
     if (!v) return "";
@@ -209,6 +210,7 @@ export default class extends Controller {
     return input;
   }
 
+  // Affiche un message d'erreur dans le formulaire d'inscription
   fail(message) {
     if (this.hasRegisterErrorTarget) {
       this.registerErrorTarget.textContent = message;

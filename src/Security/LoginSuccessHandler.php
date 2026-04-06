@@ -29,7 +29,6 @@ final class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
         }
 
         // Priorité ABSOLUE : TargetPath (flux plaque → retour form estimation)
-        // Firewall name : adapte si ton firewall ne s'appelle pas "main"
         $firewallName = 'main';
 
         if ($request->hasSession()) {

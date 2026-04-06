@@ -2,9 +2,9 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static values = {
-    agentsUrl: String,
-    sellersUrl: String,
-    vehiclesUrl: String,
+    agentsUrl: String, // URL de l'API pour récupérer les agents
+    sellersUrl: String, // URL de l'API pour récupérer les vendeurs
+    vehiclesUrl: String, // URL de l'API pour récupérer les véhicules
   };
 
   static targets = [

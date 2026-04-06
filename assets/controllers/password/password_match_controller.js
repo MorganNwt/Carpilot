@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = ['password', 'confirm', 'message'];
 
   check() {
+    // Récupère les valeurs des champs de mot de passe et de confirmation
     const pwd = this.passwordTarget.value || '';
     const confirm = this.confirmTarget.value || '';
 
@@ -15,6 +16,7 @@ export default class extends Controller {
       return;
     }
 
+    // Si les deux champs sont remplis, on vérifie la correspondance
     if (pwd === confirm) {
       this.messageTarget.textContent = '* Les mots de passe correspondent';
       this.messageTarget.classList.remove('text-red-500');

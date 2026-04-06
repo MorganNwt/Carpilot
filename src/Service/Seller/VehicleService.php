@@ -83,15 +83,12 @@ class VehicleService
                 throw new ConflictHttpException("Ce véhicule est déjà associé à un autre vendeur.");
             }
             $vehicle = $existing;
-            // Optionnel: si tu veux mettre à jour des champs du véhicule à partir du DTO,
-            // tu peux appeler un mapper update ici.
         } else {
             $vehicle = $this->mapper->fromCreateDtoToEntity($dto);
             $vehicle->setSeller($seller);
             $this->em->persist($vehicle);
         }
 
-        // Estimation (OneToOne)
         $estimation = $vehicle->getEstimation() ?? new Estimation();
         $estimation->setEstimatedPrice($data['price']);
 

@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["profile", "profileTemplate"];
 
+  // Vérifie la présence d'un token à la connexion et charge le profil
   async connect() {
     const token = localStorage.getItem("token");
 
@@ -14,6 +15,7 @@ export default class extends Controller {
     await this.loadProfile();
   }
 
+  // Génère les headers d'authentification pour les requêtes API
   get headers() {
     const token = localStorage.getItem("token");
 
@@ -24,6 +26,7 @@ export default class extends Controller {
     };
   }
 
+  // Effectue une requête API sécurisée avec gestion des erreurs et redirection si non autorisé
   async safeJson(url, options = {}) {
     const token = localStorage.getItem("token");
 
@@ -32,6 +35,7 @@ export default class extends Controller {
       return null;
     }
 
+    // Ajoute le token aux headers de la requête
     try {
       const res = await fetch(url, {
         ...options,
@@ -60,6 +64,7 @@ export default class extends Controller {
     }
   }
 
+  // Charge le profil du vendeur et l'affiche dans la page
   async loadProfile() {
     const profile = await this.safeJson("/api/sellers/profile", { method: "GET" });
     if (!profile) return;
@@ -68,6 +73,7 @@ export default class extends Controller {
     this.profileTarget.appendChild(this.renderProfile(profile));
   }
 
+  // Rendu du profil à partir du template HTML
   renderProfile(profile) {
     const node = this.profileTemplateTarget.content.firstElementChild.cloneNode(true);
 

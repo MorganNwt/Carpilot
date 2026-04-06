@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = ["tbody"];
 
   static values = {
-    listUrl: String, // ex: "/api/agent/estimations"
+    listUrl: String, // URL personnalisée pour la liste des estimations (ex: /api/agent/estimations?status=estimated)
   };
 
   async connect() {
