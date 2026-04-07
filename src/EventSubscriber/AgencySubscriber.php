@@ -37,7 +37,7 @@ class AgencySubscriber implements EventSubscriberInterface
             return;
         }
 
-        // ✅ Définir Valence par défaut si rien en session
+        //  Définir Valence par défaut si rien en session
         $request = $event->getRequest();
         if ($request->hasSession()) {
             $session = $request->getSession();
