@@ -86,19 +86,26 @@ class VehicleService
         } else {
             $vehicle = $this->mapper->fromCreateDtoToEntity($dto);
             $vehicle->setSeller($seller);
-            $this->em->persist($vehicle);
         }
 
+        // Un dossier existant conserve son agence ; un nouveau dépend de celle du vendeur.
+        $agency = $vehicle->getAgency() ?? $seller->getAgency();
+        if ($agency === null) {
+            throw new ConflictHttpException('Votre compte doit être rattaché à une agence avant de pouvoir enregistrer un véhicule.');
+        }
+        $vehicle->setAgency($agency);
+
         $estimation = $vehicle->getEstimation() ?? new Estimation();
+        if ($estimation->getAgency() === null) {
+            $estimation->setAgency($agency);
+        }
         $estimation->setEstimatedPrice($data['price']);
 
         $vehicle->setEstimation($estimation);
 
-        // Si pas de cascade persist sur Vehicle->Estimation =>
-
-        // if (!$estimation->getId()) {
-        //     $this->em->persist($estimation);
-        // }
+        if (!$existing) {
+            $this->em->persist($vehicle);
+        }
 
         $this->em->flush();
 

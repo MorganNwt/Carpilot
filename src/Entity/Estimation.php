@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Agency;
+use App\Entity\Transaction;
 use App\Enum\EstimationStatus;
 use App\Repository\EstimationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,10 +27,10 @@ class Estimation
     #[ORM\Column(enumType: EstimationStatus::class)]
     private EstimationStatus $status = EstimationStatus::ESTIMATED;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 0, nullable: true)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $estimatedPrice = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 0, nullable: true)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $offerPrice = null;
 
     #[ORM\Column]
@@ -51,6 +53,10 @@ class Estimation
      */
     #[ORM\OneToMany(targetEntity: Appointment::class, mappedBy: 'estimation')]
     private Collection $appointments;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Agency $agency = null;
 
     public function __construct()
     {
@@ -84,6 +90,10 @@ class Estimation
     public function setVehicle(Vehicle $vehicle): static
     {
         $this->vehicle = $vehicle;
+
+        if ($vehicle->getEstimation() !== $this) {
+            $vehicle->setEstimation($this);
+        }
 
         return $this;
     }
@@ -160,6 +170,18 @@ class Estimation
         }
 
         $this->transaction = $transaction;
+
+        return $this;
+    }
+
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): static
+    {
+        $this->agency = $agency;
 
         return $this;
     }
