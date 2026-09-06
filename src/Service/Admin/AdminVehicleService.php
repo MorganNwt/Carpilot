@@ -5,6 +5,9 @@ namespace App\Service\Admin;
 use App\Repository\VehicleRepository;
 use App\Mapper\VehicleMapper;
 use App\DTO\Vehicle\VehicleResponseDto;
+use App\Entity\Vehicle;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 /**
  * Service dédié aux opérations ADMIN sur les véhicules.
@@ -19,24 +22,44 @@ class AdminVehicleService
 {
     public function __construct(
         private readonly VehicleRepository $vehicleRepository,
-        private readonly VehicleMapper $vehicleMapper
+        private readonly VehicleMapper $vehicleMapper,
+        private readonly EntityManagerInterface $em,
     ) {}
 
-    /**
-     * ADMIN – Retrieve all vehicles in the system.
-     *
-     * @return VehicleResponseDto[] An array of vehicle response DTOs.
-     */
-    public function findAllVehicles(): array
+    public function deleteVehicle(Vehicle $vehicle): void
     {
-        $vehicles = $this->vehicleRepository->findAll();
+        $estimation = $vehicle->getEstimation();
+        if ($estimation !== null) {
+            if ($estimation->getTransaction() !== null || !$estimation->getAppointments()->isEmpty()) {
+                throw new ConflictHttpException('Ce véhicule est lié à une transaction ou à un rendez-vous et ne peut pas être supprimé.');
+            }
 
-        $responseDtos = [];
-
-        foreach ($vehicles as $vehicle) {
-            $responseDtos[] = $this->vehicleMapper->fromEntityToResponseDto($vehicle);
+            foreach ($estimation->getNotifications() as $notification) {
+                $estimation->removeNotification($notification);
+            }
         }
 
-        return $responseDtos;
+        $this->em->remove($vehicle);
+        $this->em->flush();
+    }
+
+    public function getPaginatedVehicles(int $page, int $limit = 10): array
+    {
+        $page = max(1, $page);
+        $limit = max(1, min(100, $limit));
+        $totalItems = $this->vehicleRepository->count([]);
+        $vehicles = $this->vehicleRepository->findBy(
+            [], ['createdAt' => 'DESC', 'id' => 'DESC'], $limit, ($page - 1) * $limit
+        );
+
+        return [
+            'data' => array_map($this->vehicleMapper->fromEntityToResponseDto(...), $vehicles),
+            'meta' => [
+                'currentPage' => $page,
+                'totalPages' => (int) ceil($totalItems / $limit),
+                'totalItems' => $totalItems,
+                'limit' => $limit,
+            ],
+        ];
     }
 }

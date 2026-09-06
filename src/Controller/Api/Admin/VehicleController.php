@@ -11,11 +11,14 @@ use App\DTO\Vehicle\VehicleResponseDto;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -34,27 +37,27 @@ final class VehicleController extends AbstractController
         private readonly AdminVehicleService $adminVehicleService
     ) {}
 
-    /**
-     * List ALL vehicles
-     */
     #[Route('', name: 'list', methods: ['GET'])]
-    #[OA\Get(
-        summary: "List all vehicles (admin)",
-        description: "Retrieves the list of all vehicles in the system."
-    )]
-    #[OA\Response(
-        response: 200,
-        description: "Returns the list of vehicles.",
-        content: new OA\JsonContent(
-            type: 'array',
-            items: new OA\Items(ref: new Model(type: VehicleResponseDto::class))
-        )
-    )]
-    public function listAll()
+    #[OA\Get(summary: 'List vehicles (paginated, admin)')]
+    #[OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1))]
+    #[OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer', default: 10))]
+    #[OA\Response(response: 200, description: 'Paginated vehicles.', content: new OA\JsonContent(
+        properties: [
+            new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: new Model(type: VehicleResponseDto::class))),
+            new OA\Property(property: 'meta', type: 'object', properties: [
+                new OA\Property(property: 'currentPage', type: 'integer'),
+                new OA\Property(property: 'totalPages', type: 'integer'),
+                new OA\Property(property: 'totalItems', type: 'integer'),
+                new OA\Property(property: 'limit', type: 'integer'),
+            ]),
+        ]
+    ))]
+    public function listAll(Request $request): JsonResponse
     {
-        return $this->json(
-            $this->adminVehicleService->findAllVehicles()
-        );
+        return $this->json($this->adminVehicleService->getPaginatedVehicles(
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 10),
+        ));
     }
 
     /**
@@ -133,9 +136,16 @@ final class VehicleController extends AbstractController
         description: "Deletes a vehicle from the system."
     )]
     #[OA\Response(response: 204, description: "Vehicle deleted successfully.")]
+    #[OA\Response(response: 409, description: 'Vehicle has linked records and cannot be deleted.')]
     public function delete(Vehicle $vehicle): JsonResponse
     {
-        $this->vehicleService->deleteVehicle($vehicle);
+        try {
+            $this->adminVehicleService->deleteVehicle($vehicle);
+        } catch (ConflictHttpException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_CONFLICT);
+        } catch (ForeignKeyConstraintViolationException) {
+            return $this->json(['message' => 'Ce véhicule est encore lié à un dossier et ne peut pas être supprimé.'], Response::HTTP_CONFLICT);
+        }
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

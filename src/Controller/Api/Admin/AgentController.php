@@ -3,6 +3,8 @@
 namespace App\Controller\Api\Admin;
 
 use App\DTO\Admin\UserResponseDto;
+use App\Entity\User\Agent;
+use App\Service\Admin\UserDeletionService;
 use App\Service\Admin\AgentService;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -42,7 +44,7 @@ final class AgentController extends AbstractController
         name: "limit",
         in: "query",
         description: "The number of items to retrieve per page.",
-        schema: new OA\Schema(type: 'integer', default: 20)
+        schema: new OA\Schema(type: 'integer', default: 10)
     )]
     #[OA\Response(
         response: 200,
@@ -72,10 +74,20 @@ final class AgentController extends AbstractController
         Request $request
     ) {
         $page = max(1, $request->query->getInt('page', 1));
-        $limit = min(100, $request->query->getInt('limit', 20));
+        $limit = min(100, $request->query->getInt('limit', 10));
 
         $paginatedAgents = $this->userService->getPaginatedAgents($page, $limit);
 
         return new JsonResponse($paginatedAgents);
+    }
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
+    #[OA\Delete(summary: 'Soft-delete a agent account')]
+    #[OA\Response(response: 204, description: 'Account deleted. Associated records are preserved.')]
+    #[OA\Response(response: 404, description: 'Account not found.')]
+    public function delete(Agent $user, UserDeletionService $service): JsonResponse
+    {
+        $service->delete($user);
+
+        return new JsonResponse(null, 204);
     }
 }

@@ -69,6 +69,7 @@ final class UserRepository extends ServiceEntityRepository
     {
         return (int) $this->createQueryBuilder('u')
             ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -79,7 +80,8 @@ final class UserRepository extends ServiceEntityRepository
     public function countAgents(): int
     {
         $qb = $this->createQueryBuilder('u')
-            ->select('COUNT(u.id)');
+            ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL');
 
         $this->filterByUserType($qb, Agent::class);
 
@@ -92,7 +94,8 @@ final class UserRepository extends ServiceEntityRepository
     public function countSellers(): int
     {
         $qb = $this->createQueryBuilder('u')
-            ->select('COUNT(u.id)');
+            ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL');
 
         $this->filterByUserType($qb, Seller::class);
 
@@ -105,7 +108,8 @@ final class UserRepository extends ServiceEntityRepository
     public function countAdmins(): int
     {
         $qb = $this->createQueryBuilder('u')
-            ->select('COUNT(u.id)');
+            ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL');
 
         $this->filterByUserType($qb, Admin::class);
 
@@ -119,6 +123,7 @@ final class UserRepository extends ServiceEntityRepository
     {
         // Si createdAt peut être NULL, garde un ordre secondaire sur id.
         return $this->createQueryBuilder('u')
+            ->andWhere('u.deletedAt IS NULL')
             ->orderBy('u.createdAt', 'DESC')
             ->addOrderBy('u.id', 'DESC');
     }
@@ -130,11 +135,9 @@ final class UserRepository extends ServiceEntityRepository
      */
     private function filterByUserType(QueryBuilder $qb, string $userClass): void
     {
-        $qb->andWhere('u INSTANCE OF :userType')
-            ->setParameter(
-                'userType',
-                $this->getEntityManager()->getClassMetadata($userClass)
-            );
+        // Ces classes internes sont fixes. Le paramètre ClassMetadata est mal
+        // interprété par les requêtes réécrites du paginateur Doctrine.
+        $qb->andWhere('u INSTANCE OF ' . $userClass);
     }
 
     /**

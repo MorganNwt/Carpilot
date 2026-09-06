@@ -3,6 +3,7 @@
 namespace App\Controller\Api\Admin;
 
 use App\Service\Admin\AdminService;
+use App\Service\Admin\AdminDashboardService;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/api/admin/admins', name: 'api_admin_admins_')]
+#[Route('/api/admin', name: 'api_admin_')]
 #[IsGranted('ROLE_ADMIN')]
 #[Security(name: 'bearerAuth')]
 #[OA\Tag(name: 'Admin - User Management')]
@@ -21,7 +22,13 @@ final class AdminController extends AbstractController
         private readonly AdminService $adminService
     ) {}
 
-    #[Route('', name: 'list', methods: ['GET'])]
+    #[Route('/dashboard', name: 'dashboard', methods: ['GET'])]
+    public function dashboard(AdminDashboardService $service): JsonResponse
+    {
+        return $this->json($service->getDashboard());
+    }
+
+    #[Route('/admins', name: 'admins_list', methods: ['GET'])]
     #[OA\Get(summary: 'List all admins (paginated)')]
     #[OA\Parameter(
         name: 'page',
