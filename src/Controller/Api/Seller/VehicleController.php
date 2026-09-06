@@ -4,12 +4,13 @@ namespace App\Controller\Api\Seller;
 
 use App\Entity\Vehicle;
 use App\Entity\User\Seller;
+use App\Mapper\VehicleMapper;
+
 use OpenApi\Attributes as OA;
-use App\DTO\Vehicle\CreateVehicleDto;
 use App\DTO\Vehicle\UpdateVehicleDto;
+use App\Enum\EstimationStatus;
 use App\Service\Seller\VehicleService;
 use App\DTO\Vehicle\VehicleResponseDto;
-use App\Mapper\VehicleMapper;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * Handles CRUD operations for the authenticated Seller's vehicles.
  */
-#[Route('/api/sellers/vehicles', name: 'api_vehicle_')]
+#[Route('/api/seller/vehicles/', name: 'api_vehicle_')]
 #[OA\Tag(name: 'Vehicles')]
 #[Security(name: 'bearerAuth')]
 #[IsGranted('ROLE_SELLER')]
@@ -35,60 +36,39 @@ final class VehicleController extends AbstractController
     public function __construct(
         private readonly VehicleService $vehicleService,
         private readonly VehicleMapper $vehicleMapper
-    ) {
-    }
+    ) {}
 
-    /*
-    #[Route('', name: 'create', methods: ['POST'])]
-    #[OA\Post(
-        summary: "Create a new vehicle",
-        description: "Allows an authenticated seller to create a new vehicle and link it to their account."
-    )]
-    #[OA\RequestBody(
-        description: "Data required to create a new vehicle",
-        required: true,
-        content: new Model(type: CreateVehicleDto::class)
-    )]
-    #[OA\Response(
-        response: 201,
-        description: "Vehicle created successfully",
-        content: new Model(type: VehicleResponseDto::class)
-    )]
-    #[OA\Response(response: 403, description: "Access Denied (not authenticated).")]
-    #[OA\Response(response: 409, description: "Conflict. A vehicle with the same plate or VIN already exists.")]
-    #[OA\Response(response: 422, description: "Validation error. The request body is invalid.")]
-    public function create(
-        #[MapRequestPayload] CreateVehicleDto $dto,
-        #[CurrentUser] ?Seller $seller
-    ): JsonResponse {
-        if (!$seller) {
-            return $this->json(['message' => 'Forbidden access. You must be logged in as a seller.'], Response::HTTP_FORBIDDEN);
-        }
 
-        try {
-            $responseDto = $this->vehicleService->createVehicle($dto, $seller);
-            return $this->json($responseDto, Response::HTTP_CREATED);
-        } catch (UniqueConstraintViolationException $e) {
-            return $this->json(['error' => 'Data conflict', 'message' => 'A vehicle with this license plate or VIN already exists.'], Response::HTTP_CONFLICT);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'An unexpected error occurred', 'message' => 'Could not create the vehicle.', 'debug' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-    }
-*/
     #[Route('create-from-estimation', name: 'create_from_estimation', methods: ['POST'])]
-    public function createFromEstimation(Request $request, Seller $seller)
+    #[OA\Post(
+        summary: "Create a vehicle from an estimation",
+        description: "Creates a new vehicle based on a provided estimation token, if the token belongs to the authenticated seller."
+    )]
+    public function createFromEstimation(Request $request): JsonResponse
     {
-        $token = $request->toArray()['estimation_token'] ?? null;
+        $user = $this->getUser();
 
-        if(!$token)
-        {
-            return new JsonResponse('Missing token', RESPONSE::HTTP_BAD_REQUEST);
+        if (!$user instanceof Seller) {
+            return $this->json(
+                ['message' => 'Accès refusé : vous devez être connecté avec un compte vendeur.'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
-        $vehicle = $this->vehicleService->createVehicleFromEstimation($token, $seller);
+        $payload = $request->toArray();
+        $token = $payload['estimation_token'] ?? null;
+
+        if (!$token) {
+            return $this->json(
+                ['message' => 'estimation_token manquant.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $vehicle = $this->vehicleService->createVehicleFromEstimation($token, $user);
         $responseDto = $this->vehicleMapper->fromEntityToResponseDto($vehicle);
 
-        return new JsonResponse($responseDto, RESPONSE::HTTP_BAD_REQUEST);
+        return $this->json($responseDto, Response::HTTP_CREATED);
     }
 
 
@@ -106,8 +86,9 @@ final class VehicleController extends AbstractController
         )
     )]
     #[OA\Response(response: 403, description: "Access Denied (not authenticated).")]
-    public function index(#[CurrentUser] ?Seller $seller): JsonResponse
-    {
+    public function index(
+        #[CurrentUser] ?Seller $seller
+    ) {
         if (!$seller) {
             return $this->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
         }
@@ -117,7 +98,7 @@ final class VehicleController extends AbstractController
         return $this->json($vehicleDtos);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
     #[OA\Get(
         summary: "Get a single vehicle's details",
         description: "Retrieves the details of a specific vehicle, if owned by the current seller."
@@ -126,8 +107,10 @@ final class VehicleController extends AbstractController
     #[OA\Response(response: 200, description: "Returns the vehicle details.", content: new Model(type: VehicleResponseDto::class))]
     #[OA\Response(response: 403, description: "Access Denied (not the owner).")]
     #[OA\Response(response: 404, description: "Vehicle not found.")]
-    public function show(Vehicle $vehicle, #[CurrentUser] ?Seller $seller): JsonResponse
-    {
+    public function show(
+        Vehicle $vehicle,
+        #[CurrentUser] ?Seller $seller
+    ) {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
         }
@@ -137,7 +120,7 @@ final class VehicleController extends AbstractController
         return $this->json($vehicleDto);
     }
 
-    #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[Route('update/{id}', name: 'update', methods: ['PUT'])]
     #[OA\Put(
         summary: "Update a vehicle",
         description: "Updates the details of a specific vehicle, if owned by the current seller."
@@ -153,22 +136,50 @@ final class VehicleController extends AbstractController
         Vehicle $vehicle,
         #[MapRequestPayload] UpdateVehicleDto $dto,
         #[CurrentUser] ?Seller $seller
-    ): JsonResponse {
+    ) {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
-            return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
+            return $this->json(
+                ['message' => 'Accès refusé : vous n’êtes pas le propriétaire de ce véhicule.'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        // Verrouillage si dossier en cours / clôturé
+        $estimation = $vehicle->getEstimation();
+        if ($estimation) {
+            $lockedStatuses = [
+                EstimationStatus::IN_REVIEW,
+                EstimationStatus::REJECTED,
+                EstimationStatus::TRANSACTION_COMPLETED,
+                EstimationStatus::CANCELLED,
+            ];
+
+            if (in_array($estimation->getStatus(), $lockedStatuses, true)) {
+                return $this->json([
+                    'message' => 'Véhicule verrouillé : impossible de modifier les informations car le dossier est en cours ou clôturé.',
+                    'status' => $estimation->getStatus()->value,
+                ], Response::HTTP_CONFLICT);
+            }
         }
 
         try {
             $responseDto = $this->vehicleService->updateVehicle($vehicle, $dto);
             return $this->json($responseDto);
         } catch (UniqueConstraintViolationException $e) {
-            return $this->json(['error' => 'Data conflict', 'message' => 'A vehicle with this license plate or VIN already exists.'], Response::HTTP_CONFLICT);
+            return $this->json([
+                'error' => 'Data conflict',
+                'message' => 'Un véhicule avec cette plaque ou ce VIN existe déjà.'
+            ], Response::HTTP_CONFLICT);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'An unexpected error occurred', 'message' => 'Could not update the vehicle.', 'debug' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'error' => 'An unexpected error occurred',
+                'message' => 'Impossible de mettre à jour le véhicule.',
+                'debug' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[Route('{id}', name: 'delete', methods: ['DELETE'])]
     #[OA\Delete(
         summary: "Delete a vehicle",
         description: "Deletes a specific vehicle, if owned by the current seller."
@@ -177,8 +188,10 @@ final class VehicleController extends AbstractController
     #[OA\Response(response: 204, description: "Vehicle deleted successfully.")]
     #[OA\Response(response: 403, description: "Access Denied (not the owner).")]
     #[OA\Response(response: 404, description: "Vehicle not found.")]
-    public function delete(Vehicle $vehicle, #[CurrentUser] ?Seller $seller): JsonResponse
-    {
+    public function delete(
+        Vehicle $vehicle,
+        #[CurrentUser] ?Seller $seller
+    ) {
         if (!$seller || $vehicle->getSeller()->getId() !== $seller->getId()) {
             return $this->json(['message' => 'Access denied. You are not the owner of this vehicle.'], Response::HTTP_FORBIDDEN);
         }

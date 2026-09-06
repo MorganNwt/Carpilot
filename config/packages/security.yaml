@@ -1,38 +1,68 @@
 security:
-    password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
 
-    providers:
-        app_user_provider:
-            entity:
-                class: App\Entity\User\User
-                property: email
+  providers:
+    app_user_provider:
+      entity:
+        class: App\Entity\User\User
+        property: email
 
-    firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+  role_hierarchy:
+    ROLE_ADMIN: [ROLE_AGENT, ROLE_SELLER, ROLE_USER]
+    ROLE_AGENT: [ROLE_USER]
+    ROLE_SELLER: [ROLE_USER]
 
-        login:
-            pattern: ^/api/login_check
-            stateless: true
-            json_login:
-                check_path: /api/login_check
-                username_path: email
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+    login:
+      user_checker: App\Security\UserChecker
+      pattern: ^/api/login_check$
+      stateless: true
+      provider: app_user_provider
+      json_login:
+        check_path: /api/login_check
+        username_path: email
+        password_path: password
+        success_handler: lexik_jwt_authentication.handler.authentication_success
+        failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        api:
-            pattern: ^/api
-            stateless: true
-            jwt: ~
+    api:
+      user_checker: App\Security\UserChecker
+      pattern: ^/api
+      stateless: true
+      provider: app_user_provider
+      jwt: ~
 
-        main:
-            lazy: true
-            provider: app_user_provider
+    main:
+      user_checker: App\Security\UserChecker
+      pattern: ^/(?!api)
+      lazy: true
+      provider: app_user_provider
+      form_login:
+        login_path: /account
+        check_path: /account
+        enable_csrf: true
+        username_parameter: email
+        password_parameter: password
+        success_handler: App\Security\LoginSuccessHandler
+      logout:
+        path: /logout
+        target: /home
 
-    access_control:
-        - { path: ^/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        #- { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+  access_control:
+    - { path: ^/api/doc, roles: PUBLIC_ACCESS }
+    - { path: ^/api/login_check$, roles: PUBLIC_ACCESS }
+    - { path: ^/api/sellers$, roles: PUBLIC_ACCESS, methods: [POST] }
+    - { path: ^/account, roles: PUBLIC_ACCESS }
+
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/agent, roles: ROLE_AGENT }
+    - { path: ^/seller, roles: ROLE_SELLER }
+
+    - { path: ^/api/admin, roles: ROLE_ADMIN }
+    - { path: ^/api/agent, roles: ROLE_AGENT }
+    - { path: ^/api/seller, roles: ROLE_SELLER }
+    - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

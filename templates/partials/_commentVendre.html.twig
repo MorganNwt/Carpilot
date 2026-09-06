@@ -1,0 +1,36 @@
+<h2 class="text-center text-2xl mt-8 md:text-3xl font-bold mb-10 text-gray-800">
+    Vendez votre véhicule facilement et rapidement !
+</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-50 mt-10">
+
+    {% for step in steps %}
+        <div class="relative bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start w-80 h-35 lg:w-120 lg:h-50 {% if loop.last %}mb-20{% endif %}">
+
+            <div class="text-orange-400 text-2xl mr-4">
+                <i class="{{ step.icon }}"></i>
+            </div>
+
+            <!-- Photo dépassante -->
+            <div class="absolute -top-6 left-4">
+                <img src="/images/{{ step.image }}"
+                     alt="{{ step.title }}"
+                     class="w-16 h-16 rounded-full border-4 border-white shadow-lg">
+            </div>
+
+            <div>
+                <h3 class="font-semibold text-lg mb-1 text-center">{{ step.title }}</h3>
+                <p class="text-center opacity-50">{{ step.text }}</p>
+            </div>
+
+            <!-- Photo de la clio rouge -->
+            {% if step.car_image %}
+                <img src="{{ asset('images/' ~ step.car_image) }}"
+                     alt="voiture"
+                     class="hidden lg:block absolute top-1/2 right-[-50px] transform -translate-y-1/2 w-80 top-85 sm:left-35 lg:left-45 xl:left-85">
+            {% endif %}
+
+        </div>
+    {% endfor %}
+
+</div>

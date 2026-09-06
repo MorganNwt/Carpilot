@@ -1,0 +1,286 @@
+{# dashboard.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard vendeur{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+
+  <style>
+    .input {
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+    }
+    .badge {
+      background: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 90px;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+<main class="min-h-screen bg-gray-50 p-8" data-controller="seller-profile seller-vehicle">
+
+<div class="max-w-6xl mx-auto">
+  <h1 class="text-2xl font-bold mb-6">Mon espace vendeur</h1>
+
+  <section class="bg-white p-6 shadow-xl rounded-2xl mb-10 max-w-4xl mx-auto">
+    <h2 class="text-orange-500 font-semibold text-lg mb-4">Mon profil</h2>
+
+    <div data-seller-profile-target="profile">
+      <p class="text-gray-400">Chargement du profil…</p>
+    </div>
+
+    <template data-seller-profile-target="profileTemplate">
+      <div class="max-w-3xl mx-auto border-b py-6" data-profile-card>
+
+        {# ================= LECTURE ================= #}
+        <div class="flex flex-col gap-4" data-view>
+         <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-start">
+            <div>
+              <p class="text-lg font-semibold">
+                <span data-field="firstName"></span> <span data-field="lastName"></span>
+              </p>
+
+              <p class="text-gray-600" data-field="email"></p>
+
+              <p class="text-gray-500 text-sm">
+                <span data-field="phone"></span>
+              </p>
+
+              <p class="text-gray-500 text-sm">
+                <span data-field="address"></span>
+                <span data-field="postalCode"></span>
+                <span data-field="city"></span>
+              </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+              <button
+                type="button"
+                class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 cursor-pointer transition"
+                data-action="click->seller-profile#toggleEdit"
+              >
+                Modifier
+              </button>
+
+              <button
+                type="button"
+                class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 cursor-pointer transition"
+                data-action="click->seller-profile#deleteAccount"
+              >
+                Supprimer le compte
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {# ================= ÉDITION ================= #}
+        <form class="hidden mt-6 space-y-4" data-edit data-action="submit->seller-profile#updateProfile">
+          <div>
+            <label for="firstName" class="block mb-1 text-sm font-medium text-gray-700">Prénom</label>
+            <input id="firstName" type="text" name="firstName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Prénom" required data-input="firstName" autocomplete="given-name"/>
+          </div>
+
+          <div>
+            <label for="lastName" class="block mb-1 text-sm font-medium text-gray-700">Nom</label>
+            <input id="lastName" type="text" name="lastName" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Nom" required data-input="lastName" autocomplete="family-name"/>
+          </div>
+
+          <div>
+            <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+            <input id="email" type="email" name="email" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Email" required data-input="email" autocomplete="email"/>
+          </div>
+
+          <div>
+            <label for="phone" class="block mb-1 text-sm font-medium text-gray-700">Téléphone</label>
+            <input id="phone" type="text" name="phone" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Téléphone" data-input="phone" autocomplete="tel"/>
+          </div>
+
+          <div>
+            <label for="address" class="block mb-1 text-sm font-medium text-gray-700">Adresse</label>
+            <input id="address" type="text" name="address" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Adresse" data-input="address" autocomplete="street-address"/>
+          </div>
+
+          <div>
+            <label for="postalCode" class="block mb-1 text-sm font-medium text-gray-700">Code postal</label>
+            <input id="postalCode" type="text" name="postalCode" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Code postal" data-input="postalCode" autocomplete="postal-code"/>
+          </div>
+
+          <div>
+            <label for="city" class="block mb-1 text-sm font-medium text-gray-700">Ville</label>
+            <input id="city" type="text" name="city" class="input border border-gray-300 rounded-lg px-4 py-2 w-full text-sm" placeholder="Ville" data-input="city" autocomplete="address-level2"/>
+          </div>
+
+          <div class="flex gap-4 pt-4 justify-end">
+            <button
+              type="submit"
+              class="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer"
+            >
+              Enregistrer
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </template>
+  </section>
+
+    <section class="mt-15 bg-white p-6 shadow-xl rounded-2xl max-w-6xl mx-auto">
+      <h2 class="text-orange-500 font-semibold text-lg mb-4">Mes véhicules</h2>
+
+      <div data-seller-vehicle-target="vehicles">
+        <p class="text-gray-400">Chargement des véhicules…</p>
+      </div>
+
+      {# ===== TEMPLATE CLONABLE ===== #}
+      <template data-seller-vehicle-target="vehicleTemplate">
+        <div class="border-b py-6" data-id="">
+          <!-- ================= LECTURE ================= -->
+          <div class="flex flex-col gap-4" data-view>
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-lg font-semibold" data-field="plate"></p>
+                <p class="text-gray-600">
+                  <span data-field="brand"></span> <span data-field="model"></span>
+                </p>
+                <p class="text-gray-400 text-sm">
+                  Ajouté le <span data-field="createdAt"></span>
+                </p>
+              </div>
+
+              <div class="flex gap-2">
+                  <button type="button" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer" data-action="click->seller-vehicle#toggleEdit">
+                      Modifier
+                  </button>
+
+                  <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition cursor-pointer" data-action="click->seller-vehicle#deleteVehicle">
+                      Supprimer
+                  </button>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 text-sm" data-badges>
+              <span class="badge" data-field="energy"></span>
+              <span class="badge" data-field="gearBox"></span>
+              <span class="badge" data-field="horsePower"></span>
+              <span class="badge" data-field="doors"></span>
+              <span class="badge" data-field="seats"></span>
+              <span class="badge" data-field="bodyType"></span>
+              <span class="badge" data-field="color"></span>
+            </div>
+
+              <p class="text-sm">
+                  Estimation :
+                  <span data-field="estimationValue" class="font-semibold"></span>
+              </p>
+
+                <!-- ================= OFFER ================= -->
+              <div class="mt-2 flex items-center gap-3">
+                  <label class="text-sm text-red-600 font-semibold">
+                      Mon prix :
+                  </label>
+
+                  <input 
+                      type="text" 
+                      inputmode="decimal"
+                      placeholder="Votre offre" 
+                      class="focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-200/50 transition border border-gray-300 rounded-lg px-3 py-1 text-sm w-32"
+                      data-input="offerPrice" 
+                  />
+
+                  <button type="button"class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition cursor-pointer" data-action="click->seller-vehicle#saveOffer">
+                      Valider
+                  </button>
+              </div>
+          </div>
+
+          <!-- ================= ÉDITION ================= -->
+          <form class="hidden mt-6 grid grid-cols-2 md:grid-cols-4 gap-4" data-edit data-action="submit->seller-vehicle#updateVehicle" data-id="">
+            <div>
+                <label class="text-sm font-medium text-gray-700">Plaque</label>
+                <input name="plate" class="input" placeholder="Plaque" data-input="plate"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">VIN</label>
+                <input name="vin" class="input" placeholder="VIN" data-input="vin"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Marque</label>
+                <input name="brand" class="input" placeholder="Marque" data-input="brand"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Modèle</label>
+                <input name="model" class="input" placeholder="Modèle" data-input="model"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Version</label>
+                <input name="version" class="input" placeholder="Version" data-input="version"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Énergie</label>
+                <input name="energy" class="input" placeholder="Énergie" data-input="energy"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Puissance (ch)</label>
+                <input name="horsePower" class="input" placeholder="Puissance (ch)" data-input="horsePower"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Puissance fiscale</label>
+                <input name="fiscalPower" class="input" placeholder="Puissance fiscale" data-input="fiscalPower"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Boîte de vitesse</label>
+                <input name="gearBox" class="input" placeholder="Boîte de vitesse" data-input="gearBox"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Nombre de portes</label>
+                <input name="doors" class="input" placeholder="Nombre de portes" data-input="doors"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Nombre de places</label>
+                <input name="seats" class="input" placeholder="Nombre de places" data-input="seats"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Type de carrosserie</label>
+                <input name="bodyType" class="input" placeholder="Type de carrosserie" data-input="bodyType"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Couleur</label>
+                <input name="color" class="input" placeholder="Couleur" data-input="color"/>
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Poids (kg)</label>
+                <input name="weightKg" class="input" placeholder="Poids (kg)" data-input="weightKg"/>
+            </div>
+
+            <div class="col-span-full flex gap-3 justify-end mt-4">
+                <button type="submit"
+                        class="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer">
+                    Enregistrer
+                </button>
+            </div>
+          </form>
+        </div>
+
+      </template>
+    </section>
+  </div>
+</main>
+{% endblock %}

@@ -2,17 +2,19 @@
 
 namespace App\Repository;
 
+use App\Entity\User\Admin;
 use App\Entity\User\Agent;
 use App\Entity\User\Seller;
 use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository
+final class UserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -24,7 +26,7 @@ class UserRepository extends ServiceEntityRepository
      */
     public function findPaginatedUsers(int $page, int $limit): Paginator
     {
-        return $this->createPaginatedQueryBuilder($page, $limit)->getQueryAndPaginator();
+        return $this->paginate($this->createBaseQb(), $page, $limit);
     }
 
     /**
@@ -32,8 +34,10 @@ class UserRepository extends ServiceEntityRepository
      */
     public function findPaginatedSellers(int $page, int $limit): Paginator
     {
-        $query = $this->createPaginatedQueryBuilder($page, $limit, Seller::class);
-        return $query->getQueryAndPaginator();
+        $qb = $this->createBaseQb();
+        $this->filterByUserType($qb, Seller::class);
+
+        return $this->paginate($qb, $page, $limit);
     }
 
     /**
@@ -41,49 +45,113 @@ class UserRepository extends ServiceEntityRepository
      */
     public function findPaginatedAgents(int $page, int $limit): Paginator
     {
-        $query = $this->createPaginatedQueryBuilder($page, $limit, Agent::class);
-        return $query->getQueryAndPaginator();
+        $qb = $this->createBaseQb();
+        $this->filterByUserType($qb, Agent::class);
+
+        return $this->paginate($qb, $page, $limit);
     }
 
+    /**
+     * Retrieves a paginated list of Admins only.
+     */
+    public function findPaginatedAdmins(int $page, int $limit): Paginator
+    {
+        $qb = $this->createBaseQb();
+        $this->filterByUserType($qb, Admin::class);
+
+        return $this->paginate($qb, $page, $limit);
+    }
 
     /**
-     * Creates a base paginated query, optionally filtering by user type.
-     *
-     * @param int $page The page number.
-     * @param int $limit The number of items per page.
-     * @param string|null $userClass The specific user class to filter by (Seller::class).
-     * @return self A new instance of this class for chaining.
+     * Count ALL users.
      */
-    private function createPaginatedQueryBuilder(int $page, int $limit, ?string $userClass = null): self
+    public function countAllUsers(): int
     {
-        if ($page < 1) {
-            $page = 1;
-        }
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Count Agents (inheritance).
+     */
+    public function countAgents(): int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL');
+
+        $this->filterByUserType($qb, Agent::class);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Count Sellers (inheritance).
+     */
+    public function countSellers(): int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL');
+
+        $this->filterByUserType($qb, Seller::class);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Count Admins (inheritance).
+     */
+    public function countAdmins(): int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.deletedAt IS NULL');
+
+        $this->filterByUserType($qb, Admin::class);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Base query builder used for listings.
+     */
+    private function createBaseQb(): QueryBuilder
+    {
+        // Si createdAt peut être NULL, garde un ordre secondaire sur id.
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.deletedAt IS NULL')
+            ->orderBy('u.createdAt', 'DESC')
+            ->addOrderBy('u.id', 'DESC');
+    }
+
+    /**
+     * Adds a filter to only keep a given user subtype (Agent/Seller) using Doctrine inheritance.
+     *
+     * @param class-string<User> $userClass
+     */
+    private function filterByUserType(QueryBuilder $qb, string $userClass): void
+    {
+        // Ces classes internes sont fixes. Le paramètre ClassMetadata est mal
+        // interprété par les requêtes réécrites du paginateur Doctrine.
+        $qb->andWhere('u INSTANCE OF ' . $userClass);
+    }
+
+    /**
+     * Paginates a QueryBuilder and returns a Doctrine Paginator.
+     */
+    private function paginate(QueryBuilder $qb, int $page, int $limit): Paginator
+    {
+        $page = max(1, $page);
+        $limit = max(1, min(100, $limit));
         $offset = ($page - 1) * $limit;
 
-        $this->queryBuilder = $this->createQueryBuilder('u')
-            ->orderBy('u.createdAt', 'DESC')
-            ->setFirstResult($offset)
+        $qb->setFirstResult($offset)
             ->setMaxResults($limit);
 
-        if ($userClass) {
-            $this->queryBuilder
-                ->andWhere('u INSTANCE OF :userType')
-                ->setParameter('userType', $this->getEntityManager()->getClassMetadata($userClass));
-        }
-
-        return $this;
+        return new Paginator($qb->getQuery(), true);
     }
-
-    /**
-     * Gets the query from the builder and returns a Paginator.
-     *
-     * @return Paginator
-     */
-    private function getQueryAndPaginator(): Paginator
-    {
-        return new Paginator($this->queryBuilder->getQuery(), true);
-    }
-
-    private $queryBuilder;
 }

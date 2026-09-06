@@ -1,0 +1,29 @@
+  .back-to-top {
+        position: fixed;
+        bottom: 5em;
+        right: 2em;
+        width: 2.5em;
+        height: 2.5em;
+        background-color: #ff8c00; /* orange */
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 24px;
+        text-decoration: none;
+        box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 1000;
+    }
+
+    .back-to-top.show {
+        opacity: 0.5;
+        pointer-events: auto;
+    }
+
+    .back-to-top:hover {
+        opacity: 1;
+    }

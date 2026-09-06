@@ -3,7 +3,7 @@
 namespace App\Controller\Api\Seller;
 
 use App\DTO\Seller\ChangePasswordDto;
-use App\DTO\Seller\SellerResponseDto;
+use App\DTO\Seller\ProfileResponseDto;
 use App\DTO\Seller\UpdateSellerDto;
 use App\Entity\User\Seller;
 use App\Service\Seller\ProfileService;
@@ -28,11 +28,9 @@ final class ProfileController extends AbstractController
 {
     public function __construct(
         private readonly ProfileService $profileService
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'get', methods: ['GET'])]
-    /*
     #[OA\Get(
         summary: "Get current seller's profile",
         description: "Retrieves the public profile data of the currently authenticated seller, including their vehicles."
@@ -40,17 +38,17 @@ final class ProfileController extends AbstractController
     #[OA\Response(
         response: 200,
         description: "Returns the seller's profile.",
-        content: new Model(type: SellerResponseDto::class)
+        content: new Model(type: ProfileResponseDto::class)
     )]
     #[OA\Response(response: 403, description: "Access Denied.")]
-    public function getProfile(#[CurrentUser] Seller $seller): JsonResponse
-    {
+    public function getProfile(
+        #[CurrentUser] Seller $seller
+    ) {
         $responseDto = $this->profileService->getSeller($seller);
         return new JsonResponse($responseDto);
     }
-*/
+
     #[Route('', name: 'update', methods: ['PUT'])]
-    /*
     #[OA\Put(
         summary: "Update current seller's profile",
         description: "Allows the authenticated seller to update their own profile information."
@@ -63,16 +61,15 @@ final class ProfileController extends AbstractController
     #[OA\Response(
         response: 200,
         description: "Profile updated successfully.",
-        content: new Model(type: SellerResponseDto::class)
+        //content: new Model(type: SellerResponseDto::class)
     )]
     #[OA\Response(response: 403, description: "Access Denied.")]
     #[OA\Response(response: 409, description: "Conflict. The new email is already in use.")]
     #[OA\Response(response: 422, description: "Validation error.")]
-    */
     public function update(
         #[CurrentUser] Seller $seller,
         #[MapRequestPayload] UpdateSellerDto $dto
-    ): JsonResponse {
+    ) {
         try {
             $responseDto = $this->profileService->updateSeller($seller, $dto);
             return new JsonResponse($responseDto);
@@ -91,14 +88,15 @@ final class ProfileController extends AbstractController
     }
 
     #[Route('', name: 'delete', methods: ['DELETE'])]
-    #[OA\Delete(
-        summary: "Delete current seller's account",
-        description: "Allows the authenticated seller to permanently delete their own account and all associated data."
+   #[OA\Delete(
+    summary: "Delete current seller's account",
+    description: "Soft-deletes the authenticated seller account (deletedAt set). Associated data is preserved."
     )]
     #[OA\Response(response: 204, description: "Account deleted successfully.")]
     #[OA\Response(response: 403, description: "Access Denied.")]
-    public function delete(#[CurrentUser] Seller $seller): JsonResponse
-    {
+    public function delete(
+        #[CurrentUser] Seller $seller
+    ) {
         try {
             $this->profileService->deleteSeller($seller);
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
@@ -134,5 +132,4 @@ final class ProfileController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 }

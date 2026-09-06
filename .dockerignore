@@ -1,0 +1,7 @@
+var/
+vendor/
+node_modules/
+.git/
+.idea/
+.env.local
+docker-compose.override.yml

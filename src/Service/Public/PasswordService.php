@@ -36,8 +36,7 @@ class PasswordService
         private readonly MailerInterface $mailer,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly LoggerInterface $logger,
-    ) {
-    }
+    ) {}
 
     /**
      * Handles a password reset request.
@@ -77,7 +76,7 @@ class PasswordService
             ->from('noreply@carpilot.fr')
             ->to($user->getEmail())
             ->subject('Password reset')
-            ->htmltemplate('emails/password_reset.html.twig')
+            ->htmlTemplate('emails/password_reset.html.twig')
             ->context([
                 'resetUrl' => $resetUrl,
                 'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime() / 3600

@@ -18,9 +18,7 @@ class VehicleMapper
 {
     public function __construct(
         private readonly EstimationMapper $estimationMapper
-    ){
-
-    }
+    ) {}
     /**
      * Transforms a CreateVehicleDto into a new Vehicle entity.
      *
@@ -45,6 +43,7 @@ class VehicleMapper
         $vehicle->setBodyType($dto->bodyType);
         $vehicle->setWeightKg($dto->weightKg);
         $vehicle->setColor($dto->color);
+        $vehicle->setMileage($dto->mileage);
         $vehicle->setRegistrationDate(new DateTimeImmutable($dto->registrationDate));
 
         return $vehicle;
@@ -102,6 +101,9 @@ class VehicleMapper
         if ($dto->color !== null) {
             $vehicle->setColor($dto->color);
         }
+        if ($dto->mileage !== null) {
+            $vehicle->setMileage($dto->mileage);
+        }
         if ($dto->registrationDate !== null) {
             $vehicle->setRegistrationDate(new DateTimeImmutable($dto->registrationDate));
         }
@@ -115,13 +117,15 @@ class VehicleMapper
      * @param Vehicle $vehicle The entity coming from the database.
      * @return VehicleResponseDto The response DTO with safe and formatted data.
      */
-    public function fromEntityToResponseDto(Vehicle $vehicle): VehicleResponseDto
+    public function fromEntityToResponseDto(Vehicle $vehicle)
     {
         $EstimationDto = $this->estimationMapper->fromEntityToResponseDto($vehicle->getEstimation());
-        
+
 
         return new VehicleResponseDto(
             $vehicle->getId(),
+            $vehicle->getSeller()?->getFirstName(),
+            $vehicle->getSeller()?->getLastName(),
             $vehicle->getPlate(),
             $vehicle->getVin(),
             $vehicle->getBrand(),
@@ -162,9 +166,9 @@ class VehicleMapper
         $dto->bodyType = $data['bodyType'] ?? null;
         $dto->weightKg = $data['weightKg'] ?? null;
         $dto->color = $data['color'] ?? null;
+        $dto->mileage = $data['mileage'] ?? null;
         $dto->registrationDate = $data['registrationDate'] ?? null;
 
         return $dto;
     }
-    
 }

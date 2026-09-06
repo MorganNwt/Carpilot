@@ -17,6 +17,12 @@ class VehicleResponseDto
         #[OA\Property(description: "The unique identifier of the vehicle.", example: 12)]
         public readonly int $id,
 
+        #[OA\Property(description: "The first name of the vehicle's seller.", example: "John", nullable: true)]
+        public readonly ?string $sellerFirstName = null,
+
+        #[OA\Property(description: "The last name of the vehicle's seller.", example: "Doe", nullable: true)]
+        public readonly ?string $sellerLastName = null,
+
         #[OA\Property(description: "The vehicle's license plate.", example: "AA-123-BB")]
         public readonly string $plate,
 
@@ -71,7 +77,11 @@ class VehicleResponseDto
         #[OA\Property(description: "The date and time the vehicle was last updated.", type: "string", format: "date-time")]
         public readonly ?DateTimeImmutable $updatedAt,
 
+        #[OA\Property(
+            description: "Related estimation if exists",
+            ref: new OA\Schema(ref: EstimationResponseDto::class),
+            nullable: true
+        )]
         public readonly ?EstimationResponseDto $estimation = null
-    ) {
-    }
+    ) {}
 }

@@ -45,7 +45,9 @@ class ResetPasswordController extends AbstractController
         response: 422,
         description: "Validation Error. The data provided is invalid (e.g., malformed email)."
     )]
-    public function request(#[MapRequestPayload] ResetPasswordRequestDto $dto): JsonResponse
+    public function request(
+        #[MapRequestPayload] ResetPasswordRequestDto $dto
+    )
     {
         try {
             $this->passwordService->handlePasswordRequest($dto);
@@ -82,7 +84,9 @@ class ResetPasswordController extends AbstractController
         response: 422,
         description: "Validation Error. The data provided is invalid (e.g., password mismatch)."
     )]
-    public function reset(#[MapRequestPayload] ResetPasswordDto $dto): JsonResponse
+    public function reset(
+        #[MapRequestPayload] ResetPasswordDto $dto
+    )
     {
         try {
             $this->passwordService->handlePasswordReset($dto);

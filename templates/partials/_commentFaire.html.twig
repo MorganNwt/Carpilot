@@ -1,0 +1,54 @@
+ <div class="container mx-auto px-4">
+        <div class="grid lg:grid-cols-2 gap-8 items-center justify-items-center">
+            <!-- COLONNE GAUCHE -->
+            <div class="relative">
+                 <h3 class="text-xl md:text-4xl font-semibold mb-8 ">Comment faire ?</h3>
+                <!-- ÉTAPE 1 -->
+                <div class="flex items-start mb-10 relative">
+                    <!-- BARRE VERTICALE -->
+                    <span class="absolute left-6 top-12 h-17 w-[4px] bg-white"></span>
+                    <!-- ROND -->
+                    <div class="w-12 h-12 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold text-xl mr-4 shrink-0">
+                        1
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg">Estimation en ligne</h4>
+                        <p class="text-sm opacity-50 mt-1">Renseignez votre véhicule à partir de sa plaque d’immatriculation, précisez son état, ajoutez quelques photos et le tour est joué !</p>
+                    </div>
+                </div>
+                <!-- ÉTAPE 2 -->
+                <div class="flex items-start mb-10 relative">
+                    <!-- BARRE VERTICALE -->
+                    <span class="absolute left-6 top-12 h-15 w-[4px] bg-white"></span>
+                    <!-- ROND -->
+                    <div class="w-12 h-12 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold text-xl mr-4 shrink-0">
+                        2
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-lg">Recevez votre prix de vente</h4>
+                        <p class="text-sm opacity-50 mt-1"><strong>En moins de 48 minutes !</strong> Nous traitons votre demande pour vous proposer la meilleure offre de rachat.</p>
+                    </div>
+                </div>
+                <!-- ÉTAPE 3 (pas de barre) -->
+                <div class="flex items-start relative">
+                    <!-- ROND -->
+                    <div class="w-12 h-12 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold text-xl mr-4 shrink-0">
+                        3
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg">Prenez rendez-vous</h4>
+                        <p class="text-sm opacity-50 mt-1">Dans une de nos agences CarPilot pour contrôler l’état de votre véhicule et valider ensemble l’offre !</p>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Image à droite -->
+            <div class="text-center hidden lg:block">
+                <img src="{{ asset('images/Comment faire.png') }}" alt="client carpilot" class="mx-auto rounded-lg shadow-lg l-120 h-120">
+                <a href="#" class="inline-block w-120 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded">
+                    Estimez maintenant !
+                </a>
+            </div>
+        </div>
+    </div>

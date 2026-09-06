@@ -55,6 +55,10 @@ class UpdateVehicleDto
     #[OA\Property(description: "Color of the vehicle.", example: "Bleu Iron")]
     public ?string $color = null;
 
+    #[OA\Property(description: "The vehicle's mileage in kilometers.", example: 45000)]
+    #[Assert\Positive(message: "Mileage must be a positive number.")]
+    public ?int $mileage = null;
+
     #[OA\Property(description: "The first registration date of the vehicle.", example: "2019-07-23")]
     #[Assert\Date(message: "The registration date format is invalid. Please use YYYY-MM-DD.")]
     public ?string $registrationDate = null;

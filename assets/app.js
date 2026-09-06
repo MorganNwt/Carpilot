@@ -6,3 +6,9 @@ import "./bootstrap.js";
  * which should already be in your base.html.twig.
  */
 import "./styles/app.scss";
+import './styles/footer.scss';
+
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+
+window.toastr = toastr;

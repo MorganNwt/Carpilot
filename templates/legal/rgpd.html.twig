@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de protection des données – RGPD{% endblock %}
+
+{% block body %}
+<main class="bg-gray-50 min-h-screen py-12 px-4">
+    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8 mt-20 mb-40">
+
+        <h1 class="text-3xl font-bold text-orange-600 mb-6">
+            Politique de protection des données personnelles
+        </h1>
+
+        <p class="text-gray-600 mb-8">
+            La présente politique de confidentialité décrit la manière dont <strong>CarPilot</strong>
+            collecte, utilise et protège les données personnelles de ses utilisateurs,
+            conformément au Règlement Général sur la Protection des Données (RGPD).
+        </p>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                1. Responsable du traitement
+            </h2>
+            <p class="text-gray-700">
+                Le responsable du traitement des données est :
+            </p>
+            <ul class="list-disc ml-6 text-gray-700 mt-2">
+                <li><strong>CarPilot</strong></li>
+                <li>Email : contact@carpilot.fr</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                2. Données personnelles collectées
+            </h2>
+
+            <p class="text-gray-700 mb-2">
+                Dans le cadre de l’utilisation du site, les données suivantes peuvent être collectées :
+            </p>
+
+            <ul class="list-disc ml-6 text-gray-700 space-y-1">
+                <li>Nom et prénom</li>
+                <li>Adresse email</li>
+                <li>Numéro de téléphone</li>
+                <li>Adresse postale</li>
+                <li>Informations liées aux véhicules (immatriculation, caractéristiques)</li>
+                <li>Données de connexion (via jeton JWT)</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                3. Finalités du traitement
+            </h2>
+
+            <p class="text-gray-700 mb-2">
+                Les données personnelles sont collectées pour les finalités suivantes :
+            </p>
+
+            <ul class="list-disc ml-6 text-gray-700 space-y-1">
+                <li>Création et gestion des comptes utilisateurs</li>
+                <li>Gestion des estimations de véhicules</li>
+                <li>Communication avec les utilisateurs</li>
+                <li>Sécurisation de l’accès aux espaces personnels</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                4. Base légale du traitement
+            </h2>
+
+            <p class="text-gray-700">
+                Les traitements sont fondés sur :
+            </p>
+
+            <ul class="list-disc ml-6 text-gray-700 mt-2 space-y-1">
+                <li>Le consentement de l’utilisateur</li>
+                <li>L’exécution d’un contrat (création de compte, estimation)</li>
+                <li>L’intérêt légitime du responsable du traitement</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                5. Durée de conservation
+            </h2>
+
+            <p class="text-gray-700">
+                Les données personnelles sont conservées uniquement pendant la durée nécessaire
+                aux finalités pour lesquelles elles ont été collectées, ou conformément aux obligations légales.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                6. Droits des utilisateurs
+            </h2>
+
+            <p class="text-gray-700 mb-2">
+                Conformément à la réglementation en vigueur, vous disposez des droits suivants :
+            </p>
+
+            <ul class="list-disc ml-6 text-gray-700 space-y-1">
+                <li>Droit d’accès à vos données</li>
+                <li>Droit de rectification</li>
+                <li>Droit à l’effacement</li>
+                <li>Droit à la limitation du traitement</li>
+                <li>Droit d’opposition</li>
+                <li>Droit à la portabilité des données</li>
+            </ul>
+
+            <p class="text-gray-700 mt-3">
+                Pour exercer vos droits, vous pouvez nous contacter à l’adresse :
+                <strong>contact@carpilot.fr</strong>
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                7. Sécurité des données
+            </h2>
+
+            <p class="text-gray-700">
+                CarPilot met en œuvre des mesures techniques et organisationnelles appropriées
+                afin de garantir la sécurité et la confidentialité des données personnelles,
+                notamment via l’authentification sécurisée par jeton JWT.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                8. Cookies
+            </h2>
+
+            <p class="text-gray-700">
+                Le site peut utiliser des cookies techniques nécessaires au bon fonctionnement
+                du service et à la gestion de la session utilisateur.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-orange-500 mb-2">
+                9. Modification de la politique
+            </h2>
+
+            <p class="text-gray-700">
+                La présente politique de confidentialité peut être modifiée à tout moment.
+                La version en vigueur est celle publiée sur le site.
+            </p>
+        </section>
+
+    </div>
+</main>
+{% endblock %}

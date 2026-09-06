@@ -1,0 +1,39 @@
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-8">
+    Questions fréquentes
+</h2>
+
+<div class="w-full max-w-4xl mx-auto px-4 md:px-6">
+    <div data-controller="faq" class="divide-y divide-gray-200">
+
+        {% for faq in faqs %}
+        <div class="py-6">
+
+            <!-- Bouton FAQ -->
+            <button 
+                data-action="click->faq#toggle"
+                class="w-full flex justify-between items-center text-left cursor-pointer gap-4"
+            >
+                <span class="font-semibold text-lg text-[#0b2c4c]">
+                    {{ faq.question }}
+                </span>
+
+                <!-- Icône -->
+                <svg data-faq-target="icon"
+                     class="w-5 h-5 text-[#0b2c4c] transform transition-transform duration-300 shrink-0"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5 15l7-7 7 7"/>
+                </svg>
+            </button>
+
+            <!-- Contenu caché -->
+            <div data-faq-target="content"
+                 class="hidden mt-4 text-gray-700 leading-relaxed">
+                {{ faq.answer|raw }}
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</div>

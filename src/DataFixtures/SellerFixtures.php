@@ -22,7 +22,7 @@ class SellerFixtures extends Fixture
             $seller->setLastName($faker->lastName());
             $seller->setEmail($faker->unique()->safeEmail());
             $seller->setPhone($faker->phoneNumber());
-            $seller->setPassword($this->hasher->hashPassword($seller, plainPassword: 'seller123'));
+            $seller->setPassword($this->hasher->hashPassword($seller, plainPassword: 'MotDePasse123!!!'));
             $seller->setRoles(['ROLE_SELLER']);
 
             // Champs supplémentaires :
@@ -30,9 +30,10 @@ class SellerFixtures extends Fixture
             $seller->setCity($faker->city());
             $seller->setPostalCode($faker->postcode());
             $seller->setCountry($faker->country());
-            $seller->setUpdatedAt($faker->dateTimeBetween('-1 month', 'now') instanceof \DateTimeInterface 
-                ? \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-1 month', 'now')) 
-                : null
+            $seller->setUpdatedAt(
+                $faker->dateTimeBetween('-1 month', 'now') instanceof \DateTimeInterface
+                    ? \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-1 month', 'now'))
+                    : null
             );
 
             $manager->persist($seller);

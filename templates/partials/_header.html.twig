@@ -1,0 +1,262 @@
+{% set currentRoute = app.request.attributes.get('_route') %}
+{% set selectedAgencyName = app.session.get('selected_agency_name') %}
+
+<div data-controller="header" class="w-full mt-6">
+
+    {# =========================
+       MOBILE / TABLETTE
+       ========================= #}
+    <div class="block md:block lg:hidden">
+        <div class="px-4 py-4">
+            <div class="flex items-center justify-between">
+                <a href="{{ path('app_home') }}" class="inline-block">
+                    <img src="/images/Logo.png" alt="CarPilot" class="h-12 w-auto">
+                </a>
+
+                <button type="button"
+                        data-action="click->header#openMobileMenu"
+                        class="flex items-center justify-center w-12 h-12 text-orange-500 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div data-header-target="mobileMenu"
+            class="hidden fixed top-0 left-0 w-full h-full z-[999] bg-white overflow-y-auto overflow-x-hidden">
+
+            <div class="flex items-center justify-between w-full px-4 py-4 border-t-4 border-gray-800 overflow-hidden">
+                <a href="{{ path('app_home') }}" class="inline-block shrink-0">
+                    <img src="/images/Logo.png" alt="CarPilot" class="h-12 w-auto max-w-full">
+                </a>
+
+                <button type="button"
+                        data-action="click->header#closeMobileMenu"
+                        class="flex items-center justify-center w-12 h-12 text-orange-500 cursor-pointer shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 6l12 12M18 6L6 18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="h-1 bg-orange-500 w-full"></div>
+
+            <nav class="w-full">
+                <a href="{{ path('app_home') }}"
+                   data-action="click->header#closeMobileMenu"
+                   class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                    <div class="flex items-center gap-4">
+                        <img src="/images/Car_Sale.png" alt="Voiture orange" class="w-7 h-7">
+                        <span class="text-[#17375e] font-semibold text-lg">Vendre ma voiture</span>
+                    </div>
+                    <span class="text-gray-300 text-3xl">›</span>
+                </a>
+
+                <a href="{{ path('app_estimez_maintenant') }}"
+                   data-action="click->header#closeMobileMenu"
+                   class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                    <div class="flex items-center gap-4">
+                        <img src="/images/Estimate.png" alt="calculatrice orange" class="w-7 h-7">
+                        <span class="text-[#17375e] font-semibold text-lg">Estimer ma voiture</span>
+                    </div>
+                    <span class="text-gray-300 text-3xl">›</span>
+                </a>
+
+                <button type="button"
+                        data-action="click->header#toggleMobileAgencyMenu"
+                        class="w-full flex items-center justify-between px-6 py-5 border-b border-gray-200 text-left cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="/images/Map_Marker.png" alt="" class="w-7 h-7">
+                        <span class="text-[#17375e] font-semibold text-lg">Nos agences</span>
+                    </div>
+                    <span class="text-gray-300 text-3xl">›</span>
+                </button>
+
+                <div data-header-target="mobileAgencyMenu" class="hidden bg-gray-50 border-b border-gray-200">
+                    {% for agency in agencyEntities %}
+                        <form method="POST" action="{{ path('web_public_select_agency', { id: agency.id }) }}">
+                            <button type="submit"
+                                    class="w-full text-left px-16 py-4 text-base text-gray-700 hover:bg-orange-500 hover:text-white border-t border-gray-100 cursor-pointer">
+                                {{ agency.name }}
+                            </button>
+                        </form>
+                    {% endfor %}
+                </div>
+
+                <a href="#contact"
+                   data-action="click->header#scrollToSection"
+                   class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                    <div class="flex items-center gap-4">
+                        <img src="/images/Man_On_Phone.png" alt="" class="w-7 h-7">
+                        <span class="text-[#17375e] font-semibold text-lg">Nous contacter</span>
+                    </div>
+                    <span class="text-gray-300 text-3xl">›</span>
+                </a>
+
+                {% if app.user %}
+                    {% set dashUrl = '/' %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% set dashUrl = path('admin_dashboard') %}
+                    {% elseif is_granted('ROLE_AGENT') %}
+                        {% set dashUrl = path('agent_dashboard') %}
+                    {% elseif is_granted('ROLE_SELLER') %}
+                        {% set dashUrl = path('seller_dashboard') %}
+                    {% endif %}
+
+                    <a href="{{ dashUrl }}"
+                       data-action="click->header#closeMobileMenu"
+                       class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <img src="/images/Man_On_Phone.png" alt="tête d'homme orange" class="w-7 h-7">
+                            <span class="text-[#17375e] font-semibold text-lg">Mon compte</span>
+                        </div>
+                        <span class="text-gray-300 text-3xl">›</span>
+                    </a>
+
+                {% else %}
+                    <a href="{{ path('app_account') }}"
+                       data-action="click->header#closeMobileMenu"
+                       class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <img src="/images/Man_On_Phone.png" alt="tête d'homme orange" class="w-7 h-7">
+                            <span class="text-[#17375e] font-semibold text-lg">Mon compte</span>
+                        </div>
+                        <span class="text-gray-300 text-3xl">›</span>
+                    </a>
+                {% endif %}
+
+                <a href="{{ path('app_astuces') }}"
+                   data-action="click->header#closeMobileMenu"
+                   class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                    <div class="flex items-center gap-4">
+                        <img src="/images/News.png" alt="article de couleur orange" class="w-7 h-7">
+                        <span class="text-[#17375e] font-semibold text-lg">Nos articles</span>
+                    </div>
+                    <span class="text-gray-300 text-3xl">›</span>
+                </a>
+                 <a href="{{ path('app_logout') }}"
+                       data-controller="logout"
+                       data-action="click->logout#logout"
+                       class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <img src="/images/Man_On_Phone.png" alt="tête d'homme orange" class="w-7 h-7">
+                            <span class="text-[#17375e] font-semibold text-lg">Déconnexion</span>
+                        </div>
+                        <span class="text-gray-300 text-3xl">›</span>
+                    </a>
+            </nav>
+        </div>
+    </div>
+
+    {# =========================
+       DESKTOP
+       ========================= #}
+    <div class="hidden lg:block">
+        <div class="grid grid-cols-[180px_1fr_760px] items-center gap-6 px-6 py-4">
+
+            <!-- Colonne 1 : Logo -->
+            <div class="flex items-center">
+                <a href="{{ path('app_home') }}" class="inline-block">
+                    <img src="/images/Logo.png" alt="CarPilot" class="h-12 w-auto">
+                </a>
+            </div>
+
+            <!-- Colonne 2 : Message -->
+            <div class="min-w-0 text-center">
+                {% if selectedAgencyName %}
+                    <p class="font-semibold text-gray-700 text-base lg:text-xl truncate">
+                        Bienvenue sur votre agence de
+                        <span class="text-orange-600">{{ selectedAgencyName }}</span>
+                    </p>
+                {% endif %}
+            </div>
+
+            <!-- Colonne 3 : Navigation -->
+            <div class="flex justify-end">
+                <nav class="hidden md:flex items-center gap-6 whitespace-nowrap">
+                    <a href="{{ path('app_home') }}"
+                       class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_home' ? 'text-orange-600' : '' }}">
+                        Vendre ma voiture
+                    </a>
+
+                    <a href="{{ path('app_estimez_maintenant') }}"
+                       class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_estimez_maintenant' ? 'text-orange-600' : '' }}">
+                        Estimer ma voiture
+                    </a>
+
+                    <a href="#contact"
+                       class="text-sm font-semibold hover:text-orange-500"
+                       data-header-target="scrollLink"
+                       data-action="click->header#scrollToSection">
+                        Nous contacter
+                    </a>
+
+                    <a href="{{ path('app_astuces') }}"
+                       class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_astuces' ? 'text-orange-600' : '' }}">
+                        Nos articles
+                    </a>
+
+                    {% if app.user %}
+                        {% set dashUrl = '/' %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {% set dashUrl = path('admin_dashboard') %}
+                        {% elseif is_granted('ROLE_AGENT') %}
+                            {% set dashUrl = path('agent_dashboard') %}
+                        {% elseif is_granted('ROLE_SELLER') %}
+                            {% set dashUrl = path('seller_dashboard') %}
+                        {% endif %}
+
+                        <a href="{{ dashUrl }}"
+                           class="text-sm font-semibold hover:text-orange-500">
+                            Dashboard
+                        </a>
+
+                        <a href="{{ path('app_logout') }}"
+                           data-controller="logout"
+                           data-action="click->logout#logout"
+                           class="text-sm font-semibold hover:text-orange-500 cursor-pointer">
+                            Déconnexion
+                        </a>
+
+                    {% else %}
+                        <a href="{{ path('app_account') }}"
+                           class="text-sm font-semibold hover:text-orange-500 {{ currentRoute == 'app_account' ? 'text-orange-600' : '' }}">
+                            Mon compte
+                        </a>
+                    {% endif %}
+
+                    <!-- Bouton agences -->
+                    <div class="relative inline-block text-left shrink-0">
+                        <button id="agencesButton"
+                                type="button"
+                                data-header-target="button"
+                                data-action="click->header#toggleAgencyMenu"
+                                class="bg-orange-500 cursor-pointer hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm inline-flex items-center gap-1 focus:outline-none whitespace-nowrap">
+                            <span>{{ selectedAgencyName ?? 'Nos agences' }}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div id="agencesMenu"
+                             data-header-target="menu"
+                             class="hidden origin-top-right absolute right-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="agencesButton">
+                                {% for agency in agencyEntities %}
+                                    <form method="POST" action="{{ path('web_public_select_agency', { id: agency.id }) }}">
+                                        <button type="submit"
+                                                class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white cursor-pointer">
+                                            {{ agency.name }}
+                                        </button>
+                                    </form>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="h-1 bg-orange-500 w-full my-4"></div>

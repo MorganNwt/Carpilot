@@ -23,7 +23,7 @@ class Seller extends User
      */
 
 
-    #[ORM\Column(length: 500)]
+    #[ORM\Column(length: 150)]
     private ?string $address;
 
     #[ORM\Column(length: 100)]
@@ -36,7 +36,7 @@ class Seller extends User
     private ?string $country;
 
     #[ORM\OneToMany(mappedBy: 'seller', targetEntity: Vehicle::class, cascade: ['remove'])]
-    private collection $vehicles;
+    private Collection $vehicles;
 
     public function __construct()
     {

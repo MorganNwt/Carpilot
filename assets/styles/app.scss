@@ -1,2 +1,12 @@
 @import "tailwindcss";
 @source not "../../public";
+
+// Styles pour les champs de formulaire
+.input {
+    @apply w-full px-5 py-4 rounded-xl border border-gray-300
+    focus:outline-none
+    focus:border-blue-400
+    focus:ring-4
+    focus:ring-blue-200/50
+    transition;
+}

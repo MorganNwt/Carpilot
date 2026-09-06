@@ -6,7 +6,6 @@ use App\Entity\Vehicle;
 use App\Entity\Estimation;
 use App\Entity\User\Seller;
 use App\Mapper\VehicleMapper;
-use App\DTO\Vehicle\CreateVehicleDto;
 use App\DTO\Vehicle\UpdateVehicleDto;
 use App\Repository\VehicleRepository;
 use App\DTO\Vehicle\VehicleResponseDto;
@@ -14,6 +13,7 @@ use App\DTO\Public\EstimationRequestDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 /**
  * Class VehicleService
@@ -30,8 +30,7 @@ class VehicleService
         private readonly EntityManagerInterface $em,
         private readonly VehicleRepository $repository,
         private readonly VehicleMapper $mapper
-    ) {
-    }
+    ) {}
 
 
     /**
@@ -45,7 +44,7 @@ class VehicleService
      * @return Vehicle The newly created Vehicle entity.
      * @throws NotFoundHttpException If the estimation token is expired or not found in cache.
      */
-    public function createVehicleFromEstimation(string $token, Seller $seller)
+    public function createVehicleFromEstimation(string $token, Seller $seller): Vehicle
     {
         $cache = new FilesystemAdapter();
         $item = $cache->getItem($token);
@@ -55,31 +54,67 @@ class VehicleService
         }
 
         $data = $item->get();
-        $vehicleData = $data['vehicle_data'];
+        $vehicleData = $data['vehicle_data'] ?? null;
+
+        if (!$vehicleData) {
+            throw new NotFoundHttpException('Estimation data missing.');
+        }
 
         $dto = new EstimationRequestDto();
-
         foreach ($vehicleData as $key => $value) {
             if (property_exists($dto, $key)) {
                 $dto->$key = $value;
             }
         }
 
-        $vehicle = $this->mapper->fromCreateDtoToEntity($dto);
-        $vehicle->setSeller($seller);
+        // Chercher véhicule existant (vin puis plate)
+        $existing = null;
 
-        $estimation = new Estimation();
+        if (!empty($dto->vin)) {
+            $existing = $this->repository->findOneBy(['vin' => $dto->vin]);
+        }
+
+        if (!$existing && !empty($dto->plate)) {
+            $existing = $this->repository->findOneBy(['plate' => $dto->plate]);
+        }
+
+        if ($existing) {
+            if ($existing->getSeller()?->getId() !== $seller->getId()) {
+                throw new ConflictHttpException("Ce véhicule est déjà associé à un autre vendeur.");
+            }
+            $vehicle = $existing;
+        } else {
+            $vehicle = $this->mapper->fromCreateDtoToEntity($dto);
+            $vehicle->setSeller($seller);
+        }
+
+        // Un dossier existant conserve son agence ; un nouveau dépend de celle du vendeur.
+        $agency = $vehicle->getAgency() ?? $seller->getAgency();
+        if ($agency === null) {
+            throw new ConflictHttpException('Votre compte doit être rattaché à une agence avant de pouvoir enregistrer un véhicule.');
+        }
+        $vehicle->setAgency($agency);
+
+        $estimation = $vehicle->getEstimation() ?? new Estimation();
+        if ($estimation->getAgency() === null) {
+            $estimation->setAgency($agency);
+        }
         $estimation->setEstimatedPrice($data['price']);
+
         $vehicle->setEstimation($estimation);
 
-        $this->em->persist($vehicle);
+        if (!$existing) {
+            $this->em->persist($vehicle);
+        }
+
         $this->em->flush();
 
         $cache->deleteItem($token);
 
         return $vehicle;
-
     }
+
+
 
 
     /**

@@ -2,186 +2,48 @@
 
 {% block title %}Accueil - CarPilot{% endblock %}
 
-{% block body %}
-<section class="bg-white py-12 text-center">
+{% block javascript %}{% endblock %}
+
+{% block body %} 
+
+<!-- Section pilotez la vente -->
+<section class="bg-white py-12 text-center mb-10">
     <h1 class="text-3xl md:text-4xl font-bold mb-4">Pilotez la vente de votre véhicule</h1>
-    <p class="text-gray-600 mb-10 max-w-2xl mx-auto">
-        Estimez la valeur de votre voiture, obtenez immédiatement votre prix de vente et prenez rendez-vous en ligne : voilà, votre voiture est vendue !
-    </p>
-
-   <div class="mx-auto md:w-1/2 max-w-md">
-    <div class="bg-orange-500 text-white py-4 px-8 rounded-t-lg font-semibold text-center">
-        Commencez la vente de votre véhicule ici !
-    </div>
-
-    <div class="bg-gray-100 p-12 rounded-b-lg">
-        <label class="block font-semibold mb-6">Pour immatriculation</label>
-        <input type="text" placeholder="GW-713-AC" class="w-full px-4 py-2 mb-4 rounded border border-gray-300 text-center font-mono text-lg bg-white">
-        <p class="text-sm text-gray-500 mb-6 mt-2">Pour un pré-remplissage des informations rapide et fiable !</p>
-       <button 
-            class="text-white px-6 py-2 rounded font-semibold transition"
-            style="background-color: #123354;"
-            onmouseover="this.style.backgroundColor='#3a5a7d'"
-            onmouseout="this.style.backgroundColor='#123354'"
-        >
-            ESTIMEZ MAINTENANT
-        </button>
-    </div>
-</div>
+    <p>Estimez la valeur de votre voiture, obtenez immédiatement votre prix de vente et prenez rendez-vous en ligne : voilà, votre voiture est vendue !</p>
+      {% include 'partials/_pilotezLaVenteImmatriculation.html.twig' %}
 </section>
 
-<section class="py-12">
-    <div class="flex justify-left">
-        <img src="/images/renault-clio 1.png" alt="Voiture Renault" class="w-96 max-w-full">
-    </div>
+<!-- Section commentares -->
+<section class="bg-orange-500 py-12 text-white text-center relative">
+     {% include 'partials/_commentaires.html.twig' %}
 </section>
 
-<section class="bg-orange-500 py-12 text-white text-center">
-    <div class="relative mb-6">
-        <div class="absolute inset-x-0 -top-6 flex justify-center">
-            <div class="bg-white rounded-full p-2 text-orange-500 shadow-md mb-8">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-                     viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-     <h2 class="text-2xl font-bold mt-8 mb-8">Ils nous ont adorés !</h2>
-
-    <div class="flex justify-center items-center gap-4 px-4">
-        <!-- Flèche gauche -->
-        <button>
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2"
-                 viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-            </svg>
-        </button>
-
-        <!-- Avis client 1 -->
-        <div class="bg-white text-gray-800 rounded-lg p-6 w-64 shadow-md">
-            <div class="flex items-center mb-4">
-                <img src="/images/photo-avis-1.png" alt="Charles HENRY" class="w-12 h-12 rounded-full mr-4">
-                <div>
-                    <h3 class="font-bold">Charles HENRY</h3>
-                    <p class="text-sm">Incroyable, ma voiture est estimé et vendu en quelques cliques seulement !</p>
-                </div>
-            </div>
-            <div class="flex items-center justify-between">
-                <img src="/images/google.png" alt="Avis Google" class="w-6 h-6">
-                <div class="flex gap-1">
-                    {% for i in 1..5 %}
-                        ⭐
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Avis client 2 -->
-        <div class="bg-white text-gray-800 rounded-lg p-6 w-64 shadow-md">
-            <div class="flex items-center mb-4">
-                <img src="/images/photo-avis-2.png" alt="Iness DEKLAPE" class="w-12 h-12 rounded-full mr-4">
-                <div>
-                    <h3 class="font-bold">Iness DEKLAPE</h3>
-                    <p class="text-sm">Très satisfaite du service, rapidité et fiabilité au rendez-vous. Je recommande ! </p>
-                </div>
-            </div>
-            <div class="flex items-center justify-between">
-                <img src="/images/google.png" alt="Avis Google" class="w-6 h-6">
-                <div class="flex gap-1">
-                    {% for i in 1..5 %}
-                        ⭐
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Flèche droite -->
-        <button>
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2"
-                 viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-            </svg>
-        </button>
-    </div>
+<!-- Section comment vendre-->
+<section class="container mx-auto px-4 py-10 flex flex-col items-center">
+     {% include 'partials/_commentVendre.html.twig' %}
 </section>
 
-<section class="container mx-auto px-4 py-10">
-    <h2 class="text-center text-2xl mt-8 md:text-3xl font-bold mb-10 text-gray-800">Vendez votre véhicule facilement et rapidement !</h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start">
-            <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-mouse-pointer"></i></div>
-            <div>
-                <h3 class="font-semibold text-lg mb-1">En quelques clics</h3>
-                <p>Choisir CarPilot, c’est dire adieu aux tracas de la revente d’occasion !</p>
-            </div>
-        </div>
-
-        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start">
-            <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-university"></i></div>
-            <div>
-                <h3 class="font-semibold text-lg mb-1">Virement instantané sur votre compte</h3>
-                <p>Une fois le véhicule déposé, vous recevez votre argent instantanément sur votre compte.</p>
-            </div>
-        </div>
-
-        <div class="bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start">
-            <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-users"></i></div>
-            <div>
-                <h3 class="font-semibold text-lg mb-1">Pour particuliers et professionnels</h3>
-                <p>Nous rachetons immédiatement votre véhicule, que vous soyez particulier ou professionnel.</p>
-            </div>
-        </div>
-
-        <div class="relative bg-[#0b2c4c] text-white p-6 rounded-lg shadow-md flex items-start">
-            <div class="text-orange-400 text-2xl mr-4"><i class="fas fa-car"></i></div>
-            <div>
-                <h3 class="font-semibold text-lg mb-1">Tous types de véhicules</h3>
-                <p>Que vous ayez une citadine, un break ou un SUV, nous avons une offre pour vous !</p>
-            </div>
-            <img src="{{ asset('images/renault_20clioeditiononehb5b_angularfront 1.png') }}" alt="voiture" class="absolute bottom-0 right-0 w-32 md:w-48 lg:w-56">
-        </div>
-    </div>
-</section>
-
+<!-- Section comment faire-->
 <section class="bg-[#0b2c4c] text-white py-10">
-    <div class="container mx-auto px-4">
-        <h3 class="text-xl md:text-2xl font-semibold mb-8">Comment faire ?</h3>
-        <div class="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-                <div class="flex items-start mb-6">
-                    <div class="w-8 h-8 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold mr-4">1</div>
-                    <div>
-                        <h4 class="font-bold text-lg">Estimation en ligne</h4>
-                        <p class="text-sm mt-1">Renseignez votre véhicule à partir de sa plaque d’immatriculation, précisez son état, ajoutez quelques photos et le tour est joué !</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start mb-6">
-                    <div class="w-8 h-8 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold mr-4">2</div>
-                    <div>
-                        <h4 class="font-bold text-lg">Recevez votre prix de vente</h4>
-                        <p class="text-sm mt-1"><strong>En moins de 48 minutes !</strong> Nous traitons votre demande pour vous proposer la meilleure offre de rachat.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start">
-                    <div class="w-8 h-8 bg-white text-[#0b2c4c] rounded-full flex items-center justify-center font-bold mr-4">3</div>
-                    <div>
-                        <h4 class="font-bold text-lg">Prenez rendez-vous</h4>
-                        <p class="text-sm mt-1">Dans une de nos agences CarPilot pour contrôler l’état de votre véhicule et valider ensemble l’offre !</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center">
-                <img src="{{ asset('images/Comment faire.png') }}" alt="client carpilot" class="mx-auto rounded-lg shadow-lg">
-                <a href="#" class="inline-block mt-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded">Estimez maintenant !</a>
-            </div>
-        </div>
-    </div>
+    {% include 'partials/_commentFaire.html.twig' %}
 </section>
 
-<section class="text-center py-6 bg-white">
-    <h4 class="text-xl font-bold text-[#0b2c4c]">Retrouvez nous en agence !</h4>
+<!-- Section google maps intégration -->
+<section class="w-full flex flex-col items-center mt-20">
+    {% include 'partials/_cardsAndGoogleMapsIntegration.html.twig' %}
+</section>
+
+<!-- Section astuces-->
+<section class="py-16 mt-20 bg-[#002f5a]">
+    <h2 class="text-center text-white text-3xl md:text-4xl font-bold mt-10 mb-15">
+        Nos astuces pour vendre votre voiture
+    </h2>
+    {% include 'partials/_astuces.html.twig' %}
+</section>
+
+<!-- Section question réponse-->
+<section class="max-w-4xl mx-auto py-10 mt-20">
+    {% include 'partials/_questionReponses.html.twig' %}
 </section>
 
 {% endblock %}

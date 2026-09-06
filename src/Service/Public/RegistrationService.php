@@ -4,9 +4,10 @@ namespace App\Service\Public;
 
 use App\DTO\Public\RegistrationDto;
 use App\DTO\Seller\ProfileResponseDto;
+use App\Mapper\UserMapper;
+use App\Repository\AgencyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Mapper\UserMapper;
 
 /**
  * Gère la logique de création de nouveaux comptes utilisateurs.
@@ -22,8 +23,8 @@ final class RegistrationService
         private readonly UserMapper $mapper,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly EntityManagerInterface $em,
-    ) {
-    }
+        private readonly AgencyRepository $agencyRepository,
+    ) {}
     /**
      * Creates a new seller account, hashes the password, and returns a public DTO.
      *
@@ -34,11 +35,18 @@ final class RegistrationService
     {
         $seller = $this->mapper->fromRegistrationDtoToEntity($dto);
 
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            $seller,
-            $dto->password
-        );
+        $agency = $this->agencyRepository->find($dto->agencyId);
+        if (!$agency) {
+            throw new \InvalidArgumentException('Invalid agency');
+        }
 
+        $seller->setAgency($agency);
+
+        $seller->setRgpdConsent(true);
+        $seller->setRgpdConsentAt(new \DateTimeImmutable());
+
+        // Hash password
+        $hashedPassword = $this->passwordHasher->hashPassword($seller, $dto->password);
         $seller->setPassword($hashedPassword);
 
         $this->em->persist($seller);

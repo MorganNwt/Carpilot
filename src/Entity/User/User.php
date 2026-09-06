@@ -10,6 +10,10 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Agency;
+use App\Entity\Notification;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -48,18 +52,18 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Identité de l'utilisateur
      */
-    #[ORM\Column(length: 255)]
-    protected ?string $firstName;
+    #[ORM\Column(length: 50)]
+    protected ?string $firstName = null;
 
-    #[ORM\Column(length: 255)]
-    protected ?string $lastName;
+    #[ORM\Column(length: 50)]
+    protected ?string $lastName = null;
 
     /**
      * Identifiant de connexion
      * Longueur 320 : standard RFC pour les emails
      */
-    #[ORM\Column(length: 320, unique: true)]
-    protected ?string $email;
+    #[ORM\Column(length: 180, unique: true)]
+    protected ?string $email = null;
 
     /**
      * Mot de passe hashé (jamais en clair)
@@ -69,7 +73,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column(length: 20)]
-    private ?string $phone;
+    private ?string $phone = null;
 
     /**
      * Rôles de sécurité Symfony (tableau JSON en base)
@@ -81,10 +85,38 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Tiemestamp de création et de dernière modification
      */
     #[ORM\Column]
-    protected ?\DateTimeImmutable $createdAt;
+    protected ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     protected ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column]
+    private bool $isVerified = false;
+
+
+    /**
+     * Consentement RGPD
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $rgpdConsent = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $rgpdConsentAt = null;
+
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'user')]
+    private Collection $notifications;
+
+    #[ORM\ManyToOne(targetEntity: Agency::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Agency $agency = null;
+
+    public function __construct()
+    {
+        $this->notifications = new ArrayCollection();
+    }
 
     /**
      * ==========================================
@@ -109,6 +141,14 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
+
+    /**
+     * Undocumented variable
+     *
+     * @var \DateTimeImmutable|null
+     */
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
 
     /**
      * ==========================================
@@ -243,7 +283,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullName(): string
     {
-        return trim($this->firstName . ' ' . $this->lastName);
+        return trim(($this->firstName ?? '') . ' ' . ($this->lastName ?? ''));
     }
 
     public function hasRole(string $role): bool
@@ -267,5 +307,118 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     abstract public function __toString(): string;
 
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
 
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function hasRgpdConsent(): bool
+    {
+        return $this->rgpdConsent;
+    }
+
+    /**
+     * Définit le consentement RGPD et la date associée
+     */
+    public function setRgpdConsent(bool $rgpdConsent): static
+    {
+        $this->rgpdConsent = $rgpdConsent;
+
+        if ($rgpdConsent && $this->rgpdConsentAt === null) {
+            $this->rgpdConsentAt = new \DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
+    public function getRgpdConsentAt(): ?\DateTimeImmutable
+    {
+        return $this->rgpdConsentAt;
+    }
+
+    public function setRgpdConsentAt(?\DateTimeImmutable $rgpdConsentAt): static
+    {
+        $this->rgpdConsentAt = $rgpdConsentAt;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getUser() === $this) {
+                $notification->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of agency
+     *
+     * @return ?Agency
+     */
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): self
+    {
+        $this->agency = $agency;
+
+        return $this;
+    }
+
+    /**
+     * Summary of getDeletedAt
+     * @return \DateTimeImmutable|null
+     */
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deletedAt !== null;
+    }
+
+    public function softDelete(): self
+    {
+        $this->deletedAt = new \DateTimeImmutable();
+        return $this;
+    }
+
+    public function restore(): self
+    {
+        $this->deletedAt = null;
+        return $this;
+    }
 }

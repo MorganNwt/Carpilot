@@ -1,16 +1,10 @@
 <?php
 
-/**
- * ==========================================
- * ============= ENTITÉ VEHICLE ==============
- * ==========================================
- */
-
 namespace App\Entity;
 
 use App\Entity\User\Seller;
+use App\Entity\Agency;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Trait\DateTimeTrait;
 use App\Repository\VehicleRepository;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
@@ -62,9 +56,11 @@ class Vehicle
     #[ORM\Column(type: 'integer')]
     private ?int $weightKg = null;
 
-    //Color
     #[ORM\Column(type: 'string', length: 30)]
     private ?string $color = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $mileage = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $registrationDate = null;
@@ -81,6 +77,10 @@ class Vehicle
 
     #[ORM\OneToOne(mappedBy: 'vehicle', cascade: ['persist', 'remove'])]
     private ?Estimation $estimation = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Agency $agency = null;
 
 
     /**
@@ -112,10 +112,6 @@ class Vehicle
      * ===== GETTERS ET SETTERS COMMUNS ========
      * ==========================================
      */
-
-
-
-
 
     public function getId(): ?int
     {
@@ -240,6 +236,17 @@ class Vehicle
     public function setSeats(int $seats): self
     {
         $this->seats = $seats;
+        return $this;
+    }
+
+    public function getMileage(): ?int
+    {
+        return $this->mileage;
+    }
+
+    public function setMileage(?int $mileage): self
+    {
+        $this->mileage   = $mileage;
         return $this;
     }
 
@@ -408,14 +415,25 @@ class Vehicle
         return $this->estimation;
     }
 
-    public function setEstimation(Estimation $estimation): static
+    public function setEstimation(?Estimation $estimation): static
     {
-        // set the owning side of the relation if necessary
-        if ($estimation->getVehicle() !== $this) {
+        $this->estimation = $estimation;
+
+        if ($estimation && $estimation->getVehicle() !== $this) {
             $estimation->setVehicle($this);
         }
 
-        $this->estimation = $estimation;
+        return $this;
+    }
+
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): static
+    {
+        $this->agency = $agency;
 
         return $this;
     }

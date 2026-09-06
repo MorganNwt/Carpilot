@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre estimation{% endblock %}
+
+{% block body %}
+<main class="min-h-[70vh] bg-gray-50 px-4 py-10" data-controller="estimation-result">
+  <section class="mt-25 max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-8">
+    <h1 class="text-2xl font-bold mb-2">Votre estimation est prête ✅</h1>
+    <p class="text-gray-600 mb-6">Voici le prix estimé pour votre véhicule.</p>
+
+    <div class="rounded-xl bg-orange-50 border border-orange-200 p-6 mb-8">
+      <p class="text-sm text-orange-700">Estimation</p>
+      <p class="text-4xl font-extrabold text-orange-600 mt-2" data-estimation-result-target="price">—</p>
+      <p class="text-sm text-gray-600 mt-2" data-estimation-result-target="meta"></p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="/seller/dashboard" class="bg-orange-500 cursor-pointer text-white px-10 py-4 rounded-xl font-semibold hover:bg-orange-600 transition w-fit mt-4">
+        Accéder à mon espace pour soumettre ma proposition de vente !
+      </a>
+    </div>
+  </section>
+</main>
+{% endblock %}

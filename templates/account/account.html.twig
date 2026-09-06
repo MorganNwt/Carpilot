@@ -1,0 +1,225 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block body %}
+    <main class="min-h-screen bg-gray-50 px-4 py-10">
+        <div data-controller="account-info" class="hidden max-w-xl mx-auto mb-8 rounded-xl bg-orange-500 px-6 py-6 text-white shadow-lg flex items-start gap-4">
+          <span class="text-2xl animate-spin">⚙️</span>
+            <div>
+                <p class="font-semibold leading-tight">
+                    Récupération de votre véhicule en cours...
+                </p>
+                <p class="text-sm text-white/80 mt-1">
+                    Connectez-vous ou créez un compte pour finaliser votre estimation.
+                </p>
+            </div>
+        </div>
+
+        <section class="min-h-screen flex justify-center bg-gray-50 px-4 ">
+    
+            <section data-controller="account" class="bg-white shadow-xl rounded-2xl w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 relative">
+
+                <!-- Colonne de gauche-->
+                <div class="p-12 flex flex-col justify-between">
+                
+                    <div class="space-y-6">
+                        <h2 class="text-orange-500 font-semibold text-lg">
+                            Me connecter
+                        </h2>
+
+                       <form id="login-form" method="post" action="/account" class="mt-17 space-y-5">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <div class="flex flex-col">
+                                <label for="email" class="mb-1 font-medium">Adresse mail</label>
+                                <input id="email" type="email" name="email" placeholder="Adresse mail" required class="input">
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="password" class="mb-1 font-medium">Mot de passe</label>
+                                <input id="password" type="password" name="password" placeholder="Mot de passe" required class="input">
+                            </div>
+
+                            <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
+
+                            <button type="submit" class="bg-blue-900 cursor-pointer text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition w-fit">
+                                Me connecter
+                            </button>
+                        </form>
+
+                        <p class="text-red-500 text-sm" data-account-target="loginError"></p>
+                    </div>
+
+                    <div class="mt-5 mb-15">
+                        <img src="/images/renault-clio 1.png" alt="Voiture Renault clio blanche" class="w-120 max-w-full">
+                    </div>
+                </div>
+
+                <!-- Séparateur -->
+                <div class="hidden md:block absolute inset-y-12 left-1/2 w-px bg-gray-300"></div>
+
+                <!-- Colonne de droite -->
+                <div class="p-12 flex flex-col justify-start">
+
+                    <div class="space-y-3 mb-8">
+                        <h2 class="text-orange-500 font-semibold text-lg">
+                            Nouveau du site ?
+                        </h2>
+                        <p class="font-semibold text-gray-800">
+                            Tous les champs sont obligatoires
+                        </p>
+                    </div>
+
+                    <form data-account-target="registerForm" data-action="submit->account#register" class="space-y-5 w-full">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
+                        <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="flex flex-col">
+                                <label for="lastName" class="mb-1 font-medium">Nom</label>
+                                <input id="lastName" type="text" name="lastName" placeholder="Jean" required class="input"
+                                    minlength="2" maxlength="50"
+                                    pattern="^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$"
+                                    title="2 à 50 caractères, lettres uniquement (espaces, tirets et apostrophes autorisés)">
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="firstName" class="mb-1 font-medium">Prénom</label>
+                                <input id="firstName" type="text" name="firstName" placeholder="Dujardin" required class="input"
+                                    minlength="2" maxlength="50"
+                                    pattern="^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$"
+                                    title="2 à 50 caractères, lettres uniquement (espaces, tirets et apostrophes autorisés)">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="email" class="mb-1 font-medium">Adresse mail</label>
+                            <input id="email" type="email" name="email" placeholder="Adresse mail" required class="input"
+                                pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                                title="Veuillez saisir une adresse email valide.">
+                        </div>
+
+                        <div data-controller="password--password-match" class="space-y-5">
+                            <div data-controller="password--password-rules" class="space-y-2">
+                                <div class="flex flex-col">
+                                    <label for="password" class="mb-1 font-medium">Mot de passe</label>
+                                    <div class="relative">
+                                        <input id="password" type="password" name="password" placeholder="Mot de passe" class="input w-full block pr-12" required 
+                                            data-password--password-rules-target="password"
+                                            data-password--password-match-target="password"
+                                            data-action="input->password--password-rules#check input->password-match#check"
+                                        >
+
+                                        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                            data-controller="password--password-toggle"
+                                            data-action="click->password--password-toggle#toggle"
+                                            aria-label="Afficher le mot de passe"
+                                        >
+                                            <!-- Eye -->
+                                            <svg data-password--password-toggle-target="eye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+
+                                            <!-- Eye Off -->
+                                            <svg data-password--password-toggle-target="eyeOff" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M3 3l18 18"/>
+                                                <path d="M10.6 10.6A2 2 0 0 0 12 14a2 2 0 0 0 1.4-.6"/>
+                                                <path d="M9.9 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-4.3 5.2"/>
+                                                <path d="M6.1 6.1C3.3 8.2 2 12 2 12s3.5 7 10 7c1.1 0 2.1-.2 3-.5"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <ul class="text-sm space-y-1">
+                                    <li data-password--password-rules-target="len" class="text-red-500">* 13 caractères minimum</li>
+                                    <li data-password--password-rules-target="upper" class="text-red-500">* 1 majuscule minimum</li>
+                                    <li data-password--password-rules-target="digit" class="text-red-500">* 1 chiffre minimum</li>
+                                    <li data-password--password-rules-target="special" class="text-red-500">* 2 caractères spéciaux minimum</li>
+                                </ul>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="passwordConfirm" class="mb-1 font-medium">Confirmez le mot de passe</label>
+                                <div class="relative" data-controller="password--password-toggle">
+                                    <input id="passwordConfirm" type="password" name="passwordConfirm" placeholder="Confirmez le mot de passe" class="input w-full block pr-12" required
+                                        data-password--password-toggle-target="input"
+                                        data-password--password-match-target="confirm"
+                                        data-action="input->password--password-match#check"
+                                    >
+
+                                    <button
+                                        type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        data-action="click->password--password-toggle#toggle"
+                                        aria-label="Afficher le mot de passe"
+                                    >
+                                    <svg data-password--password-toggle-target="eye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    <svg data-password--password-toggle-target="eyeOff" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 3l18 18"/>
+                                        <path d="M10.6 10.6A2 2 0 0 0 12 14a2 2 0 0 0 1.4-.6"/>
+                                        <path d="M9.9 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-4.3 5.2"/>
+                                        <path d="M6.1 6.1C3.3 8.2 2 12 2 12s3.5 7 10 7c1.1 0 2.1-.2 3-.5"/>
+                                    </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p data-password--password-match-target="message" class="text-sm text-red-500">
+                                Les mots de passe ne correspondent pas
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="address" class="mb-1 font-medium">Adresse</label>
+                            <input id="address" type="text" name="address" placeholder="Adresse" required class="input"
+                                minlength="5" maxlength="120">
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="postalCode" class="mb-1 font-medium">Code postal</label>
+                            <input id="postalCode" type="text" name="postalCode" placeholder="Code postal" required class="input"
+                                pattern="^\d{5}$">
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="city" class="mb-1 font-medium">Ville</label>
+                            <input id="city" type="text" name="city" placeholder="Ville" required class="input">
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="country" class="mb-1 font-medium">Pays</label>
+                            <input id="country" type="text" name="country" placeholder="Pays" required class="input">
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="phone" class="mb-1 font-medium">Téléphone</label>
+                            <input id="phone" type="tel" name="phone" placeholder="Téléphone" required class="input">
+                        </div>
+
+                        <a href="{{ path('app_legal_rgpd') }}" target="_blank" class="text-blue-600 underline hover:text-blue-800">
+                            Lire la politique de confidentialité
+                        </a>
+
+                        <label class="flex items-center gap-3 text-sm text-gray-700 mt-2">
+                            <input type="checkbox" name="rgpdConsent" class="rounded">
+                            En cochant cette case, j’accepte que mes données personnelles soient collectées et traitées afin de créer mon compte et traiter ma demande, 
+                            conformément à la politique de confidentialité.
+                        </label>
+
+                        <button type="submit"class="bg-orange-500 cursor-pointer text-white px-10 py-4 rounded-xl font-semibold hover:bg-orange-600 transition w-fit mt-4">
+                            S’inscrire
+                        </button>
+                    </form>
+
+                    <p class="text-red-500 text-sm mt-4" data-account-target="registerError"></p>
+                </div>
+
+            </section>
+        </section>
+    </main>
+{% endblock %}

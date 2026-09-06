@@ -3,7 +3,6 @@
 namespace App\Service\Seller;
 
 use App\DTO\Seller\ChangePasswordDto;
-use App\DTO\Public\RegistrationDto;
 use App\DTO\Seller\ProfileResponseDto;
 use App\DTO\Seller\UpdateSellerDto;
 use App\Entity\User\Seller;
@@ -29,8 +28,7 @@ class ProfileService
         private readonly UserMapper $mapper,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly EntityManagerInterface $em,
-    ) {
-    }
+    ) {}
 
 
     /**
@@ -61,13 +59,16 @@ class ProfileService
     }
 
     /**
-     * Deletes a seller's account from the database.
-     *
-     * @param Seller $seller The seller entity to delete.
+     * Soft-deletes a seller account (keeps relations).
      */
     public function deleteSeller(Seller $seller): void
     {
-        $this->em->remove($seller);
+        //  soft delete (méthode que tu as ajoutée dans User abstract)
+        $seller->softDelete();
+
+        // Optionnel : libérer l’email pour permettre une réinscription plus tard
+        // $seller->setEmail(sprintf('deleted+%d@carpilot.invalid', $seller->getId()));
+
         $this->em->flush();
     }
 
